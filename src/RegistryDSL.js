@@ -2,49 +2,59 @@
  * Created by rharik on 6/24/15.
  */
 
+var invariant = require('invariant');
+
 module.exports = class RegistryDSL{
     constructor(){
-        this._pathToJsonConfig;
+        this._pathToPackageJson;
         this.dependencyDeclarations = [];
         this.renamedDeclarations = [];
-        this.declarationInProcess;
-        this.renameInProgress;
+        this._declarationInProgress;
+        this._renameInProgress;
     }
 
-    pathToJsonConfig(path){
-        this._pathToJsonConfig = path;
+    pathToPackageJson(path){
+        invariant(path,'Path to package.json must be a valid path');
+        this._pathToPackageJson = path;
         return this;
     }
 
     forDependencyParam(param){
-        this.declarationInProcess ={
+        invariant(param,'You must provide a valid dependency parameter');
+        this._declarationInProgress = {
             name: param
         };
         return this;
     }
 
     requireThisModule(path){
-        this.declarationInProcess.path=path;
-        this.dependencyDeclarations.push(this.declarationInProcess);
-        this.declarationInProcess = null;
+        invariant(path,'You must provide a valid replacement module');
+        invariant(this._declarationInProgress,'You must call "forDependencyParam" before calling "requireThisModule"');
+        this._declarationInProgress.path=path;
+        this.dependencyDeclarations.push(this._declarationInProgress);
+        this._declarationInProgress = null;
         return this;
     }
 
     replace(name){
-        this.renameInProgress = {oldName: name};
+        invariant(name, 'You must provide the name of the your dependency');
+        this._renameInProgress = {oldName: name};
         return this;
     }
 
     withThis(name){
-        this.renameInProgress.name = name;
-        this.renamedDeclarations.push(this.renameInProgress);
-        this.renameInProgress=null;
+        invariant(name, 'You must provide the new name');
+        invariant(this._renameInProgress,'You must call "replace" before calling "withThis"');
+        this._renameInProgress.name = name;
+        this.renamedDeclarations.push(this._renameInProgress);
+        this._renameInProgress=null;
         return this;
     }
 
     complete(){
+        invariant(this._pathToPackageJson, 'You must provide a path to your package.json before calling complete')
         return {
-            pathToJsonConfig:this._pathToJsonConfig,
+            pathToPackageJson:this._pathToPackageJson,
             dependencyDeclarations:this.dependencyDeclarations,
             renamedDeclarations:this.renamedDeclarations
         };

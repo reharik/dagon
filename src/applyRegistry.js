@@ -3,11 +3,15 @@
  */
 
 var Dependency = require('./Dependency');
+var invariant = require('invariant');
 
 module.exports = function(registry, graph) {
-    var resolveItem= function(graph,item){
+    invariant(registry, 'Must provide a registry');
+    invariant(graph,'Must provide a graph');
+
+    var resolveItem = function(graph,item){
         // this will get more complexe as features are added
-        graph.addItem(new Dependecy(item.name, item.path));
+        graph.addItem(item);
     };
     registry.dependencyDeclarations.forEach(x=> resolveItem(graph,x));
     registry.renamedDeclarations.forEach(x=> {

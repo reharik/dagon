@@ -4,19 +4,23 @@
 var path = require('path');
 var _ = require('lodash');
 var RegistryDSL = require('./RegistryDSL');
-var Graph = require('./Graph')();
-var applyRegistry = require('./applyRegistry')();
+var Graph = require('./Graph');
+var applyRegistry = require('./applyRegistry');
 var fnArgs = require('fn-args');
 var appRoot = path.resolve('./');
 var invariant = require('invariant');
 
 
-
 module.exports =  class Container{
     constructor(registryFunc){
+        invariant(registryFunc && _.isFunction(registryFunc), 'Container requires a registry function');
         this.registry = registryFunc(new RegistryDSL());
+
         this.dependencyGraph = new Graph();
-        this.dependencyGraph.buildGraph(registry._pathToJsonConfig);
+        var packageJson =  require(this.registry.pathToPackageJson);
+        this.dependencyGraph.buildGraph(packageJson);
+
+        console.log(this.registry);
         applyRegistry(this.registry, this.dependencyGraph);
     }
 
