@@ -3,8 +3,8 @@
  */
 
 module.exports = function(logger) {
-    class TestClassBase {
 
+    return class TestClassBase {
         coonstructor(someProp) {
             this._someProp = someProp;
             this._baseDateTime = "base " + new Date().now();

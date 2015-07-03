@@ -6,6 +6,7 @@ var _ = require('lodash');
 var RegistryDSL = require('./RegistryDSL');
 var Graph = require('./Graph');
 var applyRegistry = require('./applyRegistry');
+var GraphResolution = require('./GraphResolver');
 var fnArgs = require('fn-args');
 var appRoot = path.resolve('./');
 var invariant = require('invariant');
@@ -20,8 +21,8 @@ module.exports =  class Container{
         var packageJson =  require(this.registry.pathToPackageJson);
         this.dependencyGraph.buildGraph(packageJson);
 
-        console.log(this.registry);
         applyRegistry(this.registry, this.dependencyGraph);
+        new GraphResolution().recurse(this.dependencyGraph);
     }
 
     getInstanceOf(_type) {

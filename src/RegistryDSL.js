@@ -3,6 +3,7 @@
  */
 
 var invariant = require('invariant');
+var Dependency = require('./Dependency');
 
 module.exports = class RegistryDSL{
     constructor(){
@@ -27,12 +28,17 @@ module.exports = class RegistryDSL{
         return this;
     }
 
-    requireThisModule(path){
+    requireThisModule(path, isInternal){
         invariant(path,'You must provide a valid replacement module');
         invariant(this._declarationInProgress,'You must call "forDependencyParam" before calling "requireThisModule"');
         this._declarationInProgress.path=path;
-        this.dependencyDeclarations.push(this._declarationInProgress);
+        this.dependencyDeclarations.push(new Dependency(this._declarationInProgress.name,this._declarationInProgress.path,isInternal));
         this._declarationInProgress = null;
+        return this;
+    }
+
+    requireThisInternalModule(path){
+        this.requireThisModule(path,true);
         return this;
     }
 

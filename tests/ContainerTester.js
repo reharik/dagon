@@ -33,16 +33,30 @@ describe('Container Test', function() {
 
         context('when instantiating contaienr', ()=>{
             it('should apply registry to graph',()=>{
-
                 var mut = new Mut(x=>
                     x.pathToPackageJson('../package.json')
-                        .forDependencyParam('logger').requireThisModule('./TestModules/loggerMock')
+                        .forDependencyParam('logger').requireThisInternalModule('../tests/TestModules/loggerMock')
                         .complete());
-                var logger = mut.dependencyGraph.find(x=>x.name == 'logger');
-                logger.debug('is a mock').must.equal('is a mock');
-
+                var logger = mut.dependencyGraph._items.find(x=>x.name == 'logger');
+                logger.path.must.equal('../tests/TestModules/loggerMock');
             })
-        })
+        });
 
+        context('when instantiating contaienr', ()=>{
+            it('should resolve graph',()=>{
+                var mut = new Mut(x=>
+                    x.pathToPackageJson('../package.json')
+                        .forDependencyParam('TestClass').requireThisInternalModule('../tests/TestModules/TestClass')
+                        .forDependencyParam('TestClassBase').requireThisInternalModule('../tests/TestModules/TestClassBase')
+                        .forDependencyParam('pointlessDependency').requireThisInternalModule('../tests/TestModules/pointlessDependency')
+                        .complete());
+                //console.log(mut.dependencyGraph);
+                mut.dependencyGraph._items.forEach(x=> x.resolvedInstance.must.not.null());
+                var TestClass = mut.dependencyGraph._items.find(x=>x.name=='TestClass').resolvedInstance;
+                var testClass = new TestClass('fu');
+
+                testClass.getSomeOtherPropVal().must.equal('fu'+testClass.pointlessDependencyId);
+            });
+        });
     });
 });

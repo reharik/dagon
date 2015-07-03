@@ -7,6 +7,7 @@ var Container = require('../src/Container');
 var path = require('path');
 var logger = require('../src/logger');
 var RegistryDSL = require('../src/RegistryDSL');
+var GraphResolution = require('../src/GraphResolver');
 
 describe('Graph Tester', function() {
     var Mut;
@@ -54,6 +55,13 @@ describe('Graph Tester', function() {
             })
         });
 
+        context('when calling buildGraph with dependencies', function () {
+            it('should add type of Dependency to list', function () {
+                mut.buildGraph({dependencies:{"uuid": "^2.0.1"}});
+                mut._items[0].internal.must.be.false;
+            })
+        });
+
         context('when calling buildGraph with dependency with hyphen in name', function () {
             it('should clean name, but not path', function () {
                 mut.buildGraph({dependencies:{"roll-a-dice": "0.0.2"}});
@@ -80,9 +88,16 @@ describe('Graph Tester', function() {
             it('should have correct absolute path', ()=>{
                 mut.buildGraph({internalDependencies:{"logger":"/src/logger"}});
                 mut._items[0].path.must.equal(path.join(path.resolve('./'), '/src/logger'));
-
             });
         });
+
+        context('when calling buildGraph with internal dependency', ()=>{
+            it('should set internal to true on Dependency object', ()=>{
+                mut.buildGraph({internalDependencies:{"logger":"/src/logger"}});
+                mut._items[0].internal.must.be.true;
+            });
+        });
+
     });
 
     describe('#testing addItem', function() {
@@ -106,12 +121,60 @@ describe('Graph Tester', function() {
                 mut._items[0].path.must.equal('../src/RegistryDSL');
             })
         });
-
-
-
-
     });
 
+    describe('#testing findDependency', function() {
+        context('when calling findDependency with no value', function () {
+            it('should throw proper error', function () {
+                //mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
+                (function(){mut.findDependency()}).must.throw(Error,'Invariant Violation: You must provide a dependency name to find');
+            })
+        });
+
+        context('when calling findDependency for dependency that exists', function () {
+            it('should return that resolved dependency', function () {
+                mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
+                new GraphResolution().recurse(mut);
+                var logger = mut.findDependency('logger');
+                logger.must.not.be.object;
+            })
+        });
+
+        context('when calling findDependency for dependency that does not exist', function () {
+            it('should not throw', function () {
+                mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
+                new GraphResolution().recurse(mut);
+                (function(){mut.findDependency('pig')}).must.not.throw(Error);
+            })
+        });
+    });
+
+    describe('#testing findRequiredDependency', function() {
+        context('when calling findRequiredDependency with no value', function () {
+            it('should throw proper error', function () {
+                //mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
+                (function(){mut.findRequiredDependency()}).must.throw(Error,'Invariant Violation: You must provide a dependency name to find');
+            })
+        });
+
+        context('when calling findRequiredDependency for dependency that exists', function () {
+            it('should return that resolved dependency', function () {
+                mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
+                new GraphResolution().recurse(mut);
+                var logger = mut.findRequiredDependency('someModule','logger');
+                logger.must.not.be.object;
+            })
+        });
+
+        context('when calling findRequiredDependency for dependency that does not exist', function () {
+            it('should throw proper error', function () {
+                mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
+                new GraphResolution().recurse(mut);
+                (function(){mut.findRequiredDependency('someModule','pig')})
+                    .must.throw(Error,'Invariant Violation: Module someModule has a dependency that can not be resolved: pig');
+            })
+        });
+    });
 
 
 

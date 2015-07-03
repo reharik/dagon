@@ -4,17 +4,23 @@
 
 var Dependency = require('./Dependency');
 
-module.exports = class graphResolution{
-    constructor(_graph){
-        this.graph = _graph;
-        this.recurseTree(this.graph);
+module.exports = class GraphResolver{
+    constructor(){
+        this.graph;
     }
+    recurse(_graph){
+        this.graph = _graph;
+        this.recurseTree(this.graph.items());
+    }
+
     recurseTree(items) {
         return items.forEach(x=> {
+            //console.log(x.getChildren(this.graph));
             if (x.getChildren(this.graph)) {
-                recurseTree(x.children);
+                this.recurseTree(x.children());
             }
             x.resolveInstance(this.graph);
         });
     };
+
 };

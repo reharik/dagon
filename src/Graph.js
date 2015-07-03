@@ -19,25 +19,28 @@ module.exports = class Graph{
         this._items.push(dependency);
     }
 
-    findRequiredDependency(caller, dependency){
+    _findItem(dependencyName){
+        invariant(dependencyName, 'You must provide a dependency name to find');
         for(let i of this._items){
-            if(i.name === dependency){
+            if(i.name === dependencyName){
                 return i;
             }
-            invariant(true, 'Module '+caller+' has a dependency that can not be resolved: '+dependency);
         }
     }
 
+    findRequiredDependency(caller, dependency) {
+        var item = this._findItem(dependency);
+        if(item){ return item; }
+        invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + dependency);
+    }
+
     findDependency(type){
-        for(let i of this._items){
-            if(i.name === type){
-                return i.resolvedInstance;
-            }
-       }
+        var item = this._findItem(type);
+        if(item){ return item.resolvedInstance; }
     }
 
     mapItems(func){
-        return items.map(func);
+        return _items.map(func);
     }
 
     buildGraph(pjson){
@@ -49,9 +52,13 @@ module.exports = class Graph{
         }
         if(pjson.internalDependencies) {
             Object.keys(pjson.internalDependencies).forEach(x=> {
-                this._items.push(new Dependency(x, path.join(appRoot + pjson.internalDependencies[x])));
+                this._items.push(new Dependency(x, path.join(appRoot + pjson.internalDependencies[x]), true));
             });
         }
+    }
+
+    items(){
+        return this._items;
     }
 
 };
