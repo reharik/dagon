@@ -59,4 +59,45 @@ describe('Container Test', function() {
             });
         });
     });
-});
+
+    describe('#getInstanceOf', function() {
+        context('when calling getInstanceOf with item that exists', function () {
+            it('should return resolved instance', function () {
+                var mut = new Mut(x=>
+                    x.pathToPackageJson('../package.json')
+                        .complete());
+                mut.getInstanceOf('logger').must.be.object();
+            })
+        });
+
+        context('when calling getInstanceOf with item that DOES NOT exists', function () {
+            it('should return null and not throw', function () {
+                var mut = new Mut(x=>
+                    x.pathToPackageJson('../package.json')
+                        .complete());
+                demand(mut.getInstanceOf('piglogger')).be.undefined();
+                (function(){mut.getInstanceOf('piglogger')}).must.not.throw(Error);
+            })
+        });
+    });
+
+    describe('#whatDoIHave', function() {
+        context('when calling whatDoIHave', function () {
+            it('should return bunch of stuff', function () {
+                var mut = new Mut(x=>
+                    x.pathToPackageJson('../package.json')
+                        .forDependencyParam('TestClass').requireThisInternalModule('../tests/TestModules/TestClass')
+                        .forDependencyParam('TestClassBase').requireThisInternalModule('../tests/TestModules/TestClassBase')
+                        .forDependencyParam('pointlessDependency').requireThisInternalModule('../tests/TestModules/pointlessDependency')
+                        .complete());
+                console.log(mut.whatDoIHave());
+                mut.whatDoIHave().must.not.be.empty();
+            })
+        });
+
+        //TODO write tests for options you lazy fuck
+    });
+
+
+
+    });

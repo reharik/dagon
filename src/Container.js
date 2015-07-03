@@ -26,10 +26,11 @@ module.exports =  class Container{
     }
 
     getInstanceOf(_type) {
-        this.dependencyGraph.findDependency(_type)
+        return this.dependencyGraph.findDependency(_type)
     }
 
-    whatDoIHave(options) {
+    whatDoIHave(_options) {
+        var options = _options || {};
         return this.dependencyGraph.mapItems(x=>{
             var dependency = {name: x.name};
             if(options.showResolved) { dependency.resolved = x.resolved ;}

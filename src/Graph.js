@@ -40,7 +40,7 @@ module.exports = class Graph{
     }
 
     mapItems(func){
-        return _items.map(func);
+        return this._items.map(func);
     }
 
     buildGraph(pjson){
