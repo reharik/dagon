@@ -4,6 +4,9 @@
 
 var invariant = require('invariant');
 var Dependency = require('./Dependency');
+var path = require('path');
+var fs = require('fs');
+var appRoot = path.resolve('./');
 
 module.exports = class RegistryDSL{
     constructor(){
@@ -14,9 +17,10 @@ module.exports = class RegistryDSL{
         this._renameInProgress;
     }
 
-    pathToPackageJson(path){
-        invariant(path,'Path to package.json must be a valid path');
-        this._pathToPackageJson = path;
+    pathToPackageJson(_path){
+        var resolvedPath = path.join(appRoot, _path||'undefind');
+        invariant(fs.existsSync(resolvedPath),'Path to package.json does not resolve: '+ path.resolve(resolvedPath));
+        this._pathToPackageJson = resolvedPath;
         return this;
     }
 
@@ -32,13 +36,13 @@ module.exports = class RegistryDSL{
         invariant(path,'You must provide a valid replacement module');
         invariant(this._declarationInProgress,'You must call "forDependencyParam" before calling "requireThisModule"');
         this._declarationInProgress.path=path;
-        this.dependencyDeclarations.push(new Dependency(this._declarationInProgress.name,this._declarationInProgress.path,isInternal));
+        this.dependencyDeclarations.push(new Dependency({name:this._declarationInProgress.name, path:this._declarationInProgress.path, internal:isInternal}));
         this._declarationInProgress = null;
         return this;
     }
 
-    requireThisInternalModule(path){
-        this.requireThisModule(path,true);
+    requireThisInternalModule(_path){
+        this.requireThisModule(_path ,true);
         return this;
     }
 

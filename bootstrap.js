@@ -1,14 +1,11 @@
 /**
  * Created by rharik on 6/23/15.
  */
-var bootstrapper = require('./src/IOC/bootstrapper');
+var _container = require('dependz');
 
-module.exports = function(){
-    var container = container ? container
-        : bootstrapper.initialize(x=>
-            x.pathToJsonConfig('./package.json')
-                .replace('lodash').withThis('_')
-                .replace('bluebird').withThis('Promise')
-                .complete());
-    return container;
-}();
+module.exports = new _container(x=>
+    x.pathToPackageJson('/package.json')
+            .forDependencyParam('logger').requireThisInternalModule('./loggerMock')
+            .replace('lodash').withThis('_')
+            .replace('bluebird').withThis('Promise')
+            .complete());

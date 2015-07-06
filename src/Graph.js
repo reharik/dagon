@@ -2,10 +2,8 @@
  * Created by rharik on 6/30/15.
  */
 
-var path = require('path');
 var invariant = require('invariant');
 var Dependency = require('./Dependency');
-var appRoot = path.resolve('./');
 var _ = require('lodash');
 
 module.exports = class Graph{
@@ -25,6 +23,14 @@ module.exports = class Graph{
             if(i.name === dependencyName){
                 return i;
             }
+        }
+        try {
+            var tryingRequire = require(dependencyName);
+            if (tryingRequire) {
+                return tryingRequire;
+            }
+        }catch(ex){
+            //swallow, just a hail mary to resolve
         }
     }
 
@@ -47,12 +53,12 @@ module.exports = class Graph{
         invariant(pjson,'You must provide a json object to build graph from');
         if(pjson.dependencies){
             Object.keys(pjson.dependencies).forEach(x=> {
-                this._items.push(new Dependency(x.replace(/-/g, ''), x));
+                this._items.push(new Dependency({name:x.replace(/-/g, ''), path:x}));
             });
         }
         if(pjson.internalDependencies) {
             Object.keys(pjson.internalDependencies).forEach(x=> {
-                this._items.push(new Dependency(x, path.join(appRoot + pjson.internalDependencies[x]), true));
+                this._items.push(new Dependency({name:x, path:pjson.internalDependencies[x], internal:true}));
             });
         }
     }

@@ -3,7 +3,6 @@
  */
 module.exports = function(){
     return {
-        debug:function(val){ return val;},
-        newFunc:function(val){ return val;}
+        debug:function(val){ return val;}
     }
 };

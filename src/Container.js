@@ -1,14 +1,12 @@
 /**
  * Created by rharik on 6/23/15.
  */
-var path = require('path');
 var _ = require('lodash');
 var RegistryDSL = require('./RegistryDSL');
 var Graph = require('./Graph');
 var applyRegistry = require('./applyRegistry');
+var Dependency = require('./Dependency');
 var GraphResolution = require('./GraphResolver');
-var fnArgs = require('fn-args');
-var appRoot = path.resolve('./');
 var invariant = require('invariant');
 
 
@@ -20,7 +18,6 @@ module.exports =  class Container{
         this.dependencyGraph = new Graph();
         var packageJson =  require(this.registry.pathToPackageJson);
         this.dependencyGraph.buildGraph(packageJson);
-
         applyRegistry(this.registry, this.dependencyGraph);
         new GraphResolution().recurse(this.dependencyGraph);
     }
@@ -42,11 +39,21 @@ module.exports =  class Container{
 
     inject(dependencies) {
         if(!_.isArray(dependencies)){ dependencies = [dependencies];}
+        this.dependencyGraph = new Graph();
+        var packageJson =  require(this.registry.pathToPackageJson);
+        this.dependencyGraph.buildGraph(packageJson);
+        applyRegistry(this.registry, this.dependencyGraph);
+
         dependencies.forEach(d => {
             invariant(d.name, 'injected dependecy must have a name');
-            invariant(d.instance || d.path, 'injected dependecy must have either an instance or a path');
+            invariant(d.resolvedInstance || d.path, 'injected dependency must have either a resolvedInstance or a path');
+            var newDep = d.resolvedInstance
+                ? new Dependency({name:d.name, resolvedInstance:d.resolvedInstance})
+                : new Dependency({name: d.name, path: d.path, internal : d.internal});
+            this.dependencyGraph.addItem(newDep);
         });
-        this.dependencyGraph.inject(dependencies);
+        new GraphResolution().recurse(this.dependencyGraph);
+
     }
 
 };

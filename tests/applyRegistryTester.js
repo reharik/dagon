@@ -32,13 +32,13 @@ describe('ApplyRegistry Tester', function() {
                 graph.buildGraph(packageJson);
 
                 var reg = new RegistryDSL()
-                    .pathToPackageJson('../package.json')
+                    .pathToPackageJson('/package.json')
                     .forDependencyParam('logger')
-                    .requireThisModule('../tests/TestModules/loggerMock')
+                    .requireThisModule('/tests/TestModules/loggerMock')
                     .complete();
                 mut(reg, graph);
                 var logger = graph._items.find(x=>x.name == 'logger');
-                logger.path.must.equal('../tests/TestModules/loggerMock');
+                logger.path.must.equal('/tests/TestModules/loggerMock');
             });
         });
 
@@ -49,9 +49,9 @@ describe('ApplyRegistry Tester', function() {
                 graph.buildGraph(packageJson);
 
                 var reg = new RegistryDSL()
-                    .pathToPackageJson('../package.json')
+                    .pathToPackageJson('/package.json')
                     .forDependencyParam('TestClass')
-                    .requireThisModule('../tests/TestModules/TestClass')
+                    .requireThisModule('/tests/TestModules/TestClass')
                     .complete();
                 mut(reg, graph);
                 var logger = graph._items.find(x=>x.name == 'TestClass');
@@ -66,7 +66,7 @@ describe('ApplyRegistry Tester', function() {
                 graph.buildGraph(packageJson);
 
                 var reg = new RegistryDSL()
-                    .pathToPackageJson('../package.json')
+                    .pathToPackageJson('/package.json')
                     .replace('lodash')
                     .withThis('_')
                     .complete();

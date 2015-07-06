@@ -3,6 +3,7 @@
  */
 
 var demand = require('must');
+var path = require('path');
 var Dependency = require('../src/Dependency');
 
 describe('Registry DSL Tester', function() {
@@ -20,14 +21,14 @@ describe('Registry DSL Tester', function() {
     describe('#testing DSL', function() {
         context('when calling pathToJson with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.pathToPackageJson()}).must.throw(Error,'Invariant Violation: Path to package.json must be a valid path');
+                (function(){mut.pathToPackageJson()}).must.throw(Error);
             })
         });
 
         context('when calling pathToJson with propervalue', function () {
             it('should set the path field value', function () {
-                mut.pathToPackageJson('./somepath');
-                mut._pathToPackageJson.must.equal('./somepath');
+                mut.pathToPackageJson('/package.json');
+                mut._pathToPackageJson.must.equal(path.join(path.resolve('./'),  '/package.json'));
             })
         });
 
@@ -53,21 +54,22 @@ describe('Registry DSL Tester', function() {
         context('when calling requireThisModule with proper value', function () {
             it('should set the path value on the dependency', function () {
                 mut.forDependencyParam('someParam');
-                mut.requireThisModule('../tests/TestModules/TestClass');
-                mut.dependencyDeclarations[0].path.must.equal('../tests/TestModules/TestClass');
+                mut.requireThisInternalModule('/tests/TestModules/TestClass');
+                mut.dependencyDeclarations[0].path.must.equal('/tests/TestModules/TestClass');
             })
         });
 
         context('when calling requireThisModule with out calling forDependency first', function () {
             it('should throw proper error', function () {
-                (function(){mut.requireThisModule('./somepath')}).must.throw(Error,'Invariant Violation: You must call "forDependencyParam" before calling "requireThisModule"');
+                (function(){mut.requireThisModule('/package.json')})
+                    .must.throw(Error,'Invariant Violation: You must call "forDependencyParam" before calling "requireThisModule"');
             })
         });
 
         context('when calling requireThisModule ', function () {
             it('should add object to dependencyDeclaration collection', function () {
                 mut.forDependencyParam('someParam');
-                mut.requireThisModule('../tests/TestModules/TestClass');
+                mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 demand(mut.dependencyDeclarations[0]).not.be.null;
             })
         });
@@ -75,7 +77,7 @@ describe('Registry DSL Tester', function() {
         context('when calling requireThisModule ', function () {
             it('should add object of type Dependency dependencyDeclaration collection', function () {
                 mut.forDependencyParam('someParam');
-                mut.requireThisModule('../tests/TestModules/TestClass');
+                mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].must.be.instanceOf(Dependency);
             })
         });
@@ -83,7 +85,7 @@ describe('Registry DSL Tester', function() {
         context('when calling requireThisInternalModule ', function () {
             it('should add internal Dependency', function () {
                 mut.forDependencyParam('someParam');
-                mut.requireThisInternalModule('../tests/TestModules/TestClass');
+                mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].internal.must.be.true();
             })
         });
@@ -92,7 +94,7 @@ describe('Registry DSL Tester', function() {
         context('when calling requireThisModule ', function () {
             it('should reset _declarationInProgress to null', function () {
                 mut.forDependencyParam('someParam');
-                mut.requireThisModule('../tests/TestModules/TestClass');
+                mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 demand(mut._declarationInProgress).be.null;
             })
         });
@@ -148,9 +150,9 @@ describe('Registry DSL Tester', function() {
             it('should return object with proprer properties', function () {
                 mut.replace('someParam');
                 mut.withThis('newNmae');
-                mut.pathToPackageJson('./somepath');
+                mut.pathToPackageJson('/package.json');
                 mut.forDependencyParam('someParam');
-                mut.requireThisModule('../tests/TestModules/TestClass');
+                mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 var result = mut.complete();
                 result.dependencyDeclarations.length.must.equal(1);
                 result.renamedDeclarations.length.must.equal(1);

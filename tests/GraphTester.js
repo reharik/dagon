@@ -87,7 +87,7 @@ describe('Graph Tester', function() {
         context('when calling buildGraph with internal dependency', ()=>{
             it('should have correct absolute path', ()=>{
                 mut.buildGraph({internalDependencies:{"logger":"/src/logger"}});
-                mut._items[0].path.must.equal(path.join(path.resolve('./'), '/src/logger'));
+                mut._items[0].path.must.equal('/src/logger');
             });
         });
 
@@ -108,15 +108,15 @@ describe('Graph Tester', function() {
         });
         context('when calling addItem value', function () {
             it('should should be of type Dependency', function () {
-                mut.addItem(new Dependency('something','../src/Container'));
+                mut.addItem(new Dependency({name:'something',path:'../src/Container'}));
                 mut._items[0].must.be.instanceOf(Dependency);
             })
         });
 
         context('when calling addItem ', function () {
             it('should should replace existing item if present', function () {
-                mut.addItem(new Dependency('something','../src/Container'));
-                mut.addItem(new Dependency('something','../src/RegistryDSL'));
+                mut.addItem(new Dependency({name:'something',path:'../src/Container'}));
+                mut.addItem(new Dependency({name:'something',path:'../src/RegistryDSL'}));
                 mut._items.length.must.equal(1);
                 mut._items[0].path.must.equal('../src/RegistryDSL');
             })
@@ -144,6 +144,7 @@ describe('Graph Tester', function() {
             it('should not throw', function () {
                 mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 new GraphResolution().recurse(mut);
+                console.log(mut.findDependency('pig'));
                 (function(){mut.findDependency('pig')}).must.not.throw(Error);
             })
         });
@@ -163,6 +164,15 @@ describe('Graph Tester', function() {
                 new GraphResolution().recurse(mut);
                 var logger = mut.findRequiredDependency('someModule','logger');
                 logger.must.not.be.object;
+            })
+        });
+
+        context('when calling findRequiredDependency for dependency that that is not in cache but does exist', function () {
+            it('should throw proper error', function () {
+                mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
+                new GraphResolution().recurse(mut);
+                var eventEmitter = mut.findRequiredDependency('someModule', 'events');
+                eventEmitter.EventEmitter.must.be.function();
             })
         });
 
