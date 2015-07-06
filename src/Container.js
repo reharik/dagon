@@ -13,6 +13,7 @@ var invariant = require('invariant');
 module.exports =  class Container{
     constructor(registryFunc){
         invariant(registryFunc && _.isFunction(registryFunc), 'Container requires a registry function');
+        this.registryFunc = registryFunc;
         this.registry = registryFunc(new RegistryDSL());
 
         this.dependencyGraph = new Graph();
@@ -40,6 +41,7 @@ module.exports =  class Container{
     inject(dependencies) {
         if(!_.isArray(dependencies)){ dependencies = [dependencies];}
         this.dependencyGraph = new Graph();
+        this.registry = this.registryFunc(new RegistryDSL());
         var packageJson =  require(this.registry.pathToPackageJson);
         this.dependencyGraph.buildGraph(packageJson);
         applyRegistry(this.registry, this.dependencyGraph);
