@@ -18,7 +18,7 @@ describe('Graph Tester', function() {
     });
 
     beforeEach(function(){
-        mut = new Mut()
+        mut = new Mut(path.resolve('./'));
     });
 
     describe('#testing buildgrpah', function() {
@@ -163,7 +163,7 @@ describe('Graph Tester', function() {
                 mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 new GraphResolution().recurse(mut);
                 var logger = mut.findRequiredDependency('someModule','logger');
-                logger.must.not.be.object;
+                logger.resolvedInstance.must.not.be.object;
             })
         });
 
@@ -172,7 +172,8 @@ describe('Graph Tester', function() {
                 mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 new GraphResolution().recurse(mut);
                 var eventEmitter = mut.findRequiredDependency('someModule', 'events');
-                eventEmitter.EventEmitter.must.be.function();
+                console.log(eventEmitter)
+                eventEmitter.resolvedInstance.EventEmitter.must.be.function();
             })
         });
 

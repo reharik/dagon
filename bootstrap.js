@@ -4,7 +4,7 @@
 var _container = require('dependz');
 
 module.exports = new _container(x=>
-    x.pathToPackageJson('/package.json')
+    x.pathToRoot(__dirname)
             .forDependencyParam('logger').requireThisInternalModule('./loggerMock')
             .replace('lodash').withThis('_')
             .replace('bluebird').withThis('Promise')

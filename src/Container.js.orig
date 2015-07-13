@@ -28,7 +28,7 @@ module.exports =  class Container{
 
         this.registry = this.buildRegistry(registryFuncArray);
         this.dependencyGraph = new Graph();
-        var packageJson =  require(this.registry.pathToPackageJson);
+        var packageJson =  require(this.registry.pathToRoot);
         this.dependencyGraph.buildGraph(packageJson);
         applyRegistry(this.registry, this.dependencyGraph);
         new GraphResolution().recurse(this.dependencyGraph);
@@ -36,12 +36,12 @@ module.exports =  class Container{
 
     //TODO NEEDS TESTS!
     buildRegistry(registryFuncArray){
-        var registry= {pathToPackageJson:'',
+        var registry= {pathToRoot:'',
             dependencyDeclarations:[],
             renamedDeclarations:[]};
         registryFuncArray.forEach(x=>{
             var reg = x(new RegistryDSL());
-            registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
+            registry.pathToRoot = registry.pathToRoot || reg.pathToRoot;
             if(reg.dependencyDeclarations.length>0) {
                 registry.dependencyDeclarations = registry.dependencyDeclarations.length<=0
                     ? reg.dependencyDeclarations
@@ -75,7 +75,7 @@ module.exports =  class Container{
         if(!_.isArray(dependencies)){ dependencies = [dependencies];}
         this.dependencyGraph = new Graph();
         this.registry = this.registryFunc(new RegistryDSL());
-        var packageJson =  require(this.registry.pathToPackageJson);
+        var packageJson =  require(this.registry.pathToRoot);
         this.dependencyGraph.buildGraph(packageJson);
         applyRegistry(this.registry, this.dependencyGraph);
 

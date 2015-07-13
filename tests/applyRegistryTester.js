@@ -4,7 +4,7 @@
 var demand = require('must');
 var Graph = require('../src/Graph');
 var RegistryDSL = require('../src/RegistryDSL');
-
+var path = require('path');
 describe('ApplyRegistry Tester', function() {
     var mut;
 
@@ -27,12 +27,12 @@ describe('ApplyRegistry Tester', function() {
 
         context('when calling applyRegister with one replacement dependency', ()=>{
             it('should replace dependency', ()=>{
-                var graph = new Graph();
+                var graph = new Graph(path.resolve('./'));
                 var packageJson =  require('../package.json');
                 graph.buildGraph(packageJson);
 
                 var reg = new RegistryDSL()
-                    .pathToPackageJson('/package.json')
+                    .pathToRoot(path.resolve('./'))
                     .forDependencyParam('logger')
                     .requireThisModule('/tests/TestModules/loggerMock')
                     .complete();
@@ -44,12 +44,12 @@ describe('ApplyRegistry Tester', function() {
 
         context('when calling applyRegister with explicit dependency but not replacing', ()=>{
             it('should add that dependency to graph', ()=>{
-                var graph = new Graph();
+                var graph = new Graph(path.resolve('./'));
                 var packageJson =  require('../package.json');
                 graph.buildGraph(packageJson);
 
                 var reg = new RegistryDSL()
-                    .pathToPackageJson('/package.json')
+                    .pathToRoot(path.resolve('./'))
                     .forDependencyParam('TestClass')
                     .requireThisModule('/tests/TestModules/TestClass')
                     .complete();
@@ -61,12 +61,12 @@ describe('ApplyRegistry Tester', function() {
 
         context('when calling applyRegister with one rename', ()=>{
             it('should rename dependency', ()=>{
-                var graph = new Graph();
+                var graph = new Graph(path.resolve('./'));
                 var packageJson =  require('../package.json');
                 graph.buildGraph(packageJson);
 
                 var reg = new RegistryDSL()
-                    .pathToPackageJson('/package.json')
+                    .pathToRoot(path.resolve('./'))
                     .replace('lodash')
                     .withThis('_')
                     .complete();

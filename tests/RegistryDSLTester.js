@@ -21,14 +21,14 @@ describe('Registry DSL Tester', function() {
     describe('#testing DSL', function() {
         context('when calling pathToJson with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.pathToPackageJson()}).must.throw(Error);
+                (function(){mut.pathToRoot()}).must.throw(Error);
             })
         });
 
         context('when calling pathToJson with propervalue', function () {
             it('should set the path field value', function () {
-                mut.pathToPackageJson('/package.json');
-                mut._pathToPackageJson.must.equal(path.join(path.resolve('./'),  '/package.json'));
+                mut.pathToRoot(path.resolve('./'));
+                mut._pathToPackageJson.must.equal(path.join(path.resolve('./'),  'package.json'));
             })
         });
 
@@ -40,6 +40,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling forDependency with proper value', function () {
             it('should set the name value on the decInProgress object', function () {
+                mut.pathToRoot(path.resolve('./'));
                 mut.forDependencyParam('someParam');
                 mut._declarationInProgress.name.must.equal('someParam');
             })
@@ -53,6 +54,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling requireThisModule with proper value', function () {
             it('should set the path value on the dependency', function () {
+                mut.pathToRoot(path.resolve('./'));
                 mut.forDependencyParam('someParam');
                 mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].path.must.equal('/tests/TestModules/TestClass');
@@ -68,6 +70,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling requireThisModule ', function () {
             it('should add object to dependencyDeclaration collection', function () {
+                mut.pathToRoot(path.resolve('./'));
                 mut.forDependencyParam('someParam');
                 mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 demand(mut.dependencyDeclarations[0]).not.be.null;
@@ -76,6 +79,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling requireThisModule ', function () {
             it('should add object of type Dependency dependencyDeclaration collection', function () {
+                mut.pathToRoot(path.resolve('./'));
                 mut.forDependencyParam('someParam');
                 mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].must.be.instanceOf(Dependency);
@@ -84,6 +88,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling requireThisInternalModule ', function () {
             it('should add internal Dependency', function () {
+                mut.pathToRoot(path.resolve('./'));
                 mut.forDependencyParam('someParam');
                 mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].internal.must.be.true();
@@ -93,6 +98,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling requireThisModule ', function () {
             it('should reset _declarationInProgress to null', function () {
+                mut.pathToRoot(path.resolve('./'));
                 mut.forDependencyParam('someParam');
                 mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 demand(mut._declarationInProgress).be.null;
@@ -140,7 +146,7 @@ describe('Registry DSL Tester', function() {
             })
         });
 
-        context('when calling complete with no pathToPackageJson', function () {
+        context('when calling complete with no pathToRoot', function () {
             it('should throw Proper error', function () {
                 (function(){mut.complete()}).must.throw(Error,'Invariant Violation: You must provide a path to your package.json before calling complete');
             })
@@ -150,7 +156,7 @@ describe('Registry DSL Tester', function() {
             it('should return object with proprer properties', function () {
                 mut.replace('someParam');
                 mut.withThis('newNmae');
-                mut.pathToPackageJson('/package.json');
+                mut.pathToRoot(path.resolve('./'));
                 mut.forDependencyParam('someParam');
                 mut.requireThisInternalModule('/tests/TestModules/TestClass');
                 var result = mut.complete();

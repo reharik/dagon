@@ -21,7 +21,7 @@ module.exports =  class Container{
 
         this.registryFunkArray = registryFuncArray;
         this.registry = this.buildRegistry();
-        this.dependencyGraph = new Graph();
+        this.dependencyGraph = new Graph(this.registry.appRoot);
         var packageJson =  require(this.registry.pathToPackageJson);
         this.dependencyGraph.buildGraph(packageJson);
         applyRegistry(this.registry, this.dependencyGraph);
@@ -30,11 +30,12 @@ module.exports =  class Container{
 
     //TODO NEEDS TESTS!
     buildRegistry(){
-        var registry= {pathToPackageJson:'',
+        var registry= {pathToRoot:'',
             dependencyDeclarations:[],
             renamedDeclarations:[]};
         this.registryFunkArray.forEach(x=>{
             var reg = x(new RegistryDSL());
+            registry.appRoot = registry.appRoot || reg.appRoot;
             registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
             if(reg.dependencyDeclarations.length>0) {
                 registry.dependencyDeclarations = registry.dependencyDeclarations.length<=0
@@ -67,7 +68,7 @@ module.exports =  class Container{
 
     inject(dependencies) {
         if(!_.isArray(dependencies)){ dependencies = [dependencies];}
-        this.dependencyGraph = new Graph();
+        this.dependencyGraph = new Graph(this.registry.appRoot);
         this.registry = this.buildRegistry();
         var packageJson =  require(this.registry.pathToPackageJson);
         this.dependencyGraph.buildGraph(packageJson);
@@ -77,8 +78,8 @@ module.exports =  class Container{
             invariant(d.name, 'injected dependecy must have a name');
             invariant(d.resolvedInstance || d.path, 'injected dependency must have either a resolvedInstance or a path');
             var newDep = d.resolvedInstance
-                ? new Dependency({name:d.name, resolvedInstance:d.resolvedInstance})
-                : new Dependency({name: d.name, path: d.path, internal : d.internal});
+                ? new Dependency({name:d.name, resolvedInstance:d.resolvedInstance, appRoot:this.registry.appRoot})
+                : new Dependency({name: d.name, path: d.path, internal : d.internal, appRoot:this.registry.appRoot});
             this.dependencyGraph.addItem(newDep);
         });
         new GraphResolution().recurse(this.dependencyGraph);

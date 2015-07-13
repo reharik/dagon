@@ -20,13 +20,13 @@ describe('Container Test', function() {
 
         context('when instantiating Container WITH reg func', ()=> {
             it('should NOT throw registry func error', ()=> {
-                (function(){new Mut(x=>x.pathToPackageJson('../package.json'))}).must.not.throw(Error,'Invariant Violation: Container requires a registry function');
+                (function(){new Mut(x=>x.pathToRoot('../package.json'))}).must.not.throw(Error,'Invariant Violation: Container requires a registry function');
             })
         });
 
         context('when instantiating Container', ()=> {
             it('should put new grpah on dependencyGraph property', ()=> {
-                var mut = new Mut(x=>x.pathToPackageJson('/package.json').complete());
+                var mut = new Mut(x=>x.pathToRoot(path.resolve('./')).complete());
                 demand(mut.dependencyGraph);
             })
         });
@@ -34,7 +34,7 @@ describe('Container Test', function() {
         context('when instantiating contaienr', ()=>{
             it('should apply registry to graph',()=>{
                 var mut = new Mut(x=>
-                    x.pathToPackageJson('/package.json')
+                    x.pathToRoot(path.resolve('./'))
                         .forDependencyParam('logger').requireThisInternalModule('/tests/TestModules/loggerMock')
                         .complete());
                 var logger = mut.dependencyGraph._items.find(x=>x.name == 'logger');
@@ -45,7 +45,7 @@ describe('Container Test', function() {
         context('when instantiating contaienr', ()=>{
             it('should resolve graph',()=>{
                 var mut = new Mut(x=>
-                    x.pathToPackageJson('/package.json')
+                    x.pathToRoot(path.resolve('./'))
                         .forDependencyParam('TestClass').requireThisInternalModule('/tests/TestModules/TestClass')
                         .forDependencyParam('TestClassBase').requireThisInternalModule('/tests/TestModules/TestClassBase')
                         .forDependencyParam('pointlessDependency').requireThisInternalModule('/tests/TestModules/pointlessDependency')
@@ -64,7 +64,7 @@ describe('Container Test', function() {
         context('when calling getInstanceOf with item that exists', function () {
             it('should return resolved instance', function () {
                 var mut = new Mut(x=>
-                    x.pathToPackageJson('/package.json')
+                    x.pathToRoot(path.resolve('./'))
                         .complete());
                 mut.getInstanceOf('logger').must.be.object();
             })
@@ -73,7 +73,7 @@ describe('Container Test', function() {
         context('when calling getInstanceOf with item that DOES NOT exists', function () {
             it('should return null and not throw', function () {
                 var mut = new Mut(x=>
-                    x.pathToPackageJson('/package.json')
+                    x.pathToRoot(path.resolve('./'))
                         .complete());
                 demand(mut.getInstanceOf('piglogger')).be.undefined();
                 (function(){mut.getInstanceOf('piglogger')}).must.not.throw(Error);
@@ -85,7 +85,7 @@ describe('Container Test', function() {
         context('when calling whatDoIHave', function () {
             it('should return bunch of stuff', function () {
                 var mut = new Mut(x=>
-                    x.pathToPackageJson('/package.json')
+                    x.pathToRoot(path.resolve('./'))
                         .forDependencyParam('TestClass').requireThisInternalModule('/tests/TestModules/TestClass')
                         .forDependencyParam('TestClassBase').requireThisInternalModule('/tests/TestModules/TestClassBase')
                         .forDependencyParam('pointlessDependency').requireThisInternalModule('/tests/TestModules/pointlessDependency')
@@ -102,9 +102,9 @@ describe('Container Test', function() {
         context('when calling inject', function () {
             it('should rebuild container with new dependency', function () {
                 var mut = new Mut(x=>
-                    x.pathToPackageJson('/package.json')
+                    x.pathToRoot(path.resolve('./'))
                         .complete());
-                mut.inject({name:'logger', path:'/tests/TestModules/loggerMock', internal:true});
+                mut.inject({name:'logger', path:'/tests/TestModules/loggerMock', internal:true, appRoot:path.resolve('./')});
                 mut.getInstanceOf('logger').must.be.object();
             })
         });
