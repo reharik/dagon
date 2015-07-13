@@ -14,7 +14,7 @@ describe('Container Test', function() {
     describe('#instantiate Container', function() {
         context('when instantiating Container without reg func', function () {
             it('should throw proper error', function () {
-                (function(){new Mut()}).must.throw(Error,'Invariant Violation: Container requires a registry function');
+                (function(){new Mut()}).must.throw(Error,'Invariant Violation: Container requires at least one registry function');
             })
         });
 

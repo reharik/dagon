@@ -11,15 +11,42 @@ var invariant = require('invariant');
 
 
 module.exports =  class Container{
-    constructor(registryFunc){
-        invariant(registryFunc && _.isFunction(registryFunc), 'Container requires a registry function');
-        this.registry = registryFunc(new RegistryDSL());
+    constructor(registryFuncArray){
+        //TODO CLEAN UP!!
+        if(!_.isArray(registryFuncArray)){registryFuncArray = [registryFuncArray]}
 
+        invariant(registryFuncArray
+            && registryFuncArray[0]
+            && _.isFunction(registryFuncArray[0]), 'Container requires at least one registry function');
+
+        this.registry = this.buildRegistry(registryFuncArray);
         this.dependencyGraph = new Graph();
         var packageJson =  require(this.registry.pathToPackageJson);
         this.dependencyGraph.buildGraph(packageJson);
         applyRegistry(this.registry, this.dependencyGraph);
         new GraphResolution().recurse(this.dependencyGraph);
+    }
+
+    //TODO NEEDS TESTS!
+    buildRegistry(registryFuncArray){
+        var registry= {pathToPackageJson:'',
+            dependencyDeclarations:[],
+            renamedDeclarations:[]};
+        registryFuncArray.forEach(x=>{
+            var reg = x(new RegistryDSL());
+            registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
+            if(reg.dependencyDeclarations.length>0) {
+                registry.dependencyDeclarations = registry.dependencyDeclarations.length<=0
+                    ? reg.dependencyDeclarations
+                    : registry.dependencyDeclarations.concat(reg.dependencyDeclarations)
+            }
+            if(reg.renamedDeclarations.length>0) {
+                registry.renamedDeclarations = registry.renamedDeclarations.length<=0
+                    ? reg.renamedDeclarations
+                    : registry.renamedDeclarations.concat(reg.renamedDeclarations)
+            }
+        });
+        return registry;
     }
 
     getInstanceOf(_type) {
