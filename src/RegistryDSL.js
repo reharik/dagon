@@ -6,6 +6,7 @@ var invariant = require('invariant');
 var Dependency = require('./Dependency');
 var path = require('path');
 var fs = require('fs');
+var appRoot = require('./appRoot');
 
 module.exports = class RegistryDSL{
     constructor(){
@@ -18,6 +19,7 @@ module.exports = class RegistryDSL{
     }
 
     pathToRoot(_path){
+        appRoot.path = _path;
         this.appRoot = _path;
         var resolvedPath = path.join(this.appRoot, '/package.json');
         invariant(fs.existsSync(resolvedPath),'Path to package.json does not resolve: '+ path.resolve(resolvedPath));

@@ -5,10 +5,10 @@
 var invariant = require('invariant');
 var fnArgs = require('fn-args');
 var _path = require('path');
+var appRoot = require('./appRoot');
 
 module.exports = class Dependency{
     constructor(options){
-        this.appRoot = options.appRoot;
         this.name = options.name;
         this.path = options.path;
         this.internal = options.internal || false;
@@ -58,7 +58,9 @@ module.exports = class Dependency{
     }
 
     handleInternalDependency() {
-        var resolvedPath = _path.join(this.appRoot, this.path);
+        console.log('appRoot.path');
+        console.log(appRoot.path);
+        var resolvedPath = _path.join(appRoot.path, this.path);
         this.wrappedInstance = require(resolvedPath);
     }
 
