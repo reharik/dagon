@@ -7,8 +7,7 @@ var Dependency = require('./Dependency');
 var _ = require('lodash');
 
 module.exports = class Graph{
-    constructor(appRoot){
-        this.appRoot = appRoot;
+    constructor(){
         this._items = [];
     }
 
@@ -28,7 +27,7 @@ module.exports = class Graph{
         try {
             var tryingRequire = require(dependencyName);
             if (tryingRequire) {
-                return new Dependency({name:dependencyName,resolvedInstance: tryingRequire, appRoot:this.appRoot});
+                return new Dependency({name:dependencyName,resolvedInstance: tryingRequire});
             }
         }catch(ex){
             //swallow, just a hail mary to resolve
@@ -54,12 +53,12 @@ module.exports = class Graph{
         invariant(pjson,'You must provide a json object to build graph from');
         if(pjson.dependencies){
             Object.keys(pjson.dependencies).forEach(x=> {
-                this._items.push(new Dependency({name:x.replace(/-/g, ''), path:x, appRoot:this.appRoot}));
+                this._items.push(new Dependency({name:x.replace(/-/g, ''), path:x}));
             });
         }
         if(pjson.internalDependencies) {
             Object.keys(pjson.internalDependencies).forEach(x=> {
-                this._items.push(new Dependency({name:x, path:pjson.internalDependencies[x], internal:true, appRoot:this.appRoot}));
+                this._items.push(new Dependency({name:x, path:pjson.internalDependencies[x], internal:true}));
             });
         }
     }

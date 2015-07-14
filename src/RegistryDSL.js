@@ -15,13 +15,11 @@ module.exports = class RegistryDSL{
         this.renamedDeclarations = [];
         this._declarationInProgress;
         this._renameInProgress;
-        this.appRoot;
     }
 
     pathToRoot(_path){
         appRoot.path = _path;
-        this.appRoot = _path;
-        var resolvedPath = path.join(this.appRoot, '/package.json');
+        var resolvedPath = path.join(appRoot.path, '/package.json');
         invariant(fs.existsSync(resolvedPath),'Path to package.json does not resolve: '+ path.resolve(resolvedPath));
         this._pathToPackageJson = resolvedPath;
         return this;
@@ -40,7 +38,7 @@ module.exports = class RegistryDSL{
         invariant(this._declarationInProgress,'You must call "forDependencyParam" before calling "requireThisModule"');
         this._declarationInProgress.path=path;
         this.dependencyDeclarations.push(
-            new Dependency({name:this._declarationInProgress.name, path:this._declarationInProgress.path, internal:isInternal, appRoot:this.appRoot}));
+            new Dependency({name:this._declarationInProgress.name, path:this._declarationInProgress.path, internal:isInternal}));
         this._declarationInProgress = null;
         return this;
     }
@@ -69,7 +67,6 @@ module.exports = class RegistryDSL{
         invariant(this._pathToPackageJson, 'You must provide a path to your package.json before calling complete')
 
         return {
-            appRoot: this.appRoot,
             pathToPackageJson:this._pathToPackageJson,
             dependencyDeclarations:this.dependencyDeclarations,
             renamedDeclarations:this.renamedDeclarations

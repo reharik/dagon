@@ -58,8 +58,6 @@ module.exports = class Dependency{
     }
 
     handleInternalDependency() {
-        console.log('appRoot.path');
-        console.log(appRoot.path);
         var resolvedPath = _path.join(appRoot.path, this.path);
         this.wrappedInstance = require(resolvedPath);
     }

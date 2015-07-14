@@ -104,7 +104,7 @@ describe('Container Test', function() {
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
                         .complete());
-                mut.inject({name:'logger', path:'/tests/TestModules/loggerMock', internal:true, appRoot:path.resolve('./')});
+                mut.inject({name:'logger', path:'/tests/TestModules/loggerMock', internal:true});
                 mut.getInstanceOf('logger').must.be.object();
             })
         });
