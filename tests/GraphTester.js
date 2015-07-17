@@ -162,8 +162,18 @@ describe('Graph Tester', function() {
             it('should return that resolved dependency', function () {
                 mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 new GraphResolution().recurse(mut);
-                var logger = mut.findRequiredDependency('someModule','logger');
+                var logger = mut.findRequiredDependency('logger');
                 logger.resolvedInstance.must.not.be.object;
+            })
+        });
+
+        context('when calling findGroupedDependency for dependency that exists', function () {
+            it('should return array of those depnedencies', function () {
+                var Container = require('../src/Container');
+                var cont = new Container(x=>x.pathToRoot(path.resolve('./')).groupAllInDirectory('/tests/TestModules','testGroup').complete());
+                var result = cont.dependencyGraph.findGroupedDependencies('someModule', 'testGroup');
+                result.length.must.be.gt(1);
+                result[0].groupName.must.equal('testGroup');
             })
         });
 
@@ -171,17 +181,16 @@ describe('Graph Tester', function() {
             it('should throw proper error', function () {
                 mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 new GraphResolution().recurse(mut);
-                var eventEmitter = mut.findRequiredDependency('someModule', 'events');
-                console.log(eventEmitter)
+                var eventEmitter = mut.findRequiredDependency( 'events');
                 eventEmitter.resolvedInstance.EventEmitter.must.be.function();
             })
         });
 
-        context('when calling findRequiredDependency for dependency that does not exist', function () {
+        context('when calling findGroupedDependency for dependency that does not exist', function () {
             it('should throw proper error', function () {
                 mut.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 new GraphResolution().recurse(mut);
-                (function(){mut.findRequiredDependency('someModule','pig')})
+                (function(){mut.findGroupedDependencies('someModule','pig')})
                     .must.throw(Error,'Invariant Violation: Module someModule has a dependency that can not be resolved: pig');
             })
         });

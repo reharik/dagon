@@ -47,6 +47,7 @@ module.exports = (function () {
                 return itemsDependencies.push(graph.findRequiredDependency(_this.name, d).resolvedInstance);
             });
             this.resolvedInstance = itemsDependencies.length > 0 ? this.wrappedInstance.apply(this.wrappedInstance, itemsDependencies) : this.wrappedInstance();
+
             invariant(this.resolvedInstance, this.name + ' instance must resolve in resolveInstance function');
         }
     }, {

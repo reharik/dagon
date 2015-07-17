@@ -79,8 +79,6 @@ module.exports = (function () {
     }, {
         key: 'complete',
         value: function complete() {
-            invariant(this._pathToPackageJson, 'You must provide a path to your package.json before calling complete');
-
             return {
                 pathToPackageJson: this._pathToPackageJson,
                 dependencyDeclarations: this.dependencyDeclarations,

@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "test": "mocha --opts tests/mocha.opts tests",
-    "testSpecific": "mocha --opts tests/mocha.opts ",
     "testDebug": "node-debug _mocha --timeout 15000 --opts tests/mocha.opts tests",
     "compile":"babel src --out-dir compiled/src --stage 0 && babel bootstrap.js --out-dir compiled --stage 0 && babel index.js --out-dir compiled --stage 0 && cp package.json compiled"
   },

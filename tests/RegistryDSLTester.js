@@ -146,12 +146,6 @@ describe('Registry DSL Tester', function() {
             })
         });
 
-        context('when calling complete with no pathToRoot', function () {
-            it('should throw Proper error', function () {
-                (function(){mut.complete()}).must.throw(Error,'Invariant Violation: You must provide a path to your package.json before calling complete');
-            })
-        });
-
         context('when calling complete with one rename, and one declaration', function () {
             it('should return object with proprer properties', function () {
                 mut.replace('someParam');

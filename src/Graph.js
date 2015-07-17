@@ -34,10 +34,20 @@ module.exports = class Graph{
         }
     }
 
-    findRequiredDependency(caller, dependency) {
-        var item = this._findItem(dependency);
+    findRequiredDependency(dependencyName) {
+        var item = this._findItem(dependencyName);
         if(item){ return item; }
-        invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + dependency);
+    }
+
+    findGroupedDependencies(caller, dependencyName) {
+        var item = [];
+        for(let i of this._items){
+            if(i.groupName === dependencyName){
+                item.push(i);
+            }
+        }
+        if(item.length>0){ return item; }
+        invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + dependencyName);
     }
 
     findDependency(type){

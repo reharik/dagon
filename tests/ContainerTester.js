@@ -20,7 +20,7 @@ describe('Container Test', function() {
 
         context('when instantiating Container WITH reg func', ()=> {
             it('should NOT throw registry func error', ()=> {
-                (function(){new Mut(x=>x.pathToRoot('../package.json'))}).must.not.throw(Error,'Invariant Violation: Container requires a registry function');
+                (function(){new Mut(x=>x.pathToRoot(path.resolve('./')).complete())}).must.not.throw(Error,'Invariant Violation: Container requires a registry function');
             })
         });
 
@@ -28,6 +28,16 @@ describe('Container Test', function() {
             it('should put new grpah on dependencyGraph property', ()=> {
                 var mut = new Mut(x=>x.pathToRoot(path.resolve('./')).complete());
                 demand(mut.dependencyGraph);
+            })
+        });
+
+        context('when instantiating Container with object that takes array of deps', ()=> {
+            it('should map that object properly', ()=> {
+                var mut = new Mut(x=>x.pathToRoot(path.resolve('./'))
+                    .groupAllInDirectory('/tests/TestModules','testGroup')
+                    .forDependencyParam('testWithArrayDependency').requireThisInternalModule('/tests/testWithArrayDependency')
+                    .complete());
+                console.log(mut.getInstanceOf('testWithArrayDependency')());
             })
         });
 
@@ -50,7 +60,7 @@ describe('Container Test', function() {
                         .forDependencyParam('TestClassBase').requireThisInternalModule('/tests/TestModules/TestClassBase')
                         .forDependencyParam('pointlessDependency').requireThisInternalModule('/tests/TestModules/pointlessDependency')
                         .complete());
-                //console.log(mut.dependencyGraph);
+                console.log(mut.dependencyGraph);
                 mut.dependencyGraph._items.forEach(x=> x.resolvedInstance.must.not.null());
                 var TestClass = mut.dependencyGraph._items.find(x=>x.name=='TestClass').resolvedInstance;
                 var testClass = new TestClass('fu');
@@ -80,6 +90,7 @@ describe('Container Test', function() {
             })
         });
     });
+
 
     describe('#whatDoIHave', function() {
         context('when calling whatDoIHave', function () {

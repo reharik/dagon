@@ -36,17 +36,11 @@ module.exports =  class Container{
         this.registryFunkArray.forEach(x=>{
             var reg = x(new RegistryDSL());
             registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
-            if(reg.dependencyDeclarations.length>0) {
-                registry.dependencyDeclarations = registry.dependencyDeclarations.length<=0
-                    ? reg.dependencyDeclarations
-                    : registry.dependencyDeclarations.concat(reg.dependencyDeclarations)
-            }
-            if(reg.renamedDeclarations.length>0) {
-                registry.renamedDeclarations = registry.renamedDeclarations.length<=0
-                    ? reg.renamedDeclarations
-                    : registry.renamedDeclarations.concat(reg.renamedDeclarations)
-            }
+            registry.dependencyDeclarations = registry.dependencyDeclarations.concat(reg.dependencyDeclarations);
+            registry.renamedDeclarations = registry.renamedDeclarations.concat(reg.renamedDeclarations);
         });
+        invariant(registry.pathToPackageJson, 'You must provide the path to root when building a graph');
+
         return registry;
     }
 

@@ -27,9 +27,7 @@ describe('Dependency Tester', function() {
                 })
             });
         });
-    });
 
-    describe('#testing instantiation', function () {
         context('when calling new dependency with out a path', function () {
             it('should throw proper error', function () {
                 (function () {
@@ -37,9 +35,7 @@ describe('Dependency Tester', function() {
                 })
             });
         });
-    });
 
-    describe('#testing instantiation', function () {
         context('when calling new dependency with internal set to true', function () {
             it('should set interal to true', function () {
                     var mut = new Mut({name:'TestClass', path:'/tests/TestModules/TestClass', internal:true});
@@ -174,8 +170,4 @@ describe('Dependency Tester', function() {
 
 
     });
-
-
-
-
-    });
+});

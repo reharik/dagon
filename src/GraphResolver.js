@@ -11,11 +11,11 @@ module.exports = class GraphResolver{
     recurse(_graph){
         this.graph = _graph;
         this.recurseTree(this.graph.items());
+
     }
 
     recurseTree(items) {
         return items.forEach(x=> {
-            //console.log(x.getChildren(this.graph));
             if (x.getChildren(this.graph)) {
                 this.recurseTree(x.children());
             }

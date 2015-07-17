@@ -25,6 +25,50 @@ module.exports = class RegistryDSL{
         return this;
     }
 
+    requireDirectory(dir) {
+        invariant(dir, 'You must provide a valid directory');
+        var absoluteDir = path.join(appRoot.path, dir);
+        fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
+            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir)));
+        return this;
+    }
+
+    requireDirectoryRecursively(dir){
+        invariant(dir,'You must provide a valid directory');
+        var absoluteDir= path.join(appRoot.path, dir);
+        this.recurseDirectories(absoluteDir).forEach(x=> this.dependencyDeclarations.push(x));
+        return this;
+    }
+
+    groupAllInDirectory(dir, groupName){
+        invariant(dir, 'You must provide a valid directory');
+        invariant(groupName, 'You must provide a valid Group Name');
+        var absoluteDir = path.join(appRoot.path, dir);
+        fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
+            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir, groupName)));
+        return this;
+    }
+
+    recurseDirectories(dir) {
+        return fs.readdirSync(dir).map(x=> {
+            var stat = fs.statSync(dir + '/' + x);
+            if (stat && stat.isDirectory()) {
+                this.recurseDirectories(dir + '/' + x);
+            }
+            return x;
+        })
+        .filter(x=>x.endsWith('.js'))
+        .map(x => this.processFile(x, dir));
+    }
+
+    processFile(file,dir, groupName){
+        if(!file.endsWith('.js')){return;}
+        file = file.replace('.js','');
+        var path = dir.replace(appRoot.path,'')+'/'+file;
+        return new Dependency({name: file, path: path, internal: true, groupName:groupName||''});
+    }
+
+
     forDependencyParam(param){
         invariant(param,'You must provide a valid dependency parameter');
         this._declarationInProgress = {
@@ -64,8 +108,6 @@ module.exports = class RegistryDSL{
     }
 
     complete(){
-        invariant(this._pathToPackageJson, 'You must provide a path to your package.json before calling complete')
-
         return {
             pathToPackageJson:this._pathToPackageJson,
             dependencyDeclarations:this.dependencyDeclarations,

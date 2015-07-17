@@ -16,6 +16,6 @@ module.exports = function(registry, graph) {
     registry.dependencyDeclarations.forEach(x=> resolveItem(graph,x));
     registry.renamedDeclarations.forEach(x=> {
         var target = graph.findRequiredDependency(x.oldName,x.oldName);
-        if(target) { target.name = x.name }
+        if(target) { target.name = x.name}
     });
 };
