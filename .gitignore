@@ -10,6 +10,7 @@ node_modules
 public
 build
 build-info.json
+compiled
 
 .idea
 npm-debug.log
