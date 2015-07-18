@@ -29,7 +29,6 @@ module.exports = (function () {
             var _this = this;
 
             return items.forEach(function (x) {
-                //console.log(x.getChildren(this.graph));
                 if (x.getChildren(_this.graph)) {
                     _this.recurseTree(x.children());
                 }

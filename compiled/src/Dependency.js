@@ -20,6 +20,7 @@ module.exports = (function () {
         this.name = options.name;
         this.path = options.path;
         this.internal = options.internal || false;
+        this.groupName = options.groupName || '';
         this.resolvedInstance = options.resolvedInstance;
         this._children;
         invariant(this.name, 'Dependency must have a valid name');
@@ -37,29 +38,57 @@ module.exports = (function () {
     _createClass(Dependency, [{
         key: 'resolveInstance',
         value: function resolveInstance(graph) {
-            var _this = this;
-
             if (this.resolvedInstance) {
                 return;
             }
-            var itemsDependencies = [];
-            fnArgs(this.wrappedInstance).forEach(function (d) {
-                return itemsDependencies.push(graph.findRequiredDependency(_this.name, d).resolvedInstance);
-            });
+            var itemsDependencies = this.getResolvedInstanceForCollectionOfDependencies(this.getCollectionOfDependencies(graph));
             this.resolvedInstance = itemsDependencies.length > 0 ? this.wrappedInstance.apply(this.wrappedInstance, itemsDependencies) : this.wrappedInstance();
 
             invariant(this.resolvedInstance, this.name + ' instance must resolve in resolveInstance function');
         }
     }, {
-        key: 'getChildren',
-        value: function getChildren(graph) {
+        key: 'getCollectionOfDependencies',
+        value: function getCollectionOfDependencies(graph) {
+            var _this = this;
+
+            return fnArgs(this.wrappedInstance).map(function (d) {
+                var item = graph.findRequiredDependency(d);
+                if (!item) {
+                    item = graph.findGroupedDependencies(_this.name, d);
+                }
+                return item;
+            });
+        }
+    }, {
+        key: 'getResolvedInstanceForCollectionOfDependencies',
+        value: function getResolvedInstanceForCollectionOfDependencies(dependencies) {
             var _this2 = this;
 
-            this._children = [];
-            fnArgs(this.wrappedInstance).forEach(function (d) {
-                var item = graph.findRequiredDependency(_this2.name, d);
-                _this2._children.push(item);
+            var result = [];
+            dependencies.forEach(function (x) {
+                if (Array.isArray(x)) {
+                    result.push(_this2.getResolvedInstanceForCollectionOfDependencies(x));
+                } else {
+                    result.push(x.resolvedInstance);
+                }
             });
+            return result;
+        }
+    }, {
+        key: 'flatten',
+        value: function flatten(array) {
+            var _this3 = this;
+
+            return Array.isArray(array) ? [].concat.apply([], array.map(function (x) {
+                return _this3.flatten(x);
+            }) || []) : array;
+        }
+    }, {
+        key: 'getChildren',
+        value: function getChildren(graph) {
+            this._children = this.flatten(this.getCollectionOfDependencies(graph));
+            //console.log(this.getCollectionOfDependencies(graph));
+            //console.log(this._children);
             return this._children.length > 0;
         }
     }, {

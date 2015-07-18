@@ -1,7 +1,7 @@
 /**
  * Created by rharik on 6/23/15.
  */
-var _container = require('dependz');
+var _container = require('DAGon');
 
 module.exports = new _container(x=>
     x.pathToRoot(__dirname)

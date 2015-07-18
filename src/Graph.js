@@ -39,15 +39,15 @@ module.exports = class Graph{
         if(item){ return item; }
     }
 
-    findGroupedDependencies(caller, dependencyName) {
+    findGroupedDependencies(caller, groupName) {
         var item = [];
         for(let i of this._items){
-            if(i.groupName === dependencyName){
+            if(i.groupName === groupName){
                 item.push(i);
             }
         }
         if(item.length>0){ return item; }
-        invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + dependencyName);
+        invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + groupName);
     }
 
     findDependency(type){

@@ -68,12 +68,47 @@ module.exports = (function () {
         }
     }, {
         key: 'findRequiredDependency',
-        value: function findRequiredDependency(caller, dependency) {
-            var item = this._findItem(dependency);
+        value: function findRequiredDependency(dependencyName) {
+            var item = this._findItem(dependencyName);
             if (item) {
                 return item;
             }
-            invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + dependency);
+        }
+    }, {
+        key: 'findGroupedDependencies',
+        value: function findGroupedDependencies(caller, groupName) {
+            var item = [];
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this._items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var i = _step2.value;
+
+                    if (i.groupName === groupName) {
+                        item.push(i);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+                        _iterator2['return']();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            if (item.length > 0) {
+                return item;
+            }
+            invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + groupName);
         }
     }, {
         key: 'findDependency',

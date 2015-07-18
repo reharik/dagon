@@ -13,7 +13,10 @@ describe('Dependency Tester', function() {
     var Mut;
 
     before(function () {
+        var appRoot = require('../src/appRoot');
+        appRoot.path = path.resolve('./');
         Mut = require('../src/Dependency');
+
     });
 
     beforeEach(function () {
@@ -167,6 +170,50 @@ describe('Dependency Tester', function() {
                 mut.children().must.be.empty();
             });
         });
+
+        context('when calling Children on dependency array of dependencies', function () {
+            it('should flatten array', function () {
+                var d0 =  new Mut({name:'logger', resolvedInstance:logger(), internal:true});
+                var d1 =  new Mut({name:'logger1', path:'/src/logger', internal:true, groupName: 'testGroup'});
+                var d2 =  new Mut({name:'logger2', path:'/src/logger', internal:true, groupName: 'testGroup'});
+                var d3 =  new Mut({name:'logger3', path:'/src/logger', internal:true, groupName: 'testGroup'});
+                var d4 =  new Mut({name:'logger4', path:'/src/logger', internal:true, groupName: 'testGroup'});
+                var mut =  new Mut({name:'testWithArrayDependency', path:'/tests/testWithArrayDependency', internal:true});
+                var graph = new Graph();
+                graph.addItem(d0);
+                graph.addItem(d1);
+                graph.addItem(d2);
+                graph.addItem(d3);
+                graph.addItem(d4);
+                graph.addItem(mut);
+                mut.getChildren(graph);
+                mut.children().length.must.equal(5);
+            });
+        });
+
+        context('when calling resolve on dependency array of dependencies', function () {
+            it('should flatten array', function () {
+                var d0 =  new Mut({name:'logger', resolvedInstance:logger(), internal:true});
+                var d1 =  new Mut({name:'logger1', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
+                var d2 =  new Mut({name:'logger2', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
+                var d3 =  new Mut({name:'logger3', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
+                var d4 =  new Mut({name:'logger4', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
+                var mut =  new Mut({name:'testWithArrayDependency', path:'/tests/testWithArrayDependency', internal:true});
+                var graph = new Graph();
+                graph.addItem(d0);
+                graph.addItem(d1);
+                graph.addItem(d2);
+                graph.addItem(d3);
+                graph.addItem(d4);
+                graph.addItem(mut);
+
+                var result = mut.getCollectionOfDependencies(graph);
+                result[0].must.equal(d0);
+                Array.isArray(result[1]).must.be.true();
+
+            });
+        });
+
 
 
     });

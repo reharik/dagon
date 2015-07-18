@@ -4,19 +4,17 @@
   "private": true,
   "scripts": {
     "test": "mocha --opts tests/mocha.opts tests",
+    "testSpecific": "mocha --opts tests/mocha.opts ",
     "testDebug": "node-debug _mocha --timeout 15000 --opts tests/mocha.opts tests",
-    "compile":"babel src --out-dir compiled/src --stage 0 && babel bootstrap.js --out-dir compiled --stage 0 && babel index.js --out-dir compiled --stage 0 && cp package.json compiled"
+    "compile":"babel src --out-dir compiled/src --stage 0 && babel prodBootstrap.js --out-dir compiled --stage 0 && babel index.js --out-dir compiled --stage 0 && cp package.json compiled && mv compiled/prodBootstrap.js compiled/bootstrap.js && cd compiled && npm install --production && cd ../"
   },
   "license": "MIT",
   "node": ">=0.12.0",
   "dependencies": {
     "bluebird": "^2.9.27",
-    "co": "^4.5.4",
-    "config": "^1.14.0",
     "fn-args": "^1.0.0",
     "invariant": "^2.1.0",
     "lodash": "^3.9.3",
-    "roll-a-dice": "0.0.2",
     "uuid": "^2.0.1"
   },
   "devDependencies": {

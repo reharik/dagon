@@ -13,7 +13,7 @@ var Dependency = require('./Dependency');
 var path = require('path');
 var fs = require('fs');
 var appRoot = require('./appRoot');
-
+var helpers = require('./DSLHelpers');
 module.exports = (function () {
     function RegistryDSL() {
         _classCallCheck(this, RegistryDSL);
@@ -32,6 +32,47 @@ module.exports = (function () {
             var resolvedPath = path.join(appRoot.path, '/package.json');
             invariant(fs.existsSync(resolvedPath), 'Path to package.json does not resolve: ' + path.resolve(resolvedPath));
             this._pathToPackageJson = resolvedPath;
+            return this;
+        }
+    }, {
+        key: 'requireDirectory',
+        value: function requireDirectory(dir) {
+            var _this = this;
+
+            invariant(dir, 'You must provide a valid directory');
+            var absoluteDir = path.join(appRoot.path, dir);
+            fs.readdirSync(absoluteDir).filter(function (x) {
+                return x.endsWith('.js');
+            }).forEach(function (x) {
+                return _this.dependencyDeclarations.push(helpers.processFile(x, dir));
+            });
+            return this;
+        }
+    }, {
+        key: 'requireDirectoryRecursively',
+        value: function requireDirectoryRecursively(dir) {
+            var _this2 = this;
+
+            invariant(dir, 'You must provide a valid directory');
+            var absoluteDir = path.join(appRoot.path, dir);
+            helpers.recurseDirectories(absoluteDir).forEach(function (x) {
+                return _this2.dependencyDeclarations.push(x);
+            });
+            return this;
+        }
+    }, {
+        key: 'groupAllInDirectory',
+        value: function groupAllInDirectory(dir, groupName) {
+            var _this3 = this;
+
+            invariant(dir, 'You must provide a valid directory');
+            invariant(groupName, 'You must provide a valid Group Name');
+            var absoluteDir = path.join(appRoot.path, dir);
+            fs.readdirSync(absoluteDir).filter(function (x) {
+                return x.endsWith('.js');
+            }).forEach(function (x) {
+                return _this3.dependencyDeclarations.push(helpers.processFile(x, dir, groupName));
+            });
             return this;
         }
     }, {

@@ -7,7 +7,7 @@ var Dependency = require('./Dependency');
 var path = require('path');
 var fs = require('fs');
 var appRoot = require('./appRoot');
-
+var helpers = require('./DSLHelpers');
 module.exports = class RegistryDSL{
     constructor(){
         this._pathToPackageJson;
@@ -29,14 +29,14 @@ module.exports = class RegistryDSL{
         invariant(dir, 'You must provide a valid directory');
         var absoluteDir = path.join(appRoot.path, dir);
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir)));
+            .forEach(x=> this.dependencyDeclarations.push(helpers.processFile(x, dir)));
         return this;
     }
 
     requireDirectoryRecursively(dir){
         invariant(dir,'You must provide a valid directory');
         var absoluteDir= path.join(appRoot.path, dir);
-        this.recurseDirectories(absoluteDir).forEach(x=> this.dependencyDeclarations.push(x));
+        helpers.recurseDirectories(absoluteDir).forEach(x=> this.dependencyDeclarations.push(x));
         return this;
     }
 
@@ -45,29 +45,9 @@ module.exports = class RegistryDSL{
         invariant(groupName, 'You must provide a valid Group Name');
         var absoluteDir = path.join(appRoot.path, dir);
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir, groupName)));
+            .forEach(x=> this.dependencyDeclarations.push(helpers.processFile(x, dir, groupName)));
         return this;
     }
-
-    recurseDirectories(dir) {
-        return fs.readdirSync(dir).map(x=> {
-            var stat = fs.statSync(dir + '/' + x);
-            if (stat && stat.isDirectory()) {
-                this.recurseDirectories(dir + '/' + x);
-            }
-            return x;
-        })
-        .filter(x=>x.endsWith('.js'))
-        .map(x => this.processFile(x, dir));
-    }
-
-    processFile(file,dir, groupName){
-        if(!file.endsWith('.js')){return;}
-        file = file.replace('.js','');
-        var path = dir.replace(appRoot.path,'')+'/'+file;
-        return new Dependency({name: file, path: path, internal: true, groupName:groupName||''});
-    }
-
 
     forDependencyParam(param){
         invariant(param,'You must provide a valid dependency parameter');

@@ -37,7 +37,8 @@ describe('Container Test', function() {
                     .groupAllInDirectory('/tests/TestModules','testGroup')
                     .forDependencyParam('testWithArrayDependency').requireThisInternalModule('/tests/testWithArrayDependency')
                     .complete());
-                console.log(mut.getInstanceOf('testWithArrayDependency')());
+                //console.log(mut.getInstanceOf('testWithArrayDependency')());
+                mut.getInstanceOf('testWithArrayDependency')().deps.must.be.array();
             })
         });
 

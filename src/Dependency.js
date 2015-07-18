@@ -34,9 +34,6 @@ module.exports = class Dependency{
     resolveInstance(graph){
         if(this.resolvedInstance){return;}
         var itemsDependencies = this.getResolvedInstanceForCollectionOfDependencies(this.getCollectionOfDependencies(graph));
-        //console.log('itemsDepend);
-        //console.log(this.name);
-        //console.log(itemsDependencies);
         this.resolvedInstance = itemsDependencies.length>0
             ? this.wrappedInstance.apply(this.wrappedInstance, itemsDependencies)
             : this.wrappedInstance();
@@ -55,15 +52,15 @@ module.exports = class Dependency{
     }
 
     getResolvedInstanceForCollectionOfDependencies(dependencies){
-        var result = dependencies.map(x=> {
-            if(!Array.isArray(x)){
-                return x.resolvedInstance;
+        var result = [];
+        dependencies.forEach(x=> {
+            if (Array.isArray(x)) {
+                result.push(this.getResolvedInstanceForCollectionOfDependencies(x));
             }
-            this.getResolvedInstanceForCollectionOfDependencies(x);
+            else{result.push(x.resolvedInstance);}
         });
         return result;
     }
-
 
     flatten(array) {
         return Array.isArray(array) ? [].concat.apply([], array.map(x=>this.flatten(x))||[]) : array;
@@ -94,4 +91,5 @@ module.exports = class Dependency{
             return require(this.path);
         };
     }
+
 };

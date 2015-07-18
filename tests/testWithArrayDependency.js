@@ -3,8 +3,8 @@
  */
 
 
-module.exports = function(testGroup){
+module.exports = function(logger, testGroup){
     return function(){
-        return testGroup;
+        return {deps: testGroup};
     }
 };

@@ -3,8 +3,8 @@
  */
 'use strict';
 
-var _container = require('dependz');
+var _container = require('./index');
 
 module.exports = new _container(function (x) {
-  return x.pathToRoot(__dirname).forDependencyParam('logger').requireThisInternalModule('./loggerMock').replace('lodash').withThis('_').replace('bluebird').withThis('Promise').complete();
+  return x.pathToRoot(__dirname).requireDirectory('./src').replace('lodash').withThis('_').replace('bluebird').withThis('Promise').complete();
 });
