@@ -117,7 +117,8 @@ describe('Container Test', function() {
                     x.pathToRoot(path.resolve('./'))
                         .complete());
                 mut.inject({name:'logger', path:'/tests/TestModules/loggerMock', internal:true});
-                mut.getInstanceOf('logger').must.be.object();
+                var TestClass = mut.getInstanceOf('TestClass');
+                new TestClass().callLogger('worked').must.equal('worked');
             })
         });
     });

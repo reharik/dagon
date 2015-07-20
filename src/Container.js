@@ -70,9 +70,7 @@ module.exports =  class Container{
         dependencies.forEach(d => {
             invariant(d.name, 'injected dependecy must have a name');
             invariant(d.resolvedInstance || d.path, 'injected dependency must have either a resolvedInstance or a path');
-            var newDep = d.resolvedInstance
-                ? new Dependency({name:d.name, resolvedInstance:d.resolvedInstance})
-                : new Dependency({name: d.name, path: d.path, internal : d.internal});
+            var newDep = new Dependency(d);
             this.dependencyGraph.addItem(newDep);
         });
         new GraphResolution().recurse(this.dependencyGraph);

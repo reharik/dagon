@@ -1,12 +1,12 @@
 {
-  "name": "jsioc",
-  "version": "0.0.0",
-  "private": true,
+  "name": "DAGon",
+  "version": "0.0.1",
+  "main": "index.js",
   "scripts": {
     "test": "mocha --opts tests/mocha.opts tests",
     "testSpecific": "mocha --opts tests/mocha.opts ",
     "testDebug": "node-debug _mocha --timeout 15000 --opts tests/mocha.opts tests",
-    "compile":"babel src --out-dir compiled/src --stage 0 && babel prodBootstrap.js --out-dir compiled --stage 0 && babel index.js --out-dir compiled --stage 0 && cp package.json compiled && mv compiled/prodBootstrap.js compiled/bootstrap.js && cd compiled && npm install --production && cd ../"
+    "compile":"rm -r -f compiled && babel src --out-dir compiled/src --stage 0 && babel prodBootstrap.js --out-dir compiled --stage 0 && babel index.js --out-dir compiled --stage 0 && cp package.json compiled && mv compiled/prodBootstrap.js compiled/bootstrap.js"
   },
   "license": "MIT",
   "node": ">=0.12.0",

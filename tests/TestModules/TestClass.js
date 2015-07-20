@@ -21,5 +21,9 @@ module.exports = function(TestClassBase, pointlessDependency, logger) {
         getSomeOtherPropVal(){
             return this._someOtherProp;
         }
+
+        callLogger(val){
+            return logger.debug(val);
+        }
     }
 };
