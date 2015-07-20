@@ -34,86 +34,86 @@ describe('Registry DSL Tester', function() {
 
         context('when calling forDependency with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.forDependencyParam()}).must.throw(Error,'Invariant Violation: You must provide a valid dependency parameter');
+                (function(){mut.for()}).must.throw(Error,'Invariant Violation: You must provide a valid dependency parameter');
             })
         });
 
         context('when calling forDependency with proper value', function () {
             it('should set the name value on the decInProgress object', function () {
                 mut.pathToRoot(path.resolve('./'));
-                mut.forDependencyParam('someParam');
+                mut.for('someParam');
                 mut._declarationInProgress.name.must.equal('someParam');
             })
         });
 
-        context('when calling requireThisModule with no value', function () {
+        context('when calling require with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.requireThisModule()}).must.throw(Error,'Invariant Violation: You must provide a valid replacement module');
+                (function(){mut.require()}).must.throw(Error,'Invariant Violation: You must provide a valid replacement module');
             })
         });
 
-        context('when calling requireThisModule with proper value', function () {
+        context('when calling require with proper value', function () {
             it('should set the path value on the dependency', function () {
                 mut.pathToRoot(path.resolve('./'));
-                mut.forDependencyParam('someParam');
-                mut.requireThisInternalModule('/tests/TestModules/TestClass');
+                mut.for('someParam');
+                mut.require('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].path.must.equal('/tests/TestModules/TestClass');
             })
         });
 
-        context('when calling requireThisModule with out calling forDependency first', function () {
+        context('when calling require with out calling forDependency first', function () {
             it('should throw proper error', function () {
-                (function(){mut.requireThisModule('/package.json')})
-                    .must.throw(Error,'Invariant Violation: You must call "forDependencyParam" before calling "requireThisModule"');
+                (function(){mut.require('/package.json')})
+                    .must.throw(Error,'Invariant Violation: You must call "for" before calling "require"');
             })
         });
 
-        context('when calling requireThisModule ', function () {
+        context('when calling require ', function () {
             it('should add object to dependencyDeclaration collection', function () {
                 mut.pathToRoot(path.resolve('./'));
-                mut.forDependencyParam('someParam');
-                mut.requireThisInternalModule('/tests/TestModules/TestClass');
+                mut.for('someParam');
+                mut.require('/tests/TestModules/TestClass');
                 demand(mut.dependencyDeclarations[0]).not.be.null;
             })
         });
 
-        context('when calling requireThisModule ', function () {
+        context('when calling require ', function () {
             it('should add object of type Dependency dependencyDeclaration collection', function () {
                 mut.pathToRoot(path.resolve('./'));
-                mut.forDependencyParam('someParam');
-                mut.requireThisInternalModule('/tests/TestModules/TestClass');
+                mut.for('someParam');
+                mut.require('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].must.be.instanceOf(Dependency);
             })
         });
 
-        context('when calling requireThisInternalModule ', function () {
+        context('when calling requireInternalModule ', function () {
             it('should add internal Dependency', function () {
                 mut.pathToRoot(path.resolve('./'));
-                mut.forDependencyParam('someParam');
-                mut.requireThisInternalModule('/tests/TestModules/TestClass');
+                mut.for('someParam');
+                mut.require('/tests/TestModules/TestClass');
                 mut.dependencyDeclarations[0].internal.must.be.true();
             })
         });
 
 
-        context('when calling requireThisModule ', function () {
+        context('when calling require ', function () {
             it('should reset _declarationInProgress to null', function () {
                 mut.pathToRoot(path.resolve('./'));
-                mut.forDependencyParam('someParam');
-                mut.requireThisInternalModule('/tests/TestModules/TestClass');
+                mut.for('someParam');
+                mut.require('/tests/TestModules/TestClass');
                 demand(mut._declarationInProgress).be.null;
             })
         });
 
         context('when calling replace with no param ', function () {
             it('should should throw proper error', function () {
-               (function(){mut.replace()}).must.throw(Error, 'Invariant Violation: You must provide the name of the your dependency');
+               (function(){mut.rename()}).must.throw(Error, 'Invariant Violation: You must provide the name of the your dependency');
             });
         });
 
         context('when calling replace', function (){
             it('should set property on nameInProgress ', function(){
-                mut.replace('oldname');
+                mut.rename('oldname');
                 mut._renameInProgress.oldName.must.equal('oldname');
             });
         });
@@ -132,7 +132,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling "withThis', function () {
             it('should add object to renamedDeclarations collection', function () {
-                mut.replace('someParam');
+                mut.rename('someParam');
                 mut.withThis('newName');
                 demand(mut.renamedDeclarations[0]).not.be.null;
             })
@@ -140,7 +140,7 @@ describe('Registry DSL Tester', function() {
 
         context('when calling "withThis', function () {
             it('should reset renameInProgress to null', function () {
-                mut.replace('someParam');
+                mut.rename('someParam');
                 mut.withThis('newNmae');
                 demand(mut.renamedDeclarations).be.null;
             })
@@ -148,11 +148,11 @@ describe('Registry DSL Tester', function() {
 
         context('when calling complete with one rename, and one declaration', function () {
             it('should return object with proprer properties', function () {
-                mut.replace('someParam');
+                mut.rename('someParam');
                 mut.withThis('newNmae');
                 mut.pathToRoot(path.resolve('./'));
-                mut.forDependencyParam('someParam');
-                mut.requireThisInternalModule('/tests/TestModules/TestClass');
+                mut.for('someParam');
+                mut.require('/tests/TestModules/TestClass');
                 var result = mut.complete();
                 result.dependencyDeclarations.length.must.equal(1);
                 result.renamedDeclarations.length.must.equal(1);

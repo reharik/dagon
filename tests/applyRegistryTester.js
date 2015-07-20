@@ -33,8 +33,8 @@ describe('ApplyRegistry Tester', function() {
 
                 var reg = new RegistryDSL()
                     .pathToRoot(path.resolve('./'))
-                    .forDependencyParam('logger')
-                    .requireThisModule('/tests/TestModules/loggerMock')
+                    .for('logger')
+                    .require('/tests/TestModules/loggerMock')
                     .complete();
                 mut(reg, graph);
                 var logger = graph._items.find(x=>x.name == 'logger');
@@ -50,8 +50,8 @@ describe('ApplyRegistry Tester', function() {
 
                 var reg = new RegistryDSL()
                     .pathToRoot(path.resolve('./'))
-                    .forDependencyParam('TestClass')
-                    .requireThisModule('/tests/TestModules/TestClass')
+                    .for('TestClass')
+                    .require('/tests/TestModules/TestClass')
                     .complete();
                 mut(reg, graph);
                 var logger = graph._items.find(x=>x.name == 'TestClass');
@@ -67,7 +67,7 @@ describe('ApplyRegistry Tester', function() {
 
                 var reg = new RegistryDSL()
                     .pathToRoot(path.resolve('./'))
-                    .replace('lodash')
+                    .rename('lodash')
                     .withThis('_')
                     .complete();
                 mut(reg, graph);

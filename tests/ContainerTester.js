@@ -35,7 +35,7 @@ describe('Container Test', function() {
             it('should map that object properly', ()=> {
                 var mut = new Mut(x=>x.pathToRoot(path.resolve('./'))
                     .groupAllInDirectory('/tests/TestModules','testGroup')
-                    .forDependencyParam('testWithArrayDependency').requireThisInternalModule('/tests/testWithArrayDependency')
+                    .for('testWithArrayDependency').require('/tests/testWithArrayDependency')
                     .complete());
                 //console.log(mut.getInstanceOf('testWithArrayDependency')());
                 mut.getInstanceOf('testWithArrayDependency')().deps.must.be.array();
@@ -46,7 +46,7 @@ describe('Container Test', function() {
             it('should apply registry to graph',()=>{
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
-                        .forDependencyParam('logger').requireThisInternalModule('/tests/TestModules/loggerMock')
+                        .for('logger').require('/tests/TestModules/loggerMock')
                         .complete());
                 var logger = mut.dependencyGraph._items.find(x=>x.name == 'logger');
                 logger.path.must.equal('/tests/TestModules/loggerMock');
@@ -57,9 +57,9 @@ describe('Container Test', function() {
             it('should resolve graph',()=>{
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
-                        .forDependencyParam('TestClass').requireThisInternalModule('/tests/TestModules/TestClass')
-                        .forDependencyParam('TestClassBase').requireThisInternalModule('/tests/TestModules/TestClassBase')
-                        .forDependencyParam('pointlessDependency').requireThisInternalModule('/tests/TestModules/pointlessDependency')
+                        .for('TestClass').require('/tests/TestModules/TestClass')
+                        .for('TestClassBase').require('/tests/TestModules/TestClassBase')
+                        .for('pointlessDependency').require('/tests/TestModules/pointlessDependency')
                         .complete());
                 console.log(mut.dependencyGraph);
                 mut.dependencyGraph._items.forEach(x=> x.resolvedInstance.must.not.null());
@@ -98,9 +98,9 @@ describe('Container Test', function() {
             it('should return bunch of stuff', function () {
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
-                        .forDependencyParam('TestClass').requireThisInternalModule('/tests/TestModules/TestClass')
-                        .forDependencyParam('TestClassBase').requireThisInternalModule('/tests/TestModules/TestClassBase')
-                        .forDependencyParam('pointlessDependency').requireThisInternalModule('/tests/TestModules/pointlessDependency')
+                        .for('TestClass').require('/tests/TestModules/TestClass')
+                        .for('TestClassBase').require('/tests/TestModules/TestClassBase')
+                        .for('pointlessDependency').require('/tests/TestModules/pointlessDependency')
                         .complete());
                 console.log(mut.whatDoIHave());
                 mut.whatDoIHave().must.not.be.empty();

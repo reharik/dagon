@@ -15,6 +15,8 @@ module.exports = class Dependency{
         this.internal = options.internal || false;
         this.groupName = options.groupName || '';
         this.resolvedInstance = options.resolvedInstance;
+        this.initMethodAndArgs = options.initMethodAndArgs;
+        this.instantiateWith = options.instantiateWith ? Array.isArray(options.instantiateWith) ? options.instantiateWith : [options.instantiateWith] : '';
         this._children;
         invariant(this.name, 'Dependency must have a valid name');
         invariant(this.path || this.resolvedInstance,
@@ -34,12 +36,27 @@ module.exports = class Dependency{
     resolveInstance(graph){
         if(this.resolvedInstance){return;}
         var itemsDependencies = this.getResolvedInstanceForCollectionOfDependencies(this.getCollectionOfDependencies(graph));
-        this.resolvedInstance = itemsDependencies.length>0
-            ? this.wrappedInstance.apply(this.wrappedInstance, itemsDependencies)
-            : this.wrappedInstance();
+        this.resolvedInstance = this.initiate(this.instantiate(itemsDependencies));
 
         invariant(this.resolvedInstance, this.name + ' instance must resolve in resolveInstance function')
     }
+
+    instantiate(resolvedDependencies){
+        var parent = resolvedDependencies.length>0
+            ? this.wrappedInstance.apply(this.wrappedInstance, resolvedDependencies)
+            : this.wrappedInstance();
+        if(this.instantiateWith){
+            return parent.apply(parent, this.instantiateWith)
+        }
+        return parent;
+    }
+
+    initiate(item){
+        return this.initMethodAndArgs
+            ? item[this.initMethodAndArgs.method](this.initMethodAndArgs.args)
+            : item;
+    }
+
 
     getCollectionOfDependencies(graph){
         return fnArgs(this.wrappedInstance).map( d=> {

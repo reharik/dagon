@@ -5,7 +5,7 @@ var bootstrapper = require('./src/Container');
 
 module.exports = new bootstrapper(x=>
         x.pathToRoot(__dirname)
-        .forDependencyParam('logger').requireThisInternalModule("tests/TestModules/loggerMock")
-        .replace('lodash').withThis('_')
-        .replace('bluebird').withThis('Promise')
+        .for('logger').require("tests/TestModules/loggerMock")
+        .rename('lodash').withThis('_')
+        .rename('bluebird').withThis('Promise')
         .complete());

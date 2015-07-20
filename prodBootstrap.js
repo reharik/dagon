@@ -6,6 +6,6 @@ var _container = require('./index');
 module.exports = new _container(x=>
     x.pathToRoot(__dirname)
             .requireDirectory('./src')
-            .replace('lodash').withThis('_')
-            .replace('bluebird').withThis('Promise')
+            .rename('lodash').withThis('_')
+            .rename('bluebird').withThis('Promise')
             .complete());

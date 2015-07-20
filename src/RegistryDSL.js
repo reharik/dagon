@@ -23,9 +23,12 @@ module.exports = class RegistryDSL{
         this._pathToPackageJson = resolvedPath;
         return this;
     }
-
+    // all initial entry points complete in-progress operations.  This way we can chain methods for
+    // operations, with out explicitly knowing if it's a terminal method.
     requireDirectory(dir) {
         invariant(dir, 'You must provide a valid directory');
+        this.completeDependencyDeclaration();
+        this.completeRename();
         var absoluteDir = path.join(appRoot.path, dir);
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
             .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir)));
@@ -34,6 +37,8 @@ module.exports = class RegistryDSL{
 
     requireDirectoryRecursively(dir){
         invariant(dir,'You must provide a valid directory');
+        this.completeDependencyDeclaration();
+        this.completeRename();
         var absoluteDir= path.join(appRoot.path, dir);
         this.recurseDirectories(absoluteDir);
         return this;
@@ -42,37 +47,40 @@ module.exports = class RegistryDSL{
     groupAllInDirectory(dir, groupName){
         invariant(dir, 'You must provide a valid directory');
         invariant(groupName, 'You must provide a valid Group Name');
+        this.completeDependencyDeclaration();
+        this.completeRename();
         var absoluteDir = path.join(appRoot.path, dir);
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
             .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir, groupName)));
         return this;
     }
 
-    forDependencyParam(param){
+
+    for(param){
         invariant(param,'You must provide a valid dependency parameter');
-        this._declarationInProgress = {
-            name: param
-        };
+        this.completeDependencyDeclaration();
+        this.completeRename();
+        this._declarationInProgress = this.dependencyDeclarations.find(x=>x.name == param) || { name: param };
         return this;
     }
 
-    requireThisModule(path, isInternal){
+    require(path){
         invariant(path,'You must provide a valid replacement module');
-        invariant(this._declarationInProgress,'You must call "forDependencyParam" before calling "requireThisModule"');
+        invariant(this._declarationInProgress,'You must call "for" before calling "require"');
         this._declarationInProgress.path=path;
-        this.dependencyDeclarations.push(
-            new Dependency({name:this._declarationInProgress.name, path:this._declarationInProgress.path, internal:isInternal}));
-        this._declarationInProgress = null;
+        if(path.startsWith('.') || path.includes('/')){
+            this._declarationInProgress.internal=true;
+        }
+        this.completeDependencyDeclaration();
         return this;
     }
 
-    requireThisInternalModule(_path){
-        this.requireThisModule(_path ,true);
-        return this;
-    }
 
-    replace(name){
+
+    rename(name){
         invariant(name, 'You must provide the name of the your dependency');
+        this.completeDependencyDeclaration();
+        this.completeRename();
         this._renameInProgress = {oldName: name};
         return this;
     }
@@ -81,8 +89,35 @@ module.exports = class RegistryDSL{
         invariant(name, 'You must provide the new name');
         invariant(this._renameInProgress,'You must call "replace" before calling "withThis"');
         this._renameInProgress.name = name;
-        this.renamedDeclarations.push(this._renameInProgress);
-        this._renameInProgress=null;
+        this.completeRename();
+        return this;
+    }
+
+    completeDependencyDeclaration() {
+        if(this._declarationInProgress) {
+            this.dependencyDeclarations.push(new Dependency(this._declarationInProgress));
+            this._declarationInProgress = null;
+        }
+    }
+
+    completeRename() {
+        if(this._renameInProgress) {
+            this.renamedDeclarations.push(this._renameInProgress);
+            this._renameInProgress = null;
+        }
+    }
+
+    callInitMethod(method, args){
+        invariant(method, 'You must provide an init method to call');
+        invariant(this._declarationInProgress,'You must call "for" before calling "callInitMethod"');
+        this._declarationInProgress.initMethodAndArgs = {method:method, args:args};
+        return this;
+    }
+
+    instantiateWith(val){
+        invariant(val, 'You must provide parameters to instantiate with');
+        invariant(this._declarationInProgress,'You must call "for" before calling "instantiateWith"');
+        this._declarationInProgress.instantiateWith = val;
         return this;
     }
 
@@ -108,6 +143,9 @@ module.exports = class RegistryDSL{
 
 
     complete(){
+        this.completeDependencyDeclaration();
+        this.completeRename();
+
         return {
             pathToPackageJson:this._pathToPackageJson,
             dependencyDeclarations:this.dependencyDeclarations,

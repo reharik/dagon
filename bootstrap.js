@@ -8,7 +8,7 @@ module.exports = new _container(x=>
         .requireDirectory('/tests/TestModules')
         .requireDirectoryRecursively('/tests/TestModules')
         .groupAllInDirectory('/tests/TestModules', 'name')
-            .forDependencyParam('logger').requireThisInternalModule('./loggerMock')
-            .replace('lodash').withThis('_')
-            .replace('bluebird').withThis('Promise')
+            .for('logger').requireInternalModule('./loggerMock')
+            .rename('lodash').withThis('_')
+            .rename('bluebird').withThis('Promise')
             .complete());
