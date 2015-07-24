@@ -146,6 +146,19 @@ describe('Registry DSL Tester', function() {
             })
         });
 
+        context('when calling instantiate with out first calling for',()=>{
+            it('should throw propper error', function(){
+                (function(){mut.instantiate(x=>x.asClass())}).must.throw(Error, 'Invariant Violation: You must call "for" before calling "instantiate"');
+            });
+        });
+
+        context('when calling instantiate',()=>{
+            it('should return results of func', ()=>{
+                mut.for('some depemdency').instantiate(x=>x.asClass().withParameters(['someParam']).initializeWithMethod('method'));
+                mut._declarationInProgress.instantiate.must.eql({dependencyType:'class', parameters:['someParam'], initializationMethod:'method'});
+            })
+        });
+
         context('when calling complete with one rename, and one declaration', function () {
             it('should return object with proprer properties', function () {
                 mut.rename('someParam');
@@ -156,7 +169,7 @@ describe('Registry DSL Tester', function() {
                 var result = mut.complete();
                 result.dependencyDeclarations.length.must.equal(1);
                 result.renamedDeclarations.length.must.equal(1);
-                result.pathToPackageJson.must.be.string()
+                result.pathToPackageJson.must.be.string();
             })
         });
     });

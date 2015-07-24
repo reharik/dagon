@@ -7,6 +7,9 @@ var Dependency = require('./Dependency');
 var path = require('path');
 var fs = require('fs');
 var appRoot = require('./appRoot');
+var InstantiateDSL = require('./InstantiateDSL');
+
+
 module.exports = class RegistryDSL{
     constructor(){
         this._pathToPackageJson;
@@ -107,17 +110,17 @@ module.exports = class RegistryDSL{
         }
     }
 
-    callInitMethod(method, args){
-        invariant(method, 'You must provide an init method to call');
-        invariant(this._declarationInProgress,'You must call "for" before calling "callInitMethod"');
-        this._declarationInProgress.initMethodAndArgs = {method:method, args:args};
-        return this;
-    }
+    //callInitMethod(method, args){
+    //    invariant(method, 'You must provide an init method to call');
+    //    invariant(this._declarationInProgress,'You must call "for" before calling "callInitMethod"');
+    //    this._declarationInProgress.initMethodAndArgs = {method:method, args:args};
+    //    return this;
+    //}
 
-    instantiateWith(val){
-        invariant(val, 'You must provide parameters to instantiate with');
-        invariant(this._declarationInProgress,'You must call "for" before calling "instantiateWith"');
-        this._declarationInProgress.instantiateWith = val;
+    instantiate(func){
+        invariant(func, 'You must provide func for instanciation');
+        invariant(this._declarationInProgress,'You must call "for" before calling "instantiate"');
+        this._declarationInProgress.instantiate = func(new InstantiateDSL()).getOptions();
         return this;
     }
 

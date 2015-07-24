@@ -15,8 +15,7 @@ module.exports = class Dependency{
         this.internal = options.internal || false;
         this.groupName = options.groupName || '';
         this.resolvedInstance = options.resolvedInstance;
-        this.initMethodAndArgs = options.initMethodAndArgs;
-        this.instantiateWith = options.instantiateWith ? Array.isArray(options.instantiateWith) ? options.instantiateWith : [options.instantiateWith] : '';
+        this.instantiate = options.instantiate;
         this._children;
         invariant(this.name, 'Dependency must have a valid name');
         invariant(this.path || this.resolvedInstance,
@@ -36,27 +35,48 @@ module.exports = class Dependency{
     resolveInstance(graph){
         if(this.resolvedInstance){return;}
         var itemsDependencies = this.getResolvedInstanceForCollectionOfDependencies(this.getCollectionOfDependencies(graph));
-        this.resolvedInstance = this.initiate(this.instantiate(itemsDependencies));
+        this.resolvedInstance = this._instantiate(itemsDependencies);
 
         invariant(this.resolvedInstance, this.name + ' instance must resolve in resolveInstance function')
     }
 
-    instantiate(resolvedDependencies){
+    _instantiate(resolvedDependencies){
         var parent = resolvedDependencies.length>0
             ? this.wrappedInstance.apply(this.wrappedInstance, resolvedDependencies)
             : this.wrappedInstance();
-        if(this.instantiateWith){
-            return parent.apply(parent, this.instantiateWith)
+        if(this.instantiate){
+            return this.instantiateResolvedInstance(parent);  //parent.apply(parent, this.instantiateWith)
         }
         return parent;
     }
 
-    initiate(item){
-        return this.initMethodAndArgs
-            ? item[this.initMethodAndArgs.method](this.initMethodAndArgs.args)
-            : item;
-    }
+    instantiateResolvedInstance(resolved){
+        if(this.instantiate.dependencyType == 'class'){
+            if(this.instantiate.parameters){
+                var i = Object.create(resolved.prototype);
+                var r = resolved.apply(i, this.instantiate.parameters);
+                resolved = Object(r) === r? r : i
+            }else{
+                resolved = new resolved();
+            }
+        }
+        if(this.instantiate.dependencyType == 'func'){
+            if(this.instantiate.parameters){
+                resolved = resolved.call(resolved,this.instantiate.parameters);
+            }else{
+                resolved = resolved();
+            }
+        }
+        if(this.instantiate.initializationMethod){
+            if(this.instantiate.initParameters){
+                resolved = resolved[this.instantiate.initializationMethod].apply(resolved[this.instantiate.initializationMethod],this.instantiate.initParameters)
+            }else{
+                resolved = resolved[this.instantiate.initializationMethod]()
+            }
+        }
+        return resolved;
 
+    }
 
     getCollectionOfDependencies(graph){
         return fnArgs(this.wrappedInstance).map( d=> {
