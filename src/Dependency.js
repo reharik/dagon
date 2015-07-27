@@ -120,11 +120,13 @@ module.exports = class Dependency{
 
     handleInternalDependency() {
         var resolvedPath = _path.join(appRoot.path, this.path);
+        //DANGER DANGER
         this.wrappedInstance = require(resolvedPath);
     }
 
     handleExternalModule() {
         this.wrappedInstance = function () {
+            //DANGER DANGER
             return require(this.path);
         };
     }

@@ -78,8 +78,6 @@ module.exports = class RegistryDSL{
         return this;
     }
 
-
-
     rename(name){
         invariant(name, 'You must provide the name of the your dependency');
         this.completeDependencyDeclaration();
@@ -141,9 +139,17 @@ module.exports = class RegistryDSL{
         if(!file.endsWith('.js')){return;}
         file = file.replace('.js','');
         var path = dir.replace(appRoot.path,'')+'/'+file;
-        return new Dependency({name: file, path: path, internal: true, groupName:groupName||''});
+        var name = this.normalizeName(file);
+        return new Dependency({name: name, path: path, internal: true, groupName:groupName||''});
     }
 
+    // not great that this is here and graph
+    normalizeName(orig){
+        var name = orig;
+        name.replace(/-/g, '');
+        name.replace(/./g, '_');
+        return name;
+    }
 
     complete(){
         this.completeDependencyDeclaration();

@@ -63,15 +63,24 @@ module.exports = class Graph{
         invariant(pjson,'You must provide a json object to build graph from');
         if(pjson.dependencies){
             Object.keys(pjson.dependencies).forEach(x=> {
-                this._items.push(new Dependency({name:x.replace(/-/g, ''), path:x}));
+                var name = this.normalizeName(x);
+                this._items.push(new Dependency({name:name, path:x}));
             });
         }
         if(pjson.internalDependencies) {
             Object.keys(pjson.internalDependencies).forEach(x=> {
-                this._items.push(new Dependency({name:x, path:pjson.internalDependencies[x], internal:true}));
+                var name = this.normalizeName(x);
+                this._items.push(new Dependency({name:name, path:pjson.internalDependencies[x], internal:true}));
             });
         }
     }
+
+    normalizeName(orig){
+        var name = orig.replace(/-/g, '');
+        name = name.replace(/\./g, '_');
+        return name;
+    }
+
 
     items(){
         return this._items;
