@@ -1,18 +1,17 @@
 var yowl = require('./localYowl/index');
 var moment = require('moment');
 
-module.exports =  function(options) {
+module.exports =  function() {
     var _yowl = new yowl({
         system: {
             applicationName: "dagon",
             environment: "dev"
         }
     });
-    if(!options){
-        return _yowl;
-    }
-    var level = options.level ? options.level : 'silly';
-    level = level == 'trace' ? 'silly' : level;
+
+    return _yowl;
+
+    var level = 'silly';
     _yowl.addConsoleSink({
         level,
         colorize: true,
@@ -21,4 +20,4 @@ module.exports =  function(options) {
         }
     }).info("added Console Sink");
     return _yowl;
-};
+}();

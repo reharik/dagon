@@ -5,11 +5,10 @@
 var invariant = require('invariant');
 var Dependency = require('./Dependency');
 var _ = require('lodash');
-var logger;
+var logger = require('./yowlWrapper');
 
 module.exports = class Graph{
-    constructor(_logger){
-        logger = _logger;
+    constructor(){
         this._items = [];
     }
 
@@ -50,7 +49,7 @@ module.exports = class Graph{
         if(item){ return item; }
     }
 
-    findGroupedDependencies(caller, groupName) {
+    findGroupedDependencies(groupName) {
         logger.trace('Graph | findGroupedDependencies: looping through items');
 
         var item = [];

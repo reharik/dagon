@@ -5,7 +5,6 @@
 var demand = require('must');
 var path = require('path');
 var Dependency = require('../src/Dependency');
-var logger = require('../src/yowlWrapper')();
 
 describe('Registry DSL Tester', function() {
     var Mut;
@@ -16,7 +15,7 @@ describe('Registry DSL Tester', function() {
     });
 
     beforeEach(function(){
-        mut = new Mut(logger);
+        mut = new Mut();
     });
 
     describe('#testing DSL', function() {

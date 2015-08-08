@@ -6,12 +6,11 @@ var invariant = require('invariant');
 var fnArgs = require('fn-args');
 var _path = require('path');
 var appRoot = require('./appRoot');
-var logger;
 var JSON = require('JSON');
+var logger = require('../src/yowlWrapper');
 
 module.exports = class Dependency{
-    constructor(options, _logger){
-        logger = _logger;
+    constructor(options){
         this.name = options.name;
         this.path = options.path;
         this.internal = options.internal || false;
@@ -91,10 +90,12 @@ module.exports = class Dependency{
 
     getCollectionOfDependencies(graph){
         logger.trace('Dependency | getCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
-        return fnArgs(this.wrappedInstance).map( d=> {
+        var args = fnArgs(this.wrappedInstance);
+        logger.trace('Dependency | getCollectionOfDependencies: args: '+args );
+        return args.map( d=> {
             var item = graph.findRequiredDependency(d);
             if(!item) {
-                item = graph.findGroupedDependencies(this.name, d);
+                item = graph.findGroupedDependencies(d);
             }
             if(!item){
                 logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: '+ d);

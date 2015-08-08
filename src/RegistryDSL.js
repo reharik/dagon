@@ -8,16 +8,15 @@ var path = require('path');
 var fs = require('fs');
 var appRoot = require('./appRoot');
 var InstantiateDSL = require('./InstantiateDSL');
-var logger;
+var logger = require('./yowlWrapper');
 
 module.exports = class RegistryDSL{
-    constructor(_logger){
+    constructor(){
         this._pathToPackageJson;
         this.dependencyDeclarations = [];
         this.renamedDeclarations = [];
         this._declarationInProgress;
         this._renameInProgress;
-        logger = _logger
     }
 
     pathToRoot(_path){

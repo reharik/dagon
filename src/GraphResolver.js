@@ -2,15 +2,14 @@
  * Created by rharik on 6/30/15.
  */
 
-var logger;
+var logger = require('./yowlWrapper');
 
 module.exports = class GraphResolver{
-    constructor(_logger){
-        logger = _logger;
+    constructor(){
         this.graph;
     }
     recurse(_graph){
-        logger.trace('GraphResolver | recurse: begining recursion');
+        logger.trace('GraphResolver | recurse: beginning recursion');
         this.graph = _graph;
         this.recurseTree(this.graph.items());
 

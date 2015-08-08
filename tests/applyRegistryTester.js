@@ -5,7 +5,7 @@ var demand = require('must');
 var Graph = require('../src/Graph');
 var RegistryDSL = require('../src/RegistryDSL');
 var path = require('path');
-var logger = require('../src/yowlWrapper')();
+var logger = require('../src/yowlWrapper');
 
 describe('ApplyRegistry Tester', function() {
     var mut;
@@ -29,11 +29,11 @@ describe('ApplyRegistry Tester', function() {
 
         context('when calling applyRegister with one replacement dependency', ()=>{
             it('should replace dependency', ()=>{
-                var graph = new Graph(logger);
+                var graph = new Graph();
                 var packageJson =  require('../package.json');
                 graph.buildGraph(packageJson);
 
-                var reg = new RegistryDSL(logger)
+                var reg = new RegistryDSL()
                     .pathToRoot(path.resolve('./'))
                     .for('logger')
                     .require('/tests/TestModules/loggerMock')
@@ -46,11 +46,11 @@ describe('ApplyRegistry Tester', function() {
 
         context('when calling applyRegister with explicit dependency but not replacing', ()=>{
             it('should add that dependency to graph', ()=>{
-                var graph = new Graph(logger);
+                var graph = new Graph();
                 var packageJson =  require('../package.json');
                 graph.buildGraph(packageJson);
 
-                var reg = new RegistryDSL(logger)
+                var reg = new RegistryDSL()
                     .pathToRoot(path.resolve('./'))
                     .for('TestClass')
                     .require('/tests/TestModules/TestClass')
@@ -63,11 +63,11 @@ describe('ApplyRegistry Tester', function() {
 
         context('when calling applyRegister with one rename', ()=>{
             it('should rename dependency', ()=>{
-                var graph = new Graph(logger);
+                var graph = new Graph();
                 var packageJson =  require('../package.json');
                 graph.buildGraph(packageJson);
 
-                var reg = new RegistryDSL(logger)
+                var reg = new RegistryDSL()
                     .pathToRoot(path.resolve('./'))
                     .rename('lodash')
                     .withThis('_')

@@ -3,11 +3,10 @@
  */
 
 var invariant = require('invariant');
-var logger;
+var logger = require('./yowlWrapper');
 
 module.exports = class InstantiateDSL {
-    constructor(_logger) {
-        logger = _logger;
+    constructor() {
         this._currentInstance = {};
     }
 

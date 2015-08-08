@@ -8,13 +8,11 @@ var applyRegistry = require('./applyRegistry');
 var Dependency = require('./Dependency');
 var GraphResolution = require('./GraphResolver');
 var invariant = require('invariant');
-var _logger = require('./yowlWrapper');
+var logger = require('./yowlWrapper');
 var JSON = require('JSON');
-var logger;
 
 module.exports =  class Container{
-    constructor(registryFuncArray,loggerOptions){
-        logger = _logger(loggerOptions);
+    constructor(registryFuncArray){
         //TODO CLEAN UP!!
         if(!_.isArray(registryFuncArray)){registryFuncArray = [registryFuncArray]}
 
