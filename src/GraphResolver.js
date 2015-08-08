@@ -2,13 +2,15 @@
  * Created by rharik on 6/30/15.
  */
 
-var Dependency = require('./Dependency');
+var logger;
 
 module.exports = class GraphResolver{
-    constructor(){
+    constructor(_logger){
+        logger = _logger;
         this.graph;
     }
     recurse(_graph){
+        logger.trace('GraphResolver | recurse: begining recursion');
         this.graph = _graph;
         this.recurseTree(this.graph.items());
 

@@ -8,6 +8,7 @@ var path = require('path');
 var logger = require('../src/logger');
 var RegistryDSL = require('../src/RegistryDSL');
 var Graph = require('../src/Graph');
+var logger = require('../src/yowlWrapper')();
 
 describe('Dependency Tester', function() {
     var Mut;
@@ -41,21 +42,21 @@ describe('Dependency Tester', function() {
 
         context('when calling new dependency with internal set to true', function () {
             it('should set interal to true', function () {
-                    var mut = new Mut({name:'TestClass', path:'/tests/TestModules/TestClass', internal:true});
+                    var mut = new Mut({name:'TestClass', path:'/tests/TestModules/TestClass', internal:true},logger);
                 mut.internal.must.be.true();
             });
         });
 
         context('when calling new dependency with internal not set', function () {
             it('should set interal to false', function () {
-                var mut = new Mut({name:'uuid', path:'uuid'});
+                var mut = new Mut({name:'uuid', path:'uuid'},logger);
                 mut.internal.must.be.false();
             });
         });
 
         context('when calling new external dependency', function () {
             it('should wrap required resource in empty function', function () {
-                var mut = new Mut({name:'uuid', path:'uuid'});
+                var mut = new Mut({name:'uuid', path:'uuid'},logger);
                 mut.wrappedInstance.toString().must.startWith('function () {');
             });
         });
@@ -63,7 +64,7 @@ describe('Dependency Tester', function() {
         // the has dependencies requirement is because if it has no dependencies it will look just like internal = false;
         context('when calling new internal dependency that has dependencies', function () {
             it('should not wrap required resource in empty function', function () {
-                var mut = new Mut({name:'TestClass', path:'/tests/TestModules/TestClass',internal:true});
+                var mut = new Mut({name:'TestClass', path:'/tests/TestModules/TestClass',internal:true},logger);
                 mut.wrappedInstance.toString().must.not.startWith('function () {');
             });
         });
@@ -74,7 +75,7 @@ describe('Dependency Tester', function() {
         // instantiate '123' it will throw since it's not a fuction.
         context('when calling resolveInstance with resolvedInstance', function () {
             it('should return', function () {
-                var mut = new Mut({name:'TestClass', path:'/tests/TestModules/TestClass', internal:true});
+                var mut = new Mut({name:'TestClass', path:'/tests/TestModules/TestClass', internal:true},logger);
                 mut.resolvedInstance = '123';
                 (function(){mut.resolveInstance(new Graph({}))}).must.not.throw(Error);
             });
@@ -83,7 +84,7 @@ describe('Dependency Tester', function() {
         // htis might be brittle because it depends on the internal structure of uuid
         context('when calling resolveInstance on external dep', function () {
             it('should show that the internal code is actually the expected dependency not some wrapped piece of shit', function () {
-                var mut = new Mut({name:'uuid', path:'uuid'});
+                var mut = new Mut({name:'uuid', path:'uuid'},logger);
                 var graph = new Graph(path.resolve('./'));
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 mut.resolveInstance(graph);
@@ -94,7 +95,7 @@ describe('Dependency Tester', function() {
 
         context('when calling resolveInstance item with no dependencies', function () {
             it('should set resolved instance', function () {
-                var mut = new Mut({name:'logger', path:'/src/logger', internal:true});
+                var mut = new Mut({name:'logger', path:'/src/logger', internal:true},logger);
                 var graph = new Graph(path.resolve('./'));
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 mut.resolveInstance(graph);
@@ -105,7 +106,7 @@ describe('Dependency Tester', function() {
         context('when calling resolveInstance item with dependencies', function () {
             it('should set resolved instance', function () {
                 var uuid = new Mut({name:'uuid', path:'uuid'});
-                var mut = new Mut({name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true});
+                var mut = new Mut({name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true},logger);
                 var graph = new Graph(path.resolve('./'));
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 uuid.resolveInstance(graph);
@@ -130,7 +131,7 @@ describe('Dependency Tester', function() {
         context('when calling getChildren on dependency with children', function () {
             it('should return value of true', function () {
                 var uuid = new Mut({name:'uuid', path:'uuid'});
-                var mut = new Mut({name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true});
+                var mut = new Mut({name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true},logger);
                 var graph = new Graph(path.resolve('./'));
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 uuid.resolveInstance(graph);
@@ -142,7 +143,7 @@ describe('Dependency Tester', function() {
         context('when calling getChildren on dependency with children', function () {
             it('should set dependencies children on children array ', function () {
                 var uuid = new Mut({name:'uuid', path:'uuid'});
-                var mut = new Mut({name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true});
+                var mut = new Mut({name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true},logger);
                 var graph = new Graph(path.resolve('./'));
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 uuid.resolveInstance(graph);
@@ -154,7 +155,7 @@ describe('Dependency Tester', function() {
 
         context('when calling getChildren on dependency with NO children', function () {
             it('should return null', function () {
-                var mut =  new Mut({name:'logger', path:'/src/logger', internal:true});
+                var mut =  new Mut({name:'logger', path:'/src/logger', internal:true},logger);
                 var graph = new Graph(path.resolve('./'));
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 mut.getChildren(graph).must.be.false();
@@ -163,8 +164,8 @@ describe('Dependency Tester', function() {
 
         context('when calling Children on dependency with NO children', function () {
             it('should return empty array', function () {
-                var mut =  new Mut({name:'logger', path:'/src/logger', internal:true});
-                var graph = new Graph(path.resolve('./'));
+                var mut =  new Mut({name:'logger', path:'/src/logger', internal:true},logger);
+                var graph = new Graph(logger);
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 mut.getChildren(graph);
                 mut.children().must.be.empty();
@@ -178,7 +179,7 @@ describe('Dependency Tester', function() {
                 var d2 =  new Mut({name:'logger2', path:'/src/logger', internal:true, groupName: 'testGroup'});
                 var d3 =  new Mut({name:'logger3', path:'/src/logger', internal:true, groupName: 'testGroup'});
                 var d4 =  new Mut({name:'logger4', path:'/src/logger', internal:true, groupName: 'testGroup'});
-                var mut =  new Mut({name:'testWithArrayDependency', path:'/tests/testWithArrayDependency', internal:true});
+                var mut =  new Mut({name:'testWithArrayDependency', path:'/tests/testWithArrayDependency', internal:true},logger);
                 var graph = new Graph();
                 graph.addItem(d0);
                 graph.addItem(d1);
@@ -193,12 +194,12 @@ describe('Dependency Tester', function() {
 
         context('when calling resolve on dependency array of dependencies', function () {
             it('should flatten array', function () {
-                var d0 =  new Mut({name:'logger', resolvedInstance:logger(), internal:true});
-                var d1 =  new Mut({name:'logger1', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
-                var d2 =  new Mut({name:'logger2', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
-                var d3 =  new Mut({name:'logger3', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
-                var d4 =  new Mut({name:'logger4', resolvedInstance:logger(), internal:true, groupName: 'testGroup'});
-                var mut =  new Mut({name:'testWithArrayDependency', path:'/tests/testWithArrayDependency', internal:true});
+                var d0 =  new Mut({name:'logger', resolvedInstance:logger(), internal:true},logger);
+                var d1 =  new Mut({name:'logger1', resolvedInstance:logger(), internal:true, groupName: 'testGroup'},logger);
+                var d2 =  new Mut({name:'logger2', resolvedInstance:logger(), internal:true, groupName: 'testGroup'},logger);
+                var d3 =  new Mut({name:'logger3', resolvedInstance:logger(), internal:true, groupName: 'testGroup'},logger);
+                var d4 =  new Mut({name:'logger4', resolvedInstance:logger(), internal:true, groupName: 'testGroup'},logger);
+                var mut =  new Mut({name:'testWithArrayDependency', path:'/tests/testWithArrayDependency', internal:true},logger);
                 var graph = new Graph();
                 graph.addItem(d0);
                 graph.addItem(d1);

@@ -5,31 +5,42 @@
 var invariant = require('invariant');
 var Dependency = require('./Dependency');
 var _ = require('lodash');
+var logger;
 
 module.exports = class Graph{
-    constructor(){
+    constructor(_logger){
+        logger = _logger;
         this._items = [];
     }
 
     addItem(dependency){
         invariant(dependency,'You must provide a dependency to add');
+        logger.trace('Graph | addItem: remove original if present');
         _.remove(this._items, x=>x.name == dependency.name);
+        logger.trace('Graph | addItem: add new item');
         this._items.push(dependency);
     }
 
     _findItem(dependencyName){
         invariant(dependencyName, 'You must provide a dependency name to find');
         for(let i of this._items){
+            logger.trace('Graph | findItem: '+dependencyName+' target :' + i.name);
             if(i.name === dependencyName){
+                logger.trace('Graph | findItem: item found');
                 return i;
             }
         }
         try {
+            logger.trace('Graph | findItem: item NOT found, trying to require(dep)');
             var tryingRequire = require(dependencyName);
             if (tryingRequire) {
-                return new Dependency({name:dependencyName,resolvedInstance: tryingRequire});
+                logger.trace('Graph | findItem: require found item');
+                logger.trace('Graph | findItem: adding it to graph');
+                return new Dependency({name:dependencyName,resolvedInstance: tryingRequire},logger);
             }
         }catch(ex){
+            logger.info('Graph | findItem: item was not found and require threw an error');
+            logger.info('Graph | findItem: error' + ex);
             //swallow, just a hail mary to resolve
         }
     }
@@ -40,18 +51,23 @@ module.exports = class Graph{
     }
 
     findGroupedDependencies(caller, groupName) {
+        logger.trace('Graph | findGroupedDependencies: looping through items');
+
         var item = [];
         for(let i of this._items){
+            logger.trace('Graph | findGroupedDependencies: looking for groupName: ' + groupName);
+            logger.trace('Graph | findGroupedDependencies: item groupName: ' + i.groupName);
             if(i.groupName === groupName){
+                logger.trace('Graph | findGroupedDependencies: found item in group: ' + i.name);
                 item.push(i);
             }
         }
         if(item.length>0){ return item; }
-        invariant(false, 'Module ' + caller + ' has a dependency that can not be resolved: ' + groupName);
     }
 
     findDependency(type){
         var item = this._findItem(type);
+        logger.trace('Graph | findDependency: returning resolved instance');
         if(item){ return item.resolvedInstance; }
     }
 
@@ -62,15 +78,17 @@ module.exports = class Graph{
     buildGraph(pjson){
         invariant(pjson,'You must provide a json object to build graph from');
         if(pjson.dependencies){
+            logger.trace('Graph | buildGraph: reading package.json dependencies');
             Object.keys(pjson.dependencies).forEach(x=> {
                 var name = this.normalizeName(x);
-                this._items.push(new Dependency({name:name, path:x}));
+                this._items.push(new Dependency({name:name, path:x},logger));
             });
         }
         if(pjson.internalDependencies) {
+            logger.trace('Graph | buildGraph: reading package.json internalDependencies');
             Object.keys(pjson.internalDependencies).forEach(x=> {
                 var name = this.normalizeName(x);
-                this._items.push(new Dependency({name:name, path:pjson.internalDependencies[x], internal:true}));
+                this._items.push(new Dependency({name:name, path:pjson.internalDependencies[x], internal:true},logger));
             });
         }
     }
@@ -78,6 +96,7 @@ module.exports = class Graph{
     normalizeName(orig){
         var name = orig.replace(/-/g, '');
         name = name.replace(/\./g, '_');
+        logger.trace('Graph | normalizeName: normalizing name: '+orig+'->'+name);
         return name;
     }
 

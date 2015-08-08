@@ -1,21 +1,28 @@
 {
-  "name": "DAGon",
+  "name": "dagon",
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
     "test": "mocha --opts tests/mocha.opts tests",
     "testSpecific": "mocha --opts tests/mocha.opts ",
     "testDebug": "node-debug _mocha --timeout 15000 --opts tests/mocha.opts tests",
-    "compile":"rm -r -f compiled && babel src --out-dir compiled/src --stage 0 && babel prodBootstrap.js --out-dir compiled --stage 0 && babel index.js --out-dir compiled --stage 0 && cp package.json compiled && mv compiled/prodBootstrap.js compiled/bootstrap.js"
+    "compile": "rm -r -f compiled && babel src --out-dir compiled/src --stage 0 && babel prodBootstrap.js --out-dir compiled --stage 0 && babel index.js --out-dir compiled --stage 0 && cp package.json compiled && mv compiled/prodBootstrap.js compiled/bootstrap.js"
   },
   "license": "MIT",
   "node": ">=0.12.0",
   "dependencies": {
+    "JSON": "^1.0.0",
     "bluebird": "^2.9.27",
     "fn-args": "^1.0.0",
     "invariant": "^2.1.0",
     "lodash": "^3.9.3",
-    "uuid": "^2.0.1"
+    "moment": "^2.10.6",
+    "uuid": "^2.0.1",
+    "joi": "^6.0.8",
+    "lodash": "^3.6.0",
+    "moment": "^2.10.2",
+    "winston": "^1.0.0",
+    "winston-logstash": "^0.1.11"
   },
   "devDependencies": {
     "babel": "^5.5.6",
@@ -36,11 +43,11 @@
   },
   "internalDependencies": {
     "logger": "/src/logger",
-    "pointlessDependency":"/tests/TestModules/pointlessDependency",
-    "TestClass":"/tests/TestModules/TestClass",
-    "TestClassBase":"/tests/TestModules/TestClassBase",
-    "testFunction":"/tests/TestModules/testFunction",
-    "testObject":"/tests/TestModules/testObject",
-    "testSIM":"/tests/TestModules/testSIM"
+    "pointlessDependency": "/tests/TestModules/pointlessDependency",
+    "TestClass": "/tests/TestModules/TestClass",
+    "TestClassBase": "/tests/TestModules/TestClassBase",
+    "testFunction": "/tests/TestModules/testFunction",
+    "testObject": "/tests/TestModules/testObject",
+    "testSIM": "/tests/TestModules/testSIM"
   }
 }

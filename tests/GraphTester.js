@@ -8,6 +8,7 @@ var path = require('path');
 var logger = require('../src/logger');
 var RegistryDSL = require('../src/RegistryDSL');
 var GraphResolution = require('../src/GraphResolver');
+var logger = require('../src/yowlWrapper')();
 
 describe('Graph Tester', function() {
     var Mut;
@@ -18,7 +19,7 @@ describe('Graph Tester', function() {
     });
 
     beforeEach(function(){
-        mut = new Mut(path.resolve('./'));
+        mut = new Mut(logger);
     });
 
     describe('#testing buildgrpah', function() {

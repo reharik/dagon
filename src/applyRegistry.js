@@ -2,7 +2,6 @@
  * Created by rharik on 6/30/15.
  */
 
-var Dependency = require('./Dependency');
 var invariant = require('invariant');
 
 module.exports = function(registry, graph) {

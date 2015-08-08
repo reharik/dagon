@@ -8,10 +8,13 @@ var applyRegistry = require('./applyRegistry');
 var Dependency = require('./Dependency');
 var GraphResolution = require('./GraphResolver');
 var invariant = require('invariant');
-
+var _logger = require('./yowlWrapper');
+var JSON = require('JSON');
+var logger;
 
 module.exports =  class Container{
-    constructor(registryFuncArray){
+    constructor(registryFuncArray,loggerOptions){
+        logger = _logger(loggerOptions);
         //TODO CLEAN UP!!
         if(!_.isArray(registryFuncArray)){registryFuncArray = [registryFuncArray]}
 
@@ -21,26 +24,35 @@ module.exports =  class Container{
 
         this.registryFunkArray = registryFuncArray;
         this.registry = this.buildRegistry();
-        this.dependencyGraph = new Graph();
+        logger.trace('Container | constructor : instantiate new graph');
+        this.dependencyGraph = new Graph(logger);
+        logger.trace('Container | constructor : get package.json');
         var packageJson =  require(this.registry.pathToPackageJson);
+        logger.trace('Container | constructor : build new graph');
         this.dependencyGraph.buildGraph(packageJson);
+        logger.trace('Container | constructor : apply registry');
         applyRegistry(this.registry, this.dependencyGraph);
-        new GraphResolution().recurse(this.dependencyGraph);
+        logger.trace('Container | constructor : resolve graph');
+        new GraphResolution(logger).recurse(this.dependencyGraph);
     }
 
     //TODO NEEDS TESTS!
     buildRegistry(){
+        logger.debug('Container | buildRegistry: building registry');
         var registry= {pathToRoot:'',
             dependencyDeclarations:[],
             renamedDeclarations:[]};
         this.registryFunkArray.forEach(x=>{
-            var reg = x(new RegistryDSL());
+            var reg = x(new RegistryDSL(logger));
             registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
+            logger.trace('Container | buildRegistry: pathToPackageJson: '+registry.pathToPackageJson);
             registry.dependencyDeclarations = registry.dependencyDeclarations.concat(reg.dependencyDeclarations);
+            logger.trace('Container | buildRegistry: dependencyDeclarations: '+ JSON.stringify(registry.pathToPackageJson));
             registry.renamedDeclarations = registry.renamedDeclarations.concat(reg.renamedDeclarations);
+            logger.trace('Container | buildRegistry: renamedDeclarations: '+ JSON.stringify(registry.renamedDeclarations));
         });
         invariant(registry.pathToPackageJson, 'You must provide the path to root when building a graph');
-
+        logger.trace('Container | buildRegistry: registry: '+ JSON.stringify(registry));
         return registry;
     }
 
@@ -61,19 +73,26 @@ module.exports =  class Container{
 
     inject(dependencies) {
         if(!_.isArray(dependencies)){ dependencies = [dependencies];}
-        this.dependencyGraph = new Graph();
+        logger.trace('Container | injection: instantiate new graph');
+        this.dependencyGraph = new Graph(logger);
         this.registry = this.buildRegistry();
+        logger.trace('Container | injection: get package.json');
         var packageJson =  require(this.registry.pathToPackageJson);
+        logger.trace('Container | injection: build new graph');
         this.dependencyGraph.buildGraph(packageJson);
+        logger.trace('Container | injection: apply registry');
         applyRegistry(this.registry, this.dependencyGraph);
 
+        logger.trace('Container | injection: build injected dependencies');
         dependencies.forEach(d => {
             invariant(d.name, 'injected dependecy must have a name');
             invariant(d.resolvedInstance || d.path, 'injected dependency must have either a resolvedInstance or a path');
-            var newDep = new Dependency(d);
+            var newDep = new Dependency(d, logger);
+            logger.trace('Container | injection: add new dependency to graph');
             this.dependencyGraph.addItem(newDep);
         });
-        new GraphResolution().recurse(this.dependencyGraph);
+        logger.trace('Container | injection: resolve new graph');
+        new GraphResolution(logger).recurse(this.dependencyGraph);
 
     }
 
