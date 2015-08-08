@@ -95,6 +95,9 @@ module.exports = new container(x=>
 ### Virsion 0.0.3
 
 ##### revisions
+revision 0.0.5
+- Cleaned up my package.json a bit for npm purposes
+
 revision 0.0.4
 - add documentation
 

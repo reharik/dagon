@@ -1,12 +1,24 @@
 {
   "name": "dagon",
-  "version": "0.0.4",
+  "version": "0.0.5",
+  "description": "an IOC container for javascript",
   "main": "index.js",
+  "homepage": "https://github.com/reharik/dagon",
   "scripts": {
     "test": "mocha --opts tests/mocha.opts tests",
     "testSpecific": "mocha --opts tests/mocha.opts ",
     "testDebug": "node-debug _mocha --timeout 15000 --opts tests/mocha.opts tests"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reharik/dagon"
+  },
+  "keywords": [
+    "IOC",
+    "Dependency Injection",
+    "Container",
+    "DI"
+  ],
   "license": "MIT",
   "node": ">=0.12.0",
   "dependencies": {
