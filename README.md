@@ -92,9 +92,12 @@ module.exports = new container(x=>
     - show module injection
 - make grouping return a name:value hash instead of or perhaps as a different method than the array
 
-### Virsion 0.0.5
+### Virsion 0.0.7
 
 ##### revisions
+revision 0.0.7
+- fixed some strangness
+
 revision 0.0.5
 - Cleaned up my package.json a bit for npm purposes
 

@@ -3,7 +3,7 @@
  */
 var container = require('./src/Container');
 
-module.exports = new bootstrapper(x=>
+module.exports = new container(x=>
         x.pathToRoot(__dirname)
         .for('logger').require("tests/TestModules/loggerMock")
         .rename('lodash').withThis('_')
