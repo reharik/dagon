@@ -95,9 +95,12 @@ module.exports = new container(x=>
     - show module injection
 - make grouping return a name:value hash instead of or perhaps as a different method than the array
 
-### Virsion 0.0.7
+### Virsion 0.0.8
 
 ##### revisions
+revision 0.0.8
+- published wrong folder
+
 revision 0.0.7
 - fixed some strangness
 
