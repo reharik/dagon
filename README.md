@@ -1,7 +1,10 @@
 # dagon
 dagon is a dependency injection container.
+
 It is loosely based on structuremap, the predominant IOC container for C#
+
 This container is fairly unobtrusive.
+
 Instead of writing the following
 
 ```sh
