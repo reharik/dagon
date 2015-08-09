@@ -10,7 +10,7 @@ var babel = require('gulp-babel');
 var DEBUG = process.env.NODE_ENV === "development";
 
 gulp.task('clean', function(cb) {
-    del(["./compiled"],{force:true}, cb);
+    del(["output"],{force:true}, cb);
 });
 
 gulp.task("copy-example",["clean"], function () {
@@ -30,7 +30,7 @@ gulp.task("copy-root",["clean"], function () {
 
 gulp.task("compile", ['clean'], function () {
     return gulp.src(["src/**"])
-        .pipe(babel())
+        .pipe(babel({stage:0}))
         .pipe(gulp.dest("./output/src"));
 });
 

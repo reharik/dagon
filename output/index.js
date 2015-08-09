@@ -4,4 +4,6 @@
 
 var container = require('./src/Container');
 
-module.exports = container;
+module.exports = function(){
+    container;
+};
