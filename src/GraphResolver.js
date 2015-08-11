@@ -17,7 +17,7 @@ module.exports = class GraphResolver{
 
     recurseTree(items) {
         return items.forEach(x=> {
-            if (x.getChildren(this.graph)) {
+            if (x.getChildren(this.graph, x)) {
                 this.recurseTree(x.children());
             }
             x.resolveInstance(this.graph);

@@ -88,18 +88,18 @@ module.exports = class Dependency{
 
     }
 
-    getCollectionOfDependencies(graph){
+    getCollectionOfDependencies(graph) {
         logger.trace('Dependency | getCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
         var args = fnArgs(this.wrappedInstance);
-        logger.trace('Dependency | getCollectionOfDependencies: args: '+args );
-        return args.map( d=> {
+        logger.trace('Dependency | getCollectionOfDependencies: args: ' + args);
+        return args.map(d=> {
             var item = graph.findRequiredDependency(d);
-            if(!item) {
+            if (!item) {
                 item = graph.findGroupedDependencies(d);
             }
-            if(!item){
-                logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: '+ d);
-                logger.debug('Dependency | getCollectionOfDependencies: '+ graph._items.map(x=> x.name));
+            if (!item) {
+                logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: ' + d);
+                logger.debug('Dependency | getCollectionOfDependencies: ' + graph._items.map(x=> x.name));
                 invariant(false, 'Module ' + this.name + ' has a dependency that can not be resolved: ' + d);
             }
             return item;
@@ -122,7 +122,7 @@ module.exports = class Dependency{
         return Array.isArray(array) ? [].concat.apply([], array.map(x=>this.flatten(x))||[]) : array;
     }
 
-    getChildren(graph){
+    getChildren(graph,caller){
         logger.debug('Dependency | getChildren: flattening out graph of dependencies');
         this._children = this.flatten(this.getCollectionOfDependencies(graph));
         logger.debug('Dependency | getChildren: has '+this._children.length+' children');
@@ -147,7 +147,7 @@ module.exports = class Dependency{
 
     handleExternalModule() {
         logger.trace('Dependency | handleExternalModule: external module so requiring item using path and wrapping in function ');
-        this.wrappedInstance = function () {
+        this.wrappedInstance = fuehnction () {
             //DANGER DANGER
             return require(this.path);
         };

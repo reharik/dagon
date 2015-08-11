@@ -98,6 +98,9 @@ module.exports = new container(x=>
 ### Virsion 0.0.7
 
 ##### revisions
+revision 0.0.9
+- added try catch to log better info
+
 revision 0.0.7
 - fixed some strangness
 
