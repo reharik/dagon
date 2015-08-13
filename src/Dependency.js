@@ -123,7 +123,7 @@ module.exports = class Dependency{
         return Array.isArray(array) ? [].concat.apply([], array.map(x=>this.flatten(x))||[]) : array;
     }
 
-    getChildren(graph,caller){
+    getChildren(graph){
         logger.debug('Dependency | getChildren: flattening out graph of dependencies');
         this._children = this.flatten(this.getCollectionOfDependencies(graph));
         logger.debug('Dependency | getChildren: has '+this._children.length+' children');
@@ -150,7 +150,7 @@ module.exports = class Dependency{
 
     handleExternalModule() {
         logger.trace('Dependency | handleExternalModule: external module so requiring item using path and wrapping in function ');
-        this.wrappedInstance = fuehnction () {
+        this.wrappedInstance = function () {
             //DANGER DANGER
             return require(this.path);
         };

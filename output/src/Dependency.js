@@ -14,6 +14,7 @@ var _path = require('path');
 var appRoot = require('./appRoot');
 var JSON = require('JSON');
 var logger = require('../src/yowlWrapper');
+var _ = require('lodash');
 
 module.exports = (function () {
     function Dependency(options) {
@@ -101,28 +102,22 @@ module.exports = (function () {
             var _this = this;
 
             logger.trace('Dependency | getCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
-            try {
-                var args = fnArgs(this.wrappedInstance);
-                logger.trace('Dependency | getCollectionOfDependencies: args: ' + args);
-                return args.map(function (d) {
-                    var item = graph.findRequiredDependency(d);
-                    if (!item) {
-                        item = graph.findGroupedDependencies(d);
-                    }
-                    if (!item) {
-                        logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: ' + d);
-                        logger.debug('Dependency | getCollectionOfDependencies: ' + graph._items.map(function (x) {
-                            return x.name;
-                        }));
-                        invariant(false, 'Module ' + _this.name + ' has a dependency that can not be resolved: ' + d);
-                    }
-                    return item;
-                });
-            } catch (ex) {
-                var msg = 'getCollectionOfDependencies failed.  Probably on fnArgs for this.wrappedInstance' + JSON.stringify(this);
-                logger.debug(msg);
-                console.log(msg);
-            }
+            var args = fnArgs(this.wrappedInstance);
+            logger.trace('Dependency | getCollectionOfDependencies: args: ' + args);
+            return args.map(function (d) {
+                var item = graph.findRequiredDependency(d);
+                if (!item) {
+                    item = graph.findGroupedDependencies(d);
+                }
+                if (!item) {
+                    logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: ' + d);
+                    logger.debug('Dependency | getCollectionOfDependencies: ' + graph._items.map(function (x) {
+                        return x.name;
+                    }));
+                    invariant(false, 'Module ' + _this.name + ' has a dependency that can not be resolved: ' + d);
+                }
+                return item;
+            });
         }
     }, {
         key: 'getResolvedInstanceForCollectionOfDependencies',
@@ -177,6 +172,7 @@ module.exports = (function () {
             var resolvedPath = _path.join(appRoot.path, this.path);
             //DANGER DANGER
             this.wrappedInstance = require(resolvedPath);
+            invariant(_.isFunction(this.wrappedInstance), 'Dependency | handleInternalDependency: dagon is unable to require the following dependency: ' + this.name + ' at this path: ' + resolvedPath);
         }
     }, {
         key: 'handleExternalModule',
