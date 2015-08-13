@@ -35,7 +35,7 @@ The basic usage pattern is
 - Define a bootstrap.js file ( call it whatever you want. I call it bootstrap.js ) 
 - Your bootstrap.js file should live at the same level as your package.json
 - All of your modules should be in thier own file and all modules should only have one export
-- All of your modules should be wrapped in a function that takes as parameters, the names of it's dependencies.  Which is to say, for each dependency for which you would normally write "var x = require('x')" you just pass into the name into the wrapper.  This goes for both external modules ( modules that you have "npm install --save"'d ) and internal modules ( modules that you have defined in your source code )
+- All of your modules should be wrapped in a function that takes as parameters, the names of it's dependencies.  Which is to say, for each dependency for which you would normally write "var x = require('x')" you just pass the name into the wrapper.  This goes for both external modules ( modules that you have "npm install --save"'d ) and internal modules ( modules that you have defined in your source code )
 - Your dependencies will be named for the file they reside in unless otherwise noted in the bootstrapper. e.g. a module in a file named "lumpyGravy.js"  will be injected by adding the param "lumpyGravy" to the wrapper of a module.
 
 Here is your simplest bootstrap file
@@ -61,24 +61,30 @@ module.exports = new container(x=>
         // If you follow the convention and put your bootstrapper next to your package.json
         // then __dirname will suffice
         x.pathToRoot(__dirname)
-        // this will require all ogf the modules found in said directory and it will do so recursively
+        // this will require all ogf the modules found in said directory
+        // and it will do so recursively
         .requireDirectoryRecursively('./src')
         // this will require all of the modules in said directory, but not recursively
         .requireDirectory('./somewhereelse')
         // this will group a number of modules such that you can then require the groupname 
         // and recieve an array of modules.  More on this later ( I hope )
         groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
-        // here you can specify an alternate name for a dependency.  A "rename" requires a "withThis"
+        // here you can specify an alternate name for a dependency.
+        // A "rename" requires a "withThis"
         .rename('bluebird').withThis('Promise')
         .rename('lodash').withThis('_')
-        // here you can override either a previously declared dependency ( say, through the "requireDirectory" method )
-        // or just register a generically named dependecy and point to it's location.l  Very nice for testing purposes
+        // here you can override either a previously declared dependency
+        // ( say, through the "requireDirectory" method )
+        // or just register a generically named dependecy and point to it's location.
+        // Very nice for testing purposes
         // A "for" requires a "require"
         .for('genericLogger').require('./src/myPersonalLogger')
-        // Here we can do some post registration configuration.  You must specify which dependency instantiate refers to
+        // Here we can do some post registration configuration.
+        // You must specify which dependency instantiate refers to
         // I will nned to write a section on this
         .for('someModule').instantiate(i=>i
-            .asClass() // alternately .asFunc() // if your module is an object then you do not need to specify
+            .asClass() // alternately .asFunc()
+            // if your module is an object then you do not need to specify
             .withParameters('myConnectionString', 'someOtherSetting')
             .initializeWithMethod('init')
             .withInitParameters('heySomeOtherValue', {hey:'lots of other values'})
@@ -114,7 +120,7 @@ when you use the groupAllInDirectory method in your bootstrap, you specify a gro
 
 So a contrived but nice example of strategy pattern would be https://en.wikipedia.org/wiki/Strategy_pattern a calculator
 
-You could do ( a nieve example )
+You could do ( a naive example )
 ```
     groupAllInDirectory('/calcStrategies', 'calcStrategies')
     modules.export = function(calcStrategies){
@@ -188,11 +194,11 @@ before(function(){
 ```
 now when your mut ( module under test ) injects 'gesConnection' expecting a nifty out of process connection, it will actually get the mock;
 
-One caviat here is that the injection rebuilds the entire container.  This means you need to be careful to do all your injections before you get the target instances.  This is why
+One caveat here is that the injection rebuilds the entire container.  This means you need to be careful to do all your injections before you get the target instances.  This is why
 ```
 container.inject( <object> || [<object>]) 
 ```
-accepts a dependency object or an array of dependency objects.  I guess this isn't great.  The issue is that if you inject a dependency you need all other dependencies that might require the target dependency, no matter at what level, to be rebuilt. It's complicated.  I might find a better way in the future.
+accepts a dependency object or an array of dependency objects.  Once you inject a dependency, all other dependencies that might require the target dependency, no matter at what level, nned to be rebuilt.
 
 ### TODO
 - more docs of course
