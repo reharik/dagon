@@ -44,10 +44,11 @@ var container = require('dagon');
 
 module.exports = new container(x=>
         // Path to root is really looking for where you package.json lives. 
-        // If you follow the convention and put your bootstrapper next to your package.json
-        // then __dirname will suffice
+        // If you follow the convention and put your bootstrapper next to your 
+        // package.json then __dirname will suffice
         x.pathToRoot(__dirname)
-        // this will require all modules found in said directory and it will do so recursively
+        // this will require all modules found in said directory 
+        // and it will do so recursively
         .requireDirectoryRecursively('./src')
         // the end
         .complete());
@@ -58,16 +59,17 @@ var container = require('dagon');
 
 module.exports = new container(x=>
         // Path to root is really looking for where you package.json lives. 
-        // If you follow the convention and put your bootstrapper next to your package.json
-        // then __dirname will suffice
+        // If you follow the convention and put your bootstrapper next to your
+        // package.json then __dirname will suffice
         x.pathToRoot(__dirname)
         // this will require all ogf the modules found in said directory
         // and it will do so recursively
         .requireDirectoryRecursively('./src')
-        // this will require all of the modules in said directory, but not recursively
+        // this will require all of the modules in said directory,
+        // but not recursively
         .requireDirectory('./somewhereelse')
-        // this will group a number of modules such that you can then require the groupname 
-        // and recieve an array of modules.  More on this later ( I hope )
+        // this will group a number of modules such that you can then
+        // require the groupname and recieve an array of modules.
         groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
         // here you can specify an alternate name for a dependency.
         // A "rename" requires a "withThis"
@@ -75,8 +77,8 @@ module.exports = new container(x=>
         .rename('lodash').withThis('_')
         // here you can override either a previously declared dependency
         // ( say, through the "requireDirectory" method )
-        // or just register a generically named dependecy and point to it's location.
-        // Very nice for testing purposes
+        // or just register a generically named dependecy
+        // and point to it's location. Very nice for testing purposes
         // A "for" requires a "require"
         .for('genericLogger').require('./src/myPersonalLogger')
         // Here we can do some post registration configuration.
@@ -87,7 +89,7 @@ module.exports = new container(x=>
             // if your module is an object then you do not need to specify
             .withParameters('myConnectionString', 'someOtherSetting')
             .initializeWithMethod('init')
-            .withInitParameters('heySomeOtherValue', {hey:'lots of other values'})
+            .withInitParameters('heySomeOtherValue', {hey:'other values'})
         // the end
         .complete());
 ```
@@ -205,10 +207,10 @@ accepts a dependency object or an array of dependency objects.  Once you inject 
     - use cases for each feature
 - make grouping return a name:value hash instead of or perhaps as a different method than the array
 
-### Virsion 0.0.10
+### Virsion 0.0.11
 
 ##### revisions
-revision 0.0.10
+revision 0.0.11
 - minor fixes and more docs
 
 revision 0.0.7
