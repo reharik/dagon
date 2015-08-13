@@ -86,6 +86,114 @@ module.exports = new container(x=>
         .complete());
 ```
 
+#### other convienent methods
+``` 
+dagon.getInstanceOf('myDependency')
+``` 
+returns your dependency.  Using getInstanceOf inside of your module is an anti-pattern.  Don't do it. Inject it.  Period.  However, there are times you will find getInstanceOf to be very necessary.  Testing is one case.
+
+```
+dagon.whatDoIHave(options)
+```
+returns json result of all your dependencies currently takes the following options 
+ - showResolved = bool
+    - JSON.strigifies your resolved instances
+ - showWrappedInstance = bool
+    - shows the wrapped instances.  eg
+```
+    function(dep1, dep2, dep3){
+        returns function(){
+        }
+    }
+```
+
+#### grouping
+when you use the groupAllInDirectory method in your bootstrap, you specify a group name.  When you inject this group name you get an array of all the dependencies in the specified directory.  This is very handy for implementing a strategy pattern.  In .net I used to do this by interface, but we don't really have that here in node.
+
+// as I write this I realize that perhaps I could have the foldername be the default group name unless specified
+
+So a contrived but nice example of strategy pattern would be https://en.wikipedia.org/wiki/Strategy_pattern a calculator
+
+You could do ( a nieve example )
+```
+    groupAllInDirectory('/calcStrategies', 'calcStrategies')
+    modules.export = function(calcStrategies){
+        return function(mathOp, val1, val2){
+            calcStrategies.filter(x=> x.name == mathOp)
+            .forEach(x=> return x.execute(val1, val2);
+        }
+    }
+```
+this example shows why I would like to implement a hash as well, instead of requiring the strategy to have a "name" property, you could just do 
+```
+    modules.export = function(calcStrategies){
+        return function(mathOp, val1, val2){
+            return calcStrategies[mathOp](val1,val2)
+            // with error handling of course
+        }
+    }
+```
+
+#### scoping 
+using require you can create a singleton by doing 
+```
+    module.export = {
+        'my':value
+    }
+```
+or 
+```
+    module.export = function(){
+    bla bla bla
+    return {}
+    }()
+```
+What you can't do ( unless I'm wrong ) is configure said singleton.
+
+with dagon you can do 
+```
+    bla bla bla
+    .instantiate(x=> x.asFunc().withParameters('myLocalDBConnectionString')
+```
+This could then return an object and voila you have an object that is a singleton that is specific to your dev environment.
+
+You could also do this with an internal function.
+```
+    bla bla bla
+    .initializeWithMethod('init')
+            .withInitParameters('heySomeOtherValue', {hey:'lots of other values'})
+```
+
+#### injection
+When testing a module.  If you hard code the 
+``` 
+require('someModThatCallsOutOfProcess')
+```
+when it comes time to unit test your module, you are doing an integration test. Like it or not.  There is no easy way, (again, unless I'm wrong ) to sub in a mock for this require.  What you end up doing is passing around your out of process modules in your method calls.  It get's very ugly very fast. 
+
+With dagon, you can address this in one or both of two ways.  
+- you can use a testBootstrap which subs your implementations right there.
+```
+    .for('logger').require("/unitTests/mocks/logger")
+```
+
+or you can, in your unit test do 
+```
+before(function(){
+        container = require('../testBootstrap');
+        gesConnection = container.getInstanceOf('gesConnection');
+        container.inject({name: 'gesConnection', resolvedInstance: require('mockGesConnection')});
+        }
+   });
+```
+now when your mut ( module under test ) injects 'gesConnection' expecting a nifty out of process connection, it will actually get the mock;
+
+One caviat here is that the injection rebuilds the entire container.  This means you need to be careful to do all your injections before you get the target instances.  This is why
+```
+container.inject( <object> || [<object>]) 
+```
+accepts a dependency object or an array of dependency objects.  I guess this isn't great.  The issue is that if you inject a dependency you need all other dependencies that might require the target dependency, no matter at what level, to be rebuilt. It's complicated.  I might find a better way in the future.
+
 ### TODO
 - more docs of course
     - use cases for each feature
