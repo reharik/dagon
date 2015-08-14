@@ -44,10 +44,17 @@ var container = require('dagon');
 
 module.exports = new container(x=>
         // Path to root is really looking for where you package.json lives. 
+<<<<<<< HEAD
+        // If you follow the convention and put your bootstrapper next to your
+        // package.json then __dirname will suffice
+        x.pathToRoot(__dirname)
+        // this will require all modules found in said directory
+=======
         // If you follow the convention and put your bootstrapper next to your 
         // package.json then __dirname will suffice
         x.pathToRoot(__dirname)
         // this will require all modules found in said directory 
+>>>>>>> 0e5b9e235ba9d90aa3f26f15a6d92eeabbf085a9
         // and it will do so recursively
         .requireDirectoryRecursively('./src')
         // the end

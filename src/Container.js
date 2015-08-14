@@ -73,9 +73,8 @@ module.exports =  class Container{
         var options = _options || {};
         return this.dependencyGraph.mapItems(x=>{
             var dependency = {name: x.name};
-            if(options.showResolved) { dependency.resolved = x.resolved ;}
-            if(options.showInstance && x.internal) { dependency.instance = x.instance;}
-            if(options.showInstanceForAll) { dependency.instance = x.instance;}
+            if(options.showResolved) { dependency.resolvedInstance = x.resolvedInstance ;}
+            if(options.showWrappedInstance) { dependency.wrappedInstance = x.wrappedInstance;}
             return dependency
         });
     }

@@ -76,13 +76,10 @@ module.exports = (function () {
             return this.dependencyGraph.mapItems(function (x) {
                 var dependency = { name: x.name };
                 if (options.showResolved) {
-                    dependency.resolved = x.resolved;
+                    dependency.resolvedInstance = x.resolvedInstance;
                 }
-                if (options.showInstance && x.internal) {
-                    dependency.instance = x.instance;
-                }
-                if (options.showInstanceForAll) {
-                    dependency.instance = x.instance;
+                if (options.showWrappedInstance) {
+                    dependency.wrappedInstance = x.wrappedInstance;
                 }
                 return dependency;
             });

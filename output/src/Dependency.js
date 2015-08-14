@@ -14,6 +14,7 @@ var _path = require('path');
 var appRoot = require('./appRoot');
 var JSON = require('JSON');
 var logger = require('../src/yowlWrapper');
+var _ = require('lodash');
 
 module.exports = (function () {
     function Dependency(options) {
@@ -171,6 +172,7 @@ module.exports = (function () {
             var resolvedPath = _path.join(appRoot.path, this.path);
             //DANGER DANGER
             this.wrappedInstance = require(resolvedPath);
+            invariant(_.isFunction(this.wrappedInstance), 'Dependency | handleInternalDependency: dagon is unable to require the following dependency: ' + this.name + ' at this path: ' + resolvedPath);
         }
     }, {
         key: 'handleExternalModule',

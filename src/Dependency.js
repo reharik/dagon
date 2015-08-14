@@ -89,18 +89,18 @@ module.exports = class Dependency{
 
     }
 
-    getCollectionOfDependencies(graph){
+    getCollectionOfDependencies(graph) {
         logger.trace('Dependency | getCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
         var args = fnArgs(this.wrappedInstance);
-        logger.trace('Dependency | getCollectionOfDependencies: args: '+args );
-        return args.map( d=> {
+        logger.trace('Dependency | getCollectionOfDependencies: args: ' + args);
+        return args.map(d=> {
             var item = graph.findRequiredDependency(d);
-            if(!item) {
+            if (!item) {
                 item = graph.findGroupedDependencies(d);
             }
-            if(!item){
-                logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: '+ d);
-                logger.debug('Dependency | getCollectionOfDependencies: '+ graph._items.map(x=> x.name));
+            if (!item) {
+                logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: ' + d);
+                logger.debug('Dependency | getCollectionOfDependencies: ' + graph._items.map(x=> x.name));
                 invariant(false, 'Module ' + this.name + ' has a dependency that can not be resolved: ' + d);
             }
             return item;
