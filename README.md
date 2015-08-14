@@ -118,13 +118,11 @@ returns json result of all your dependencies currently takes the following optio
 #### grouping
 when you use the groupAllInDirectory method in your bootstrap, you specify a group name.  When you inject this group name you get an array of all the dependencies in the specified directory.  This is very handy for implementing a strategy pattern.  In .net I used to do this by interface, but we don't really have that here in node.
 
-// as I write this I realize that perhaps I could have the foldername be the default group name unless specified
-
 So a contrived but nice example of strategy pattern would be https://en.wikipedia.org/wiki/Strategy_pattern a calculator
 
 You could do ( a naive example )
 ```
-    groupAllInDirectory('/calcStrategies', 'calcStrategies')
+    groupAllInDirectory('/calcStrategies', 'optionalGroupName')
     modules.export = function(calcStrategies){
         return function(mathOp, val1, val2){
             calcStrategies.filter(x=> x.name == mathOp)
@@ -132,15 +130,21 @@ You could do ( a naive example )
         }
     }
 ```
-this example shows why I would like to implement a hash as well, instead of requiring the strategy to have a "name" property, you could just do 
+the groupAllInDirectory take a path and an optional group name.  If no group name is provided, then the directory name will be used.
+
+Now you can also do this
 ```
-    modules.export = function(calcStrategies){
+    modules.export = function(calcStrategies_hash){
         return function(mathOp, val1, val2){
-            return calcStrategies[mathOp](val1,val2)
+            return calcStrategies_hash[mathOp](val1,val2)
             // with error handling of course
         }
     }
 ```
+Notice of course the _hash suffix. This is how the container knows to inject a hash rather than an array.
+If there is no suffix or there is a _array suffix then you will get an array.
+
+You should not use the _suffix in the 'optionalGroupName' parameter of the "groupAllInDirectory" function.
 
 #### scoping 
 using require you can create a singleton by doing 
@@ -207,9 +211,14 @@ accepts a dependency object or an array of dependency objects.  Once you inject 
     - use cases for each feature
 - make grouping return a name:value hash instead of or perhaps as a different method than the array
 
-### Virsion 0.0.11
+### Virsion 0.0.12
 
 ##### revisions
+revision 0.0.12
+- added getArrayOfGroup method
+- added getHashOfGroup method
+- added ability to inject has using the groupname_hash suffix
+
 revision 0.0.11
 - minor fixes and more docs
 

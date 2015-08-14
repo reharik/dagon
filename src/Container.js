@@ -63,7 +63,7 @@ module.exports =  class Container{
     }
 
     getHashOfGroup(_groupName) {
-        var group = this.dependencyGraph.findGroupedDependencies(_groupName);
+        var group = this.dependencyGraph.findGroupedDependencies(_groupName, true);
         var hash = {};
         group.forEach(x=> hash[x.name] = x);
         return hash;

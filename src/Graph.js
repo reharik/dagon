@@ -49,9 +49,31 @@ module.exports = class Graph{
         if(item){ return item; }
     }
 
-    findGroupedDependencies(groupName) {
+    //TODO needs tests
+    findGroupedDependencies(groupName, groupAsArray) {
         logger.trace('Graph | findGroupedDependencies: looping through items');
+        if(!groupName.contains('_hash')|| groupAsArray){
+            return buildGroupAsArray(groupName);
+        }
+        return buildGroupAsHash(groupName);
+    }
+    //TODO needs tests
+    buildGroupAsHash(groupName) {
+        groupName = groupName.replace('_hash','');
+        var item = {};
+        for(let i of this._items){
+            logger.trace('Graph | findGroupedDependencies: looking for groupName: ' + groupName);
+            logger.trace('Graph | findGroupedDependencies: item groupName: ' + i.groupName);
+            if(i.groupName === groupName){
+                logger.trace('Graph | findGroupedDependencies: found item in group: ' + i.name);
+                item[i.name] = i;
+            }
+        }
+        return item;
+    }
 
+    buildGroupAsArray(groupName) {
+        groupName = groupName.replace('_array','');
         var item = [];
         for(let i of this._items){
             logger.trace('Graph | findGroupedDependencies: looking for groupName: ' + groupName);
