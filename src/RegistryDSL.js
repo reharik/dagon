@@ -53,10 +53,10 @@ module.exports = class RegistryDSL{
         return this;
     }
 
-    groupAllInDirectory(dir, groupName){
+    groupAllInDirectory(dir, _groupName){
         invariant(dir, 'You must provide a valid directory');
-        invariant(groupName, 'You must provide a valid Group Name');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
+        var groupName = _groupName || dir.split(path.sep).pop();
         this.completeDependencyDeclaration();
         this.completeRename();
         var absoluteDir = path.join(appRoot.path, dir);

@@ -58,6 +58,17 @@ module.exports =  class Container{
         return this.dependencyGraph.findDependency(_type)
     }
 
+    getArrayOfGroup(_groupName){
+        return this.dependencyGraph.findGroupedDependencies(_groupName);
+    }
+
+    getHashOfGroup(_groupName) {
+        var group = this.dependencyGraph.findGroupedDependencies(_groupName);
+        var hash = {};
+        group.forEach(x=> hash[x.name] = x);
+        return hash;
+    }
+
     whatDoIHave(_options) {
         var options = _options || {};
         return this.dependencyGraph.mapItems(x=>{
