@@ -30,14 +30,19 @@ module.exports = (function () {
 
         this.registryFunkArray = registryFuncArray;
         this.registry = this.buildRegistry();
+
         logger.trace('Container | constructor : instantiate new graph');
         this.dependencyGraph = new Graph(logger);
+
         logger.trace('Container | constructor : get package.json');
         var packageJson = require(this.registry.pathToPackageJson);
+
         logger.trace('Container | constructor : build new graph');
         this.dependencyGraph.buildGraph(packageJson);
+
         logger.trace('Container | constructor : apply registry');
-        applyRegistry(this.registry, this.dependencyGraph);
+        applyRegistry(this.registry, this.dependencyGraph, logger);
+
         logger.trace('Container | constructor : resolve graph');
         new GraphResolution(logger).recurse(this.dependencyGraph);
     }
@@ -54,10 +59,13 @@ module.exports = (function () {
             this.registryFunkArray.forEach(function (x) {
                 var reg = x(new RegistryDSL(logger));
                 registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
+
                 logger.trace('Container | buildRegistry: pathToPackageJson: ' + registry.pathToPackageJson);
                 registry.dependencyDeclarations = registry.dependencyDeclarations.concat(reg.dependencyDeclarations);
+
                 logger.trace('Container | buildRegistry: dependencyDeclarations: ' + JSON.stringify(registry.pathToPackageJson));
                 registry.renamedDeclarations = registry.renamedDeclarations.concat(reg.renamedDeclarations);
+
                 logger.trace('Container | buildRegistry: renamedDeclarations: ' + JSON.stringify(registry.renamedDeclarations));
             });
             invariant(registry.pathToPackageJson, 'You must provide the path to root when building a graph');

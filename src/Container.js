@@ -22,14 +22,19 @@ module.exports =  class Container{
 
         this.registryFunkArray = registryFuncArray;
         this.registry = this.buildRegistry();
+
         logger.trace('Container | constructor : instantiate new graph');
         this.dependencyGraph = new Graph(logger);
+
         logger.trace('Container | constructor : get package.json');
         var packageJson =  require(this.registry.pathToPackageJson);
+
         logger.trace('Container | constructor : build new graph');
         this.dependencyGraph.buildGraph(packageJson);
+
         logger.trace('Container | constructor : apply registry');
-        applyRegistry(this.registry, this.dependencyGraph);
+        applyRegistry(this.registry, this.dependencyGraph, logger);
+
         logger.trace('Container | constructor : resolve graph');
         new GraphResolution(logger).recurse(this.dependencyGraph);
     }

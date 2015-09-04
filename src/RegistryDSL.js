@@ -41,7 +41,6 @@ module.exports = class RegistryDSL{
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
         this.completeDependencyDeclaration();
-        this.completeRename();
         var absoluteDir = path.join(appRoot.path, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
@@ -57,7 +56,6 @@ module.exports = class RegistryDSL{
         invariant(dir,'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectoryRecursively: closing in process declarations and renames');
         this.completeDependencyDeclaration();
-        this.completeRename();
         var absoluteDir= path.join(appRoot.path, dir);
         this.recurseDirectories(absoluteDir);
         return this;
@@ -73,7 +71,6 @@ module.exports = class RegistryDSL{
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
         this.completeDependencyDeclaration();
-        this.completeRename();
         var absoluteDir = path.join(appRoot.path, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))

@@ -5,8 +5,9 @@
 'use strict';
 
 var invariant = require('invariant');
+var Dependency = require('./Dependency');
 
-module.exports = function (registry, graph) {
+module.exports = function (registry, graph, logger) {
     invariant(registry, 'Must provide a registry');
     invariant(graph, 'Must provide a graph');
 
@@ -15,12 +16,15 @@ module.exports = function (registry, graph) {
         graph.addItem(item);
     };
     registry.dependencyDeclarations.forEach(function (x) {
-        return resolveItem(graph, x);
-    });
-    registry.renamedDeclarations.forEach(function (x) {
-        var target = graph.findRequiredDependency(x.oldName, x.oldName);
+
+        var target = graph.findRequiredDependency(x.name);
         if (target) {
-            target.name = x.name;
+            target.name = x.newName ? x.newName : target.name;
+            target.path = x.path ? x.path : target.path;
+            target.instantiate = x.instantiate ? x.instantiate : target.instantiate;
+        } else {
+            x.path = x.path ? x.path : x.name;
+            resolveItem(graph, new Dependency(x, logger));
         }
     });
 };

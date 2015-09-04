@@ -22,9 +22,7 @@ module.exports = (function () {
 
         this._pathToPackageJson;
         this.dependencyDeclarations = [];
-        this.renamedDeclarations = [];
         this._declarationInProgress;
-        this._renameInProgress;
     }
 
     /**
@@ -58,7 +56,6 @@ module.exports = (function () {
             invariant(dir, 'You must provide a valid directory');
             logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
             this.completeDependencyDeclaration();
-            this.completeRename();
             var absoluteDir = path.join(appRoot.path, dir);
             logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
             fs.readdirSync(absoluteDir).filter(function (x) {
@@ -79,7 +76,6 @@ module.exports = (function () {
             invariant(dir, 'You must provide a valid directory');
             logger.trace('RegistryDSL | requireDirectoryRecursively: closing in process declarations and renames');
             this.completeDependencyDeclaration();
-            this.completeRename();
             var absoluteDir = path.join(appRoot.path, dir);
             this.recurseDirectories(absoluteDir);
             return this;
@@ -99,7 +95,6 @@ module.exports = (function () {
             logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
             var groupName = _groupName || dir.split(path.sep).pop();
             this.completeDependencyDeclaration();
-            this.completeRename();
             var absoluteDir = path.join(appRoot.path, dir);
             logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
             fs.readdirSync(absoluteDir).filter(function (x) {
@@ -119,9 +114,8 @@ module.exports = (function () {
         key: 'for',
         value: function _for(param) {
             invariant(param, 'You must provide a valid dependency parameter');
-            logger.trace('RegistryDSL | for: closing in process declarations and renames');
+            logger.trace('RegistryDSL | for: closing in process declarations');
             this.completeDependencyDeclaration();
-            this.completeRename();
             logger.trace('RegistryDSL | for: beginning new dependency declaration ');
             this._declarationInProgress = this.dependencyDeclarations.find(function (x) {
                 return x.name == param;
@@ -139,12 +133,10 @@ module.exports = (function () {
         value: function require(path) {
             invariant(path, 'You must provide a valid replacement module');
             invariant(this._declarationInProgress, 'You must call "for" before calling "require"');
-            logger.trace('RegistryDSL | require: completing dependency declaration');
             this._declarationInProgress.path = path;
             if (path.startsWith('.') || path.includes('/')) {
                 this._declarationInProgress.internal = true;
             }
-            this.completeDependencyDeclaration();
             return this;
         }
 
@@ -154,46 +146,20 @@ module.exports = (function () {
          * @returns {this}
          */
     }, {
-        key: 'rename',
-        value: function rename(name) {
-            invariant(name, 'You must provide the name of the your dependency');
-            logger.trace('RegistryDSL | rename: closing in process declarations and renames');
-            this.completeDependencyDeclaration();
-            this.completeRename();
-            logger.trace('RegistryDSL | rename: starting new rename');
-            this._renameInProgress = { oldName: name };
-            return this;
-        }
-
-        /**
-         * This completes the open declaration.
-         * @param name - the new name of the dependency you are renaming
-         * @returns {this}
-         */
-    }, {
-        key: 'withThis',
-        value: function withThis(name) {
-            invariant(name, 'You must provide the new name');
-            invariant(this._renameInProgress, 'You must call "replace" before calling "withThis"');
-            logger.trace('RegistryDSL | withThis: completing rename');
-            this._renameInProgress.name = name;
-            this.completeRename();
+        key: 'renameTo',
+        value: function renameTo(name) {
+            invariant(name, 'You must provide the NEW name for your dependency');
+            invariant(this._declarationInProgress, 'You must call "for" before calling "require"');
+            logger.trace('RegistryDSL | rename: renaming');
+            this._declarationInProgress.newName = name;
             return this;
         }
     }, {
         key: 'completeDependencyDeclaration',
         value: function completeDependencyDeclaration() {
             if (this._declarationInProgress) {
-                this.dependencyDeclarations.push(new Dependency(this._declarationInProgress, logger));
+                this.dependencyDeclarations.push(this._declarationInProgress);
                 this._declarationInProgress = null;
-            }
-        }
-    }, {
-        key: 'completeRename',
-        value: function completeRename() {
-            if (this._renameInProgress) {
-                this.renamedDeclarations.push(this._renameInProgress);
-                this._renameInProgress = null;
             }
         }
 
@@ -257,12 +223,10 @@ module.exports = (function () {
         key: 'complete',
         value: function complete() {
             this.completeDependencyDeclaration();
-            this.completeRename();
 
             return {
                 pathToPackageJson: this._pathToPackageJson,
-                dependencyDeclarations: this.dependencyDeclarations,
-                renamedDeclarations: this.renamedDeclarations
+                dependencyDeclarations: this.dependencyDeclarations
             };
         }
     }]);

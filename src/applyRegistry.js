@@ -5,7 +5,7 @@
 var invariant = require('invariant');
 var Dependency = require('./Dependency');
 
-module.exports = function(registry, graph) {
+module.exports = function(registry, graph, logger) {
     invariant(registry, 'Must provide a registry');
     invariant(graph,'Must provide a graph');
 
