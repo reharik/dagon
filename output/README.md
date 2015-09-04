@@ -31,8 +31,8 @@ Two things to note, are that
  - You do NOT need to maintain all the ../../ horror.  You just pass the name of your dependency into the wrapper.
     This has proven to be worth the effort of development all on it's own.
 
-The basic usage pattern is 
-- Define a bootstrap.js file ( call it whatever you want. I call it bootstrap.js ) 
+The basic usage pattern is
+- Define a bootstrap.js file ( call it whatever you want. I call it bootstrap.js )
 - Your bootstrap.js file should live at the same level as your package.json
 - All of your modules should be in thier own file and all modules should only have one export
 - All of your modules should be wrapped in a function that takes as parameters, the names of it's dependencies.  Which is to say, for each dependency for which you would normally write "var x = require('x')" you just pass the name into the wrapper.  This goes for both external modules ( modules that you have "npm install --save"'d ) and internal modules ( modules that you have defined in your source code )
@@ -43,11 +43,11 @@ Here is your simplest bootstrap file
 var container = require('dagon');
 
 module.exports = new container(x=>
-        // Path to root is really looking for where you package.json lives. 
-        // If you follow the convention and put your bootstrapper next to your 
+        // Path to root is really looking for where you package.json lives.
+        // If you follow the convention and put your bootstrapper next to your
         // package.json then __dirname will suffice
         x.pathToRoot(__dirname)
-        // this will require all modules found in said directory 
+        // this will require all modules found in said directory
         // and it will do so recursively
         .requireDirectoryRecursively('./src')
         // the end
@@ -58,7 +58,7 @@ And here is a bootstrap using all of the features.
 var container = require('dagon');
 
 module.exports = new container(x=>
-        // Path to root is really looking for where you package.json lives. 
+        // Path to root is really looking for where you package.json lives.
         // If you follow the convention and put your bootstrapper next to your
         // package.json then __dirname will suffice
         x.pathToRoot(__dirname)
@@ -72,9 +72,9 @@ module.exports = new container(x=>
         // require the groupname and recieve an array of modules.
         groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
         // here you can specify an alternate name for a dependency.
-        // A "rename" requires a "withThis"
-        .rename('bluebird').withThis('Promise')
-        .rename('lodash').withThis('_')
+        // A "renameTo" requires a "for"
+        .for('bluebird').renameTo('Promise')
+        .for('lodash').renameTo('_')
         // here you can override either a previously declared dependency
         // ( say, through the "requireDirectory" method )
         // or just register a generically named dependecy
@@ -95,15 +95,15 @@ module.exports = new container(x=>
 ```
 
 #### other convienent methods
-``` 
+```
 dagon.getInstanceOf('myDependency')
-``` 
+```
 returns your dependency.  Using getInstanceOf inside of your module is an anti-pattern.  Don't do it. Inject it.  Period.  However, there are times you will find getInstanceOf to be very necessary.  Testing is one case.
 
 ```
 dagon.whatDoIHave(options)
 ```
-returns json result of all your dependencies currently takes the following options 
+returns json result of all your dependencies currently takes the following options
  - showResolved = bool
     - JSON.strigifies your resolved instances
  - showWrappedInstance = bool
@@ -146,14 +146,14 @@ If there is no suffix or there is a _array suffix then you will get an array.
 
 You should not use the _suffix in the 'optionalGroupName' parameter of the "groupAllInDirectory" function.
 
-#### scoping 
-using require you can create a singleton by doing 
+#### scoping
+using require you can create a singleton by doing
 ```
     module.export = {
         'my':value
     }
 ```
-or 
+or
 ```
     module.export = function(){
     bla bla bla
@@ -162,7 +162,7 @@ or
 ```
 What you can't do ( unless I'm wrong ) is configure said singleton.
 
-with dagon you can do 
+with dagon you can do
 ```
     bla bla bla
     .instantiate(x=> x.asFunc().withParameters('myLocalDBConnectionString')
@@ -177,19 +177,19 @@ You could also do this with an internal function.
 ```
 
 #### injection
-When testing a module.  If you hard code the 
-``` 
+When testing a module.  If you hard code the
+```
 require('someModThatCallsOutOfProcess')
 ```
-when it comes time to unit test your module, you are doing an integration test. Like it or not.  There is no easy way, (again, unless I'm wrong ) to sub in a mock for this require.  What you end up doing is passing around your out of process modules in your method calls.  It get's very ugly very fast. 
+when it comes time to unit test your module, you are doing an integration test. Like it or not.  There is no easy way, (again, unless I'm wrong ) to sub in a mock for this require.  What you end up doing is passing around your out of process modules in your method calls.  It get's very ugly very fast.
 
-With dagon, you can address this in one or both of two ways.  
+With dagon, you can address this in one or both of two ways.
 - you can use a testBootstrap which subs your implementations right there.
 ```
     .for('logger').require("/unitTests/mocks/logger")
 ```
 
-or you can, in your unit test do 
+or you can, in your unit test do
 ```
 before(function(){
         container = require('../testBootstrap');
@@ -202,7 +202,7 @@ now when your mut ( module under test ) injects 'gesConnection' expecting a nift
 
 One caveat here is that the injection rebuilds the entire container.  This means you need to be careful to do all your injections before you get the target instances.  This is why
 ```
-container.inject( <object> || [<object>]) 
+container.inject( <object> || [<object>])
 ```
 accepts a dependency object or an array of dependency objects.  Once you inject a dependency, all other dependencies that might require the target dependency, no matter at what level, nned to be rebuilt.
 
@@ -211,9 +211,14 @@ accepts a dependency object or an array of dependency objects.  Once you inject 
     - use cases for each feature
 - make grouping return a name:value hash instead of or perhaps as a different method than the array
 
-### Virsion 0.0.12
+### Virsion 0.1.0
 
 ##### revisions
+revision 0.1.0
+- added some jsdoc that got eaten by babel. oh well
+- BREAKING CHANGE TO RENAME
+- refactored some of the explicit declaration stuff. very sorry. Now you have one "for" for each declaration including rename but you can chain them all together
+
 revision 0.0.12
 - added getArrayOfGroup method
 - added getHashOfGroup method
