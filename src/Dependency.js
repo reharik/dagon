@@ -135,12 +135,12 @@ module.exports = class Dependency{
     }
 
     handleResolvedInstancePassedIn() {
-        logger.trace('Dependency | handleResolvedInstancePassedIn: reoslved instance passed so wrapping resolved instance in function');
+        logger.trace('Dependency | handleResolvedInstancePassedIn: reoslved instance passed '+this.name+' so wrapping resolved instance in function');
         this.wrappedInstance = function(){return this.resolvedInstance;};
     }
 
     handleInternalDependency() {
-        logger.trace('Dependency | handleInternalDependency: internal module so requiring item using path. no need to wrap in function ');
+        logger.trace('Dependency | handleInternalDependency: internal module '+this.name+' so requiring item using path '+this.path+'. no need to wrap in function ');
         var resolvedPath = _path.join(appRoot.path, this.path);
         //DANGER DANGER
         this.wrappedInstance = require(resolvedPath);
@@ -149,7 +149,7 @@ module.exports = class Dependency{
     }
 
     handleExternalModule() {
-        logger.trace('Dependency | handleExternalModule: external module so requiring item using path and wrapping in function ');
+        logger.trace('Dependency | handleExternalModule: external module '+this.name+' so requiring item using path '+this.path+' and wrapping in function ');
         this.wrappedInstance = function () {
             //DANGER DANGER
             return require(this.path);

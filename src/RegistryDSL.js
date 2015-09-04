@@ -145,7 +145,7 @@ module.exports = class RegistryDSL{
 
     completeDependencyDeclaration() {
         if(this._declarationInProgress) {
-            this.dependencyDeclarations.push(new Dependency(this._declarationInProgress,logger));
+            this.dependencyDeclarations.push(this._declarationInProgress);
             this._declarationInProgress = null;
         }
     }

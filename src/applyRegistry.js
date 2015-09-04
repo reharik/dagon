@@ -12,9 +12,21 @@ module.exports = function(registry, graph) {
         // this will get more complexe as features are added
         graph.addItem(item);
     };
-    registry.dependencyDeclarations.forEach(x=> resolveItem(graph,x));
+    registry.dependencyDeclarations.forEach(x=> {
+
+        var target = graph.findRequiredDependency(x.name);
+        if(target) {
+            target.name = x.name ? x.name : target.name;
+            target.path = x.path? x.path: target.path;
+            target.instantiate = x.instantiate ? x.instantiate : target.instantiate;
+        }else{
+            x.path = x.path ? x.path : x.name;
+            resolveItem(graph,new Dependency(x,logger));
+        }
+    });
+
     registry.renamedDeclarations.forEach(x=> {
-        var target = graph.findRequiredDependency(x.oldName,x.oldName);
+        var target = graph.findRequiredDependency(x.oldName);
         if(target) { target.name = x.name}
     });
 };
