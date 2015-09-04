@@ -14,9 +14,7 @@ module.exports = class RegistryDSL{
     constructor(){
         this._pathToPackageJson;
         this.dependencyDeclarations = [];
-        this.renamedDeclarations = [];
         this._declarationInProgress;
-        this._renameInProgress;
     }
 
     /**
@@ -90,9 +88,8 @@ module.exports = class RegistryDSL{
      */
     for(param){
         invariant(param,'You must provide a valid dependency parameter');
-        logger.trace('RegistryDSL | for: closing in process declarations and renames');
+        logger.trace('RegistryDSL | for: closing in process declarations');
         this.completeDependencyDeclaration();
-        this.completeRename();
         logger.trace('RegistryDSL | for: beginning new dependency declaration ');
         this._declarationInProgress = this.dependencyDeclarations.find(x=>x.name == param) || { name: param };
         return this;
@@ -105,12 +102,10 @@ module.exports = class RegistryDSL{
     require(path){
         invariant(path,'You must provide a valid replacement module');
         invariant(this._declarationInProgress,'You must call "for" before calling "require"');
-        logger.trace('RegistryDSL | require: completing dependency declaration');
         this._declarationInProgress.path=path;
         if(path.startsWith('.') || path.includes('/')){
             this._declarationInProgress.internal=true;
         }
-        this.completeDependencyDeclaration();
         return this;
     }
 
@@ -119,27 +114,11 @@ module.exports = class RegistryDSL{
      * @param name - the original name of the dependency you are renaming
      * @returns {this}
      */
-    rename(name){
-        invariant(name, 'You must provide the name of the your dependency');
-        logger.trace('RegistryDSL | rename: closing in process declarations and renames');
-        this.completeDependencyDeclaration();
-        this.completeRename();
-        logger.trace('RegistryDSL | rename: starting new rename');
-        this._renameInProgress = {oldName: name};
-        return this;
-    }
-
-    /**
-     * This completes the open declaration.
-     * @param name - the new name of the dependency you are renaming
-     * @returns {this}
-     */
-    withThis(name){
-        invariant(name, 'You must provide the new name');
-        invariant(this._renameInProgress,'You must call "replace" before calling "withThis"');
-        logger.trace('RegistryDSL | withThis: completing rename');
-        this._renameInProgress.name = name;
-        this.completeRename();
+    renameTo(name){
+        invariant(name, 'You must provide the NEW name for your dependency');
+        invariant(this._declarationInProgress,'You must call "for" before calling "require"');
+        logger.trace('RegistryDSL | rename: renaming');
+        this._declarationInProgress.newName = name;
         return this;
     }
 
@@ -147,13 +126,6 @@ module.exports = class RegistryDSL{
         if(this._declarationInProgress) {
             this.dependencyDeclarations.push(this._declarationInProgress);
             this._declarationInProgress = null;
-        }
-    }
-
-    completeRename() {
-        if(this._renameInProgress) {
-            this.renamedDeclarations.push(this._renameInProgress);
-            this._renameInProgress = null;
         }
     }
 
@@ -203,12 +175,10 @@ module.exports = class RegistryDSL{
 
     complete(){
         this.completeDependencyDeclaration();
-        this.completeRename();
 
         return {
             pathToPackageJson:this._pathToPackageJson,
-            dependencyDeclarations:this.dependencyDeclarations,
-            renamedDeclarations:this.renamedDeclarations
+            dependencyDeclarations:this.dependencyDeclarations
         };
     }
 };
