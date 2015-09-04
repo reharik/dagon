@@ -19,6 +19,10 @@ module.exports = class RegistryDSL{
         this._renameInProgress;
     }
 
+    /**
+     * @param path - the path to your package.json
+     * @returns {this}
+     */
     pathToRoot(_path){
         logger.trace('RegistryDSL | pathToRoot: setting path to root: '+_path);
         appRoot.path = _path;
@@ -31,6 +35,10 @@ module.exports = class RegistryDSL{
 
     // all initial entry points complete in-progress operations.  This way we can chain methods for
     // operations, with out explicitly knowing if it's a terminal method.
+    /**
+     * @param dir - the directory with modules that you want to register
+     * @returns {this}
+     */
     requireDirectory(dir) {
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
@@ -43,6 +51,10 @@ module.exports = class RegistryDSL{
         return this;
     }
 
+    /**
+     * @param dir - the directory with modules that you want to register recursively
+     * @returns {this}
+     */
     requireDirectoryRecursively(dir){
         invariant(dir,'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectoryRecursively: closing in process declarations and renames');
@@ -53,6 +65,11 @@ module.exports = class RegistryDSL{
         return this;
     }
 
+    /**
+     * @param dir - the directory with modules that you want to group together
+     * @param groupName the name to group all the moduels under
+     * @returns {this}
+     */
     groupAllInDirectory(dir, _groupName){
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
@@ -66,7 +83,11 @@ module.exports = class RegistryDSL{
         return this;
     }
 
-
+    /**
+     * This opens a new dependency declaration.
+     * @param name - the name of the dependency you are registering
+     * @returns {this}
+     */
     for(param){
         invariant(param,'You must provide a valid dependency parameter');
         logger.trace('RegistryDSL | for: closing in process declarations and renames');
@@ -76,7 +97,11 @@ module.exports = class RegistryDSL{
         this._declarationInProgress = this.dependencyDeclarations.find(x=>x.name == param) || { name: param };
         return this;
     }
-
+    /**
+     * This completes the open declaration.
+     * @param path - the path of the dependency you are registering
+     * @returns {this}
+     */
     require(path){
         invariant(path,'You must provide a valid replacement module');
         invariant(this._declarationInProgress,'You must call "for" before calling "require"');
@@ -89,6 +114,11 @@ module.exports = class RegistryDSL{
         return this;
     }
 
+    /**
+     * This opens a new dependency declaration.
+     * @param name - the original name of the dependency you are renaming
+     * @returns {this}
+     */
     rename(name){
         invariant(name, 'You must provide the name of the your dependency');
         logger.trace('RegistryDSL | rename: closing in process declarations and renames');
@@ -99,6 +129,11 @@ module.exports = class RegistryDSL{
         return this;
     }
 
+    /**
+     * This completes the open declaration.
+     * @param name - the new name of the dependency you are renaming
+     * @returns {this}
+     */
     withThis(name){
         invariant(name, 'You must provide the new name');
         invariant(this._renameInProgress,'You must call "replace" before calling "withThis"');
@@ -122,13 +157,10 @@ module.exports = class RegistryDSL{
         }
     }
 
-    //callInitMethod(method, args){
-    //    invariant(method, 'You must provide an init method to call');
-    //    invariant(this._declarationInProgress,'You must call "for" before calling "callInitMethod"');
-    //    this._declarationInProgress.initMethodAndArgs = {method:method, args:args};
-    //    return this;
-    //}
-
+    /**
+     * @param function - create a function to define how you would like this object instantiated
+     * @returns {this}
+     */
     instantiate(func){
         invariant(func, 'You must provide func for instanciation');
         invariant(this._declarationInProgress,'You must call "for" before calling "instantiate"');

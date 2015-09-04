@@ -54,10 +54,20 @@ module.exports =  class Container{
         return registry;
     }
 
+    /**
+     *
+     * @param type - the type of dependency you want to get
+     * @returns {type}
+     */
     getInstanceOf(_type) {
         return this.dependencyGraph.findDependency(_type)
     }
 
+    /**
+     *
+     * @param groupName - the groupName of dependencies you want to get
+     * @returns {type}
+     */
     getArrayOfGroup(_groupName){
         return this.dependencyGraph.findGroupedDependencies(_groupName);
     }
@@ -69,6 +79,11 @@ module.exports =  class Container{
         return hash;
     }
 
+    /**
+     *
+     * @param type - the type of dependency you want to get
+     * @returns {type}
+     */
     whatDoIHave(_options) {
         var options = _options || {};
         return this.dependencyGraph.mapItems(x=>{

@@ -27,6 +27,11 @@ module.exports = (function () {
         this._renameInProgress;
     }
 
+    /**
+     * @param path - the path to your package.json
+     * @returns {this}
+     */
+
     _createClass(RegistryDSL, [{
         key: 'pathToRoot',
         value: function pathToRoot(_path) {
@@ -41,6 +46,10 @@ module.exports = (function () {
 
         // all initial entry points complete in-progress operations.  This way we can chain methods for
         // operations, with out explicitly knowing if it's a terminal method.
+        /**
+         * @param dir - the directory with modules that you want to register
+         * @returns {this}
+         */
     }, {
         key: 'requireDirectory',
         value: function requireDirectory(dir) {
@@ -59,6 +68,11 @@ module.exports = (function () {
             });
             return this;
         }
+
+        /**
+         * @param dir - the directory with modules that you want to register recursively
+         * @returns {this}
+         */
     }, {
         key: 'requireDirectoryRecursively',
         value: function requireDirectoryRecursively(dir) {
@@ -70,14 +84,20 @@ module.exports = (function () {
             this.recurseDirectories(absoluteDir);
             return this;
         }
+
+        /**
+         * @param dir - the directory with modules that you want to group together
+         * @param groupName the name to group all the moduels under
+         * @returns {this}
+         */
     }, {
         key: 'groupAllInDirectory',
-        value: function groupAllInDirectory(dir, groupName) {
+        value: function groupAllInDirectory(dir, _groupName) {
             var _this2 = this;
 
             invariant(dir, 'You must provide a valid directory');
-            invariant(groupName, 'You must provide a valid Group Name');
             logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
+            var groupName = _groupName || dir.split(path.sep).pop();
             this.completeDependencyDeclaration();
             this.completeRename();
             var absoluteDir = path.join(appRoot.path, dir);
@@ -89,6 +109,12 @@ module.exports = (function () {
             });
             return this;
         }
+
+        /**
+         * This opens a new dependency declaration.
+         * @param name - the name of the dependency you are registering
+         * @returns {this}
+         */
     }, {
         key: 'for',
         value: function _for(param) {
@@ -102,6 +128,12 @@ module.exports = (function () {
             }) || { name: param };
             return this;
         }
+
+        /**
+         * This completes the open declaration.
+         * @param path - the path of the dependency you are registering
+         * @returns {this}
+         */
     }, {
         key: 'require',
         value: function require(path) {
@@ -115,6 +147,12 @@ module.exports = (function () {
             this.completeDependencyDeclaration();
             return this;
         }
+
+        /**
+         * This opens a new dependency declaration.
+         * @param name - the original name of the dependency you are renaming
+         * @returns {this}
+         */
     }, {
         key: 'rename',
         value: function rename(name) {
@@ -126,6 +164,12 @@ module.exports = (function () {
             this._renameInProgress = { oldName: name };
             return this;
         }
+
+        /**
+         * This completes the open declaration.
+         * @param name - the new name of the dependency you are renaming
+         * @returns {this}
+         */
     }, {
         key: 'withThis',
         value: function withThis(name) {
@@ -153,13 +197,10 @@ module.exports = (function () {
             }
         }
 
-        //callInitMethod(method, args){
-        //    invariant(method, 'You must provide an init method to call');
-        //    invariant(this._declarationInProgress,'You must call "for" before calling "callInitMethod"');
-        //    this._declarationInProgress.initMethodAndArgs = {method:method, args:args};
-        //    return this;
-        //}
-
+        /**
+         * @param function - create a function to define how you would like this object instantiated
+         * @returns {this}
+         */
     }, {
         key: 'instantiate',
         value: function instantiate(func) {

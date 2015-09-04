@@ -98,7 +98,7 @@ module.exports = (function () {
         }
     }, {
         key: 'getCollectionOfDependencies',
-        value: function getCollectionOfDependencies(graph) {
+        value: function getCollectionOfDependencies(graph, groupAsArray) {
             var _this = this;
 
             logger.trace('Dependency | getCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
@@ -107,7 +107,7 @@ module.exports = (function () {
             return args.map(function (d) {
                 var item = graph.findRequiredDependency(d);
                 if (!item) {
-                    item = graph.findGroupedDependencies(d);
+                    item = graph.findGroupedDependencies(d, groupAsArray);
                 }
                 if (!item) {
                     logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: ' + d);
@@ -116,6 +116,7 @@ module.exports = (function () {
                     }));
                     invariant(false, 'Module ' + _this.name + ' has a dependency that can not be resolved: ' + d);
                 }
+                // wouldn't I need to flatten this if there is a grouped dependency?
                 return item;
             });
         }
@@ -148,7 +149,7 @@ module.exports = (function () {
         key: 'getChildren',
         value: function getChildren(graph) {
             logger.debug('Dependency | getChildren: flattening out graph of dependencies');
-            this._children = this.flatten(this.getCollectionOfDependencies(graph));
+            this._children = this.flatten(this.getCollectionOfDependencies(graph, true));
             logger.debug('Dependency | getChildren: has ' + this._children.length + ' children');
             return this._children.length > 0;
         }

@@ -64,11 +64,44 @@ module.exports = (function () {
             logger.trace('Container | buildRegistry: registry: ' + JSON.stringify(registry));
             return registry;
         }
+
+        /**
+         *
+         * @param type - the type of dependency you want to get
+         * @returns {type}
+         */
     }, {
         key: 'getInstanceOf',
         value: function getInstanceOf(_type) {
             return this.dependencyGraph.findDependency(_type);
         }
+
+        /**
+         *
+         * @param groupName - the groupName of dependencies you want to get
+         * @returns {type}
+         */
+    }, {
+        key: 'getArrayOfGroup',
+        value: function getArrayOfGroup(_groupName) {
+            return this.dependencyGraph.findGroupedDependencies(_groupName);
+        }
+    }, {
+        key: 'getHashOfGroup',
+        value: function getHashOfGroup(_groupName) {
+            var group = this.dependencyGraph.findGroupedDependencies(_groupName, true);
+            var hash = {};
+            group.forEach(function (x) {
+                return hash[x.name] = x;
+            });
+            return hash;
+        }
+
+        /**
+         *
+         * @param type - the type of dependency you want to get
+         * @returns {type}
+         */
     }, {
         key: 'whatDoIHave',
         value: function whatDoIHave(_options) {

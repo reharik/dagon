@@ -86,12 +86,24 @@ module.exports = (function () {
                 return item;
             }
         }
+
+        //TODO needs tests
     }, {
         key: 'findGroupedDependencies',
-        value: function findGroupedDependencies(groupName) {
+        value: function findGroupedDependencies(groupName, groupAsArray) {
             logger.trace('Graph | findGroupedDependencies: looping through items');
+            if (!groupName.contains('_hash') || groupAsArray) {
+                return buildGroupAsArray(groupName);
+            }
+            return buildGroupAsHash(groupName);
+        }
 
-            var item = [];
+        //TODO needs tests
+    }, {
+        key: 'buildGroupAsHash',
+        value: function buildGroupAsHash(groupName) {
+            groupName = groupName.replace('_hash', '');
+            var item = {};
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
@@ -104,7 +116,7 @@ module.exports = (function () {
                     logger.trace('Graph | findGroupedDependencies: item groupName: ' + i.groupName);
                     if (i.groupName === groupName) {
                         logger.trace('Graph | findGroupedDependencies: found item in group: ' + i.name);
-                        item.push(i);
+                        item[i.name] = i;
                     }
                 }
             } catch (err) {
@@ -118,6 +130,43 @@ module.exports = (function () {
                 } finally {
                     if (_didIteratorError2) {
                         throw _iteratorError2;
+                    }
+                }
+            }
+
+            return item;
+        }
+    }, {
+        key: 'buildGroupAsArray',
+        value: function buildGroupAsArray(groupName) {
+            groupName = groupName.replace('_array', '');
+            var item = [];
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = this._items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var i = _step3.value;
+
+                    logger.trace('Graph | findGroupedDependencies: looking for groupName: ' + groupName);
+                    logger.trace('Graph | findGroupedDependencies: item groupName: ' + i.groupName);
+                    if (i.groupName === groupName) {
+                        logger.trace('Graph | findGroupedDependencies: found item in group: ' + i.name);
+                        item.push(i);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+                        _iterator3['return']();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
                     }
                 }
             }
