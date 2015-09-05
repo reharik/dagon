@@ -211,9 +211,11 @@ accepts a dependency object or an array of dependency objects.  Once you inject 
     - use cases for each feature
 - make grouping return a name:value hash instead of or perhaps as a different method than the array
 
-### Virsion 0.1.0
+### Virsion 0.1.1
 
 ##### revisions
+revision 0.1.1
+- couple quick bug fixes
 revision 0.1.0
 - added some jsdoc that got eaten by babel. oh well
 - BREAKING CHANGE TO RENAME

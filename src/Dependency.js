@@ -72,7 +72,7 @@ module.exports = class Dependency{
         if(this.instantiate.dependencyType == 'func'){
             logger.debug('Dependency | instantiateResolvedInstance: item is func so "call" or just call()');
             if(this.instantiate.parameters){
-                resolved = resolved.call(resolved,this.instantiate.parameters);
+                resolved = resolved.apply(resolved,this.instantiate.parameters);
             }else{
                 resolved = resolved();
             }
