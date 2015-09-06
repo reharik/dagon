@@ -26,7 +26,7 @@ module.exports = class Dependency{
         this.init();
     }
 
-    function init() {
+    init() {
         if (this.resolvedInstance) {
             this.handleResolvedInstancePassedIn();
         }

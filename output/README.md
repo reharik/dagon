@@ -211,9 +211,11 @@ accepts a dependency object or an array of dependency objects.  Once you inject 
     - use cases for each feature
 - make grouping return a name:value hash instead of or perhaps as a different method than the array
 
-### Virsion 0.1.1
+### Virsion 0.1.2
 
 ##### revisions
+revision 0.1.2
+- fixed a bug where overridding a dependency with a local module ( say a mock ) does not work
 revision 0.1.1
 - couple quick bug fixes
 revision 0.1.0

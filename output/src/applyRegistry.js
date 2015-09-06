@@ -23,6 +23,7 @@ module.exports = function (registry, graph, logger) {
             target.path = x.path ? x.path : target.path;
             target.internal = x.internal ? x.internal : target.internal;
             target.instantiate = x.instantiate ? x.instantiate : target.instantiate;
+            target.init();
         } else {
             x.path = x.path ? x.path : x.name;
             resolveItem(graph, new Dependency(x, logger));

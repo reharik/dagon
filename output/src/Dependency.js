@@ -30,17 +30,21 @@ module.exports = (function () {
         invariant(this.name, 'Dependency must have a valid name');
         invariant(this.path || this.resolvedInstance, 'Dependency ' + this.name + ' must have a valid path: ' + this.path);
         logger.trace('Dependency | constructor: Intialized with following properties: ' + JSON.stringify(this));
-
-        if (this.resolvedInstance) {
-            this.handleResolvedInstancePassedIn();
-        } else if (this.internal) {
-            this.handleInternalDependency();
-        } else {
-            this.handleExternalModule();
-        }
+        this.init();
     }
 
     _createClass(Dependency, [{
+        key: 'init',
+        value: function init() {
+            if (this.resolvedInstance) {
+                this.handleResolvedInstancePassedIn();
+            } else if (this.internal) {
+                this.handleInternalDependency();
+            } else {
+                this.handleExternalModule();
+            }
+        }
+    }, {
         key: 'resolveInstance',
         value: function resolveInstance(graph) {
             logger.trace('Dependency | resolveInstance: resolving instance or returning if already resolved');
