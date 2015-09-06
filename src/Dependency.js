@@ -23,8 +23,11 @@ module.exports = class Dependency{
         invariant(this.path || this.resolvedInstance,
             'Dependency ' + this.name + ' must have a valid path: '+this.path);
         logger.trace('Dependency | constructor: Intialized with following properties: '+JSON.stringify(this));
+        this.init();
+    }
 
-        if(this.resolvedInstance){
+    function init() {
+        if (this.resolvedInstance) {
             this.handleResolvedInstancePassedIn();
         }
         else if (this.internal) {

@@ -1,6 +1,6 @@
 {
   "name": "dagon",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "an IOC container for javascript",
   "main": "index.js",
   "homepage": "https://github.com/reharik/dagon",
