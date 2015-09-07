@@ -24,7 +24,7 @@ gulp.task("copy-tests",["clean"], function () {
 });
 
 gulp.task("copy-root",["clean"], function () {
-    return gulp.src(["package.json", "index.js", "testBootstrap.js", "babelhook.js", 'README.md'],{dot:true})
+    return gulp.src(["package.json", "testBootstrap.js", "babelhook.js", 'README.md'],{dot:true})
         .pipe(gulp.dest("output"));
 });
 

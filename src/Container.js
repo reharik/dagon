@@ -8,26 +8,28 @@ var applyRegistry = require('./applyRegistry');
 var Dependency = require('./Dependency');
 var GraphResolution = require('./GraphResolver');
 var invariant = require('invariant');
-var logger = require('./yowlWrapper');
 var JSON = require('JSON');
+var logger = require('./yowlWrapper');
 
 module.exports =  class Container{
-    constructor(registryFuncArray){
+    constructor(registryFuncArray) {
         //TODO CLEAN UP!!
-        if(!_.isArray(registryFuncArray)){registryFuncArray = [registryFuncArray]}
+        if (!_.isArray(registryFuncArray)) {
+            registryFuncArray = [registryFuncArray]
+        }
 
         invariant(registryFuncArray
             && registryFuncArray[0]
             && _.isFunction(registryFuncArray[0]), 'Container requires at least one registry function');
 
         this.registryFunkArray = registryFuncArray;
-        this.registry = this.buildRegistry();
+        this.registry          = this.buildRegistry();
 
         logger.trace('Container | constructor : instantiate new graph');
-        this.dependencyGraph = new Graph(logger);
+        this.dependencyGraph   = new Graph(logger);
 
         logger.trace('Container | constructor : get package.json');
-        var packageJson =  require(this.registry.pathToPackageJson);
+        var packageJson        = require(this.registry.pathToPackageJson);
 
         logger.trace('Container | constructor : build new graph');
         this.dependencyGraph.buildGraph(packageJson);
@@ -40,25 +42,27 @@ module.exports =  class Container{
     }
 
     //TODO NEEDS TESTS!
-    buildRegistry(){
+    buildRegistry() {
         logger.debug('Container | buildRegistry: building registry');
-        var registry= {pathToRoot:'',
-            dependencyDeclarations:[],
-            renamedDeclarations:[]};
-        this.registryFunkArray.forEach(x=>{
-            var reg = x(new RegistryDSL(logger));
-            registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
+        var registry = {
+            pathToRoot            : '',
+            dependencyDeclarations: [],
+            renamedDeclarations   : []
+        };
+        this.registryFunkArray.forEach(x=> {
+            var reg                         = x(new RegistryDSL(logger));
+            registry.pathToPackageJson      = registry.pathToPackageJson || reg.pathToPackageJson;
 
-            logger.trace('Container | buildRegistry: pathToPackageJson: '+registry.pathToPackageJson);
+            logger.trace('Container | buildRegistry: pathToPackageJson: ' + registry.pathToPackageJson);
             registry.dependencyDeclarations = registry.dependencyDeclarations.concat(reg.dependencyDeclarations);
 
-            logger.trace('Container | buildRegistry: dependencyDeclarations: '+ JSON.stringify(registry.pathToPackageJson));
-            registry.renamedDeclarations = registry.renamedDeclarations.concat(reg.renamedDeclarations);
+            logger.trace('Container | buildRegistry: dependencyDeclarations: ' + JSON.stringify(registry.pathToPackageJson));
+            registry.renamedDeclarations    = registry.renamedDeclarations.concat(reg.renamedDeclarations);
 
-            logger.trace('Container | buildRegistry: renamedDeclarations: '+ JSON.stringify(registry.renamedDeclarations));
+            logger.trace('Container | buildRegistry: renamedDeclarations: ' + JSON.stringify(registry.renamedDeclarations));
         });
         invariant(registry.pathToPackageJson, 'You must provide the path to root when building a graph');
-        logger.trace('Container | buildRegistry: registry: '+ JSON.stringify(registry));
+        logger.trace('Container | buildRegistry: registry: ' + JSON.stringify(registry));
         return registry;
     }
 

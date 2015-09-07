@@ -14,8 +14,8 @@ var applyRegistry = require('./applyRegistry');
 var Dependency = require('./Dependency');
 var GraphResolution = require('./GraphResolver');
 var invariant = require('invariant');
-var logger = require('./yowlWrapper');
 var JSON = require('JSON');
+var logger = require('./yowlWrapper');
 
 module.exports = (function () {
     function Container(registryFuncArray) {
@@ -53,9 +53,11 @@ module.exports = (function () {
         key: 'buildRegistry',
         value: function buildRegistry() {
             logger.debug('Container | buildRegistry: building registry');
-            var registry = { pathToRoot: '',
+            var registry = {
+                pathToRoot: '',
                 dependencyDeclarations: [],
-                renamedDeclarations: [] };
+                renamedDeclarations: []
+            };
             this.registryFunkArray.forEach(function (x) {
                 var reg = x(new RegistryDSL(logger));
                 registry.pathToPackageJson = registry.pathToPackageJson || reg.pathToPackageJson;
