@@ -6,8 +6,8 @@ var demand = require('must');
 var Container = require('../src/Container');
 var path = require('path');
 var RegistryDSL = require('../src/RegistryDSL');
-var Graph = require('../src/Graph');
-var logger = require('../src/yowlWrapper');
+var Graph = require('../src/groupDependencies');
+var logger = require('../src/logwrapper');
 
 describe('Dependency Tester', function() {
     var Mut;
@@ -216,7 +216,7 @@ describe('Dependency Tester', function() {
 
         context('when calling getCollectionOfDependencies on a dependency that does not resolve', ()=>{
             it('should throw proper error', ()=> {
-                var Graph = require('../src/Graph');
+                var Graph = require('../src/groupDependencies');
                 var graph = new Graph();
                 graph.buildGraph(require(path.join(path.resolve('./') + '/package.json')));
                 //new GraphResolution().recurse(graph);

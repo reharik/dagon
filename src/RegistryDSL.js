@@ -8,7 +8,7 @@ var path = require('path');
 var fs = require('fs');
 var appRoot = require('./appRoot');
 var InstantiateDSL = require('./InstantiateDSL');
-var logger = require('./yowlWrapper');
+var logger = require('./logwrapper');
 
 module.exports = class RegistryDSL{
     constructor(){
@@ -156,10 +156,10 @@ module.exports = class RegistryDSL{
         logger.trace('RegistryDSL | processFile: creating dependency object');
         if(!file.endsWith('.js')){return;}
         file = file.replace('.js','');
-        var path = dir.replace(appRoot.path,'')+'/'+file;
+        var path = dir + '/'+file;
         var name = this.normalizeName(file);
         logger.trace('RegistryDSL | processFile: properties -' + name +' -'+path+' -'+groupName);
-        return new Dependency({name: name, path: path, internal: true, groupName:groupName||''},logger);
+        return {name: name, path: path, internal: true, groupName:groupName||''};
     }
 
     // not great that this is here and graph

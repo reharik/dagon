@@ -7,14 +7,14 @@ var Container = require('../src/Container');
 var path = require('path');
 var logger = require('../src/logger');
 var RegistryDSL = require('../src/RegistryDSL');
-var GraphResolution = require('../src/GraphResolver');
+var GraphResolution = require('../src/graphResolver');
 
 describe('Graph Tester', function() {
     var Mut;
     var mut;
 
     before(function () {
-        Mut = require('../src/Graph');
+        Mut = require('../src/groupDependencies');
     });
 
     beforeEach(function () {

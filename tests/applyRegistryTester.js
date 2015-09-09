@@ -2,16 +2,16 @@
  * Created by rharik on 7/2/15.
  */
 var demand = require('must');
-var Graph = require('../src/Graph');
+var Graph = require('../src/groupDependencies');
 var RegistryDSL = require('../src/RegistryDSL');
 var path = require('path');
-var logger = require('../src/yowlWrapper');
+var logger = require('../src/logwrapper');
 
 describe('ApplyRegistry Tester', function() {
     var mut;
 
     beforeEach(function(){
-        mut = require('../src/applyRegistry');
+        mut = require('../src/buildListofDependencies');
     });
 
     describe('#testing apply', function() {

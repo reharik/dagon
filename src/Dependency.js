@@ -7,7 +7,7 @@ var fnArgs = require('fn-args');
 var _path = require('path');
 var appRoot = require('./appRoot');
 var JSON = require('JSON');
-var logger = require('../src/yowlWrapper');
+var logger = require('logwrapper');
 var _ = require('lodash');
 
 module.exports = class Dependency{
@@ -91,24 +91,6 @@ module.exports = class Dependency{
         return resolved;
     }
 
-    getCollectionOfDependencies(graph, groupAsArray) {
-        logger.trace('Dependency | getCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
-        var args = fnArgs(this.wrappedInstance);
-        logger.trace('Dependency | getCollectionOfDependencies: args: ' + args);
-        return args.map(d=> {
-            var item = graph.findRequiredDependency(d);
-            if (!item) {
-                item = graph.findGroupedDependencies(d,groupAsArray);
-            }
-            if (!item) {
-                logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: ' + d);
-                logger.debug('Dependency | getCollectionOfDependencies: ' + graph._items.map(x=> x.name));
-                invariant(false, 'Module ' + this.name + ' has a dependency that can not be resolved: ' + d);
-            }
-            // wouldn't I need to flatten this if there is a grouped dependency?
-            return item;
-        });
-    }
 
     getResolvedInstanceForCollectionOfDependencies(dependencies){
         logger.trace('Dependency | getResolvedInstanceForCollectionOfDependencies: getting resolved instances recursively');
@@ -135,28 +117,6 @@ module.exports = class Dependency{
 
     children(){
         return this._children;
-    }
-
-    handleResolvedInstancePassedIn() {
-        logger.trace('Dependency | handleResolvedInstancePassedIn: reoslved instance passed '+this.name+' so wrapping resolved instance in function');
-        this.wrappedInstance = function(){return this.resolvedInstance;};
-    }
-
-    handleInternalDependency() {
-        logger.trace('Dependency | handleInternalDependency: internal module '+this.name+' so requiring item using path '+this.path+'. no need to wrap in function ');
-        var resolvedPath = _path.join(appRoot.path, this.path);
-        //DANGER DANGER
-        this.wrappedInstance = require(resolvedPath);
-        invariant(_.isFunction(this.wrappedInstance),
-        'Dependency | handleInternalDependency: dagon is unable to require the following dependency: '+this.name+' at this path: '+ resolvedPath)
-    }
-
-    handleExternalModule() {
-        logger.trace('Dependency | handleExternalModule: external module '+this.name+' so requiring item using path '+this.path+' and wrapping in function ');
-        this.wrappedInstance = function () {
-            //DANGER DANGER
-            return require(this.path);
-        };
     }
 
 };

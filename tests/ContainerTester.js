@@ -48,7 +48,7 @@ describe('Container Test', function() {
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').require('/tests/TestModules/loggerMock')
                         .complete());
-                var logger = mut.dependencyGraph._items.find(x=>x.name == 'logger');
+                var logger = mut.dependencyGraph.find(x=>x.name == 'logger');
                 logger.path.must.equal('/tests/TestModules/loggerMock');
             })
         });
