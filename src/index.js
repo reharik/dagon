@@ -2,7 +2,7 @@
  * Created by rharik on 7/13/15.
  */
 
-var _logger = require('./logwrapper');
+var _logger = require('./logger');
 var extend = require('extend');
 var moment = require('moment');
 module.exports = function(_options){

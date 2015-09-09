@@ -5,7 +5,7 @@
 module.exports = function(logger) {
 
     return class TestClassBase {
-        coonstructor(someProp) {
+        constructor(someProp) {
             this._someProp = someProp;
             this._baseDateTime = "base " + new Date().now();
             logger.debug('someProp: '+this._someProp);

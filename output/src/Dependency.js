@@ -51,7 +51,7 @@ module.exports = (function () {
             if (this.resolvedInstance) {
                 return;
             }
-            logger.trace('Dependency | getCollectionOfDependencies: calling getResolvedInstanceForCollectionOfDependencies');
+            logger.trace('Dependency | getFlatCollectionOfDependencies: calling getResolvedInstanceForCollectionOfDependencies');
             var itemsDependencies = this.getResolvedInstanceForCollectionOfDependencies(this.getCollectionOfDependencies(graph));
             this.resolvedInstance = this._instantiate(itemsDependencies);
 
@@ -105,17 +105,17 @@ module.exports = (function () {
         value: function getCollectionOfDependencies(graph, groupAsArray) {
             var _this = this;
 
-            logger.trace('Dependency | getCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
+            logger.trace('Dependency | getFlatCollectionOfDependencies: getting args from wrapper function and finding instances in graph');
             var args = fnArgs(this.wrappedInstance);
-            logger.trace('Dependency | getCollectionOfDependencies: args: ' + args);
+            logger.trace('Dependency | getFlatCollectionOfDependencies: args: ' + args);
             return args.map(function (d) {
                 var item = graph.findRequiredDependency(d);
                 if (!item) {
                     item = graph.findGroupedDependencies(d, groupAsArray);
                 }
                 if (!item) {
-                    logger.debug('Dependency | getCollectionOfDependencies: can not find dependency: ' + d);
-                    logger.debug('Dependency | getCollectionOfDependencies: ' + graph._items.map(function (x) {
+                    logger.debug('Dependency | getFlatCollectionOfDependencies: can not find dependency: ' + d);
+                    logger.debug('Dependency | getFlatCollectionOfDependencies: ' + graph._items.map(function (x) {
                         return x.name;
                     }));
                     invariant(false, 'Module ' + _this.name + ' has a dependency that can not be resolved: ' + d);

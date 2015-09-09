@@ -41,7 +41,7 @@ module.exports = class Dependency{
     resolveInstance(graph){
         logger.trace('Dependency | resolveInstance: resolving instance or returning if already resolved');
         if(this.resolvedInstance){return;}
-        logger.trace('Dependency | getCollectionOfDependencies: calling getResolvedInstanceForCollectionOfDependencies');
+        logger.trace('Dependency | getFlatCollectionOfDependencies: calling getResolvedInstanceForCollectionOfDependencies');
         var itemsDependencies = this.getResolvedInstanceForCollectionOfDependencies(this.getCollectionOfDependencies(graph));
         this.resolvedInstance = this._instantiate(itemsDependencies);
 

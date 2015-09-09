@@ -3,12 +3,11 @@
  */
 
 var invariant = require('invariant');
-var Dependency = require('./Dependency');
 var path = require('path');
 var fs = require('fs');
 var appRoot = require('./appRoot');
 var InstantiateDSL = require('./InstantiateDSL');
-var logger = require('./logwrapper');
+var logger = require('./logger');
 
 module.exports = class RegistryDSL{
     constructor(){

@@ -7,7 +7,7 @@ var buildListofDependencies = require('./buildListofDependencies');
 var graphResolution = require('./graphResolver');
 var invariant = require('invariant');
 var JSON = require('JSON');
-var logger = require('./logwrapper');
+var logger = require('./logger');
 
 module.exports =  class Container{
     constructor(registryFunc) {
@@ -20,12 +20,12 @@ module.exports =  class Container{
         logger.trace('Container | constructor : get package.json');
         var packageJson        = require(this.registry.pathToPackageJson);
 
-
         logger.trace('Container | constructor : apply registry');
         this.dependencyGraph = buildListofDependencies(this.registry.dependencyDeclarations, packageJson);
 
         logger.trace('Container | constructor : resolve graph');
         graphResolution(this.dependencyGraph);
+
     }
 
     /**
@@ -34,7 +34,8 @@ module.exports =  class Container{
      * @returns {type}
      */
     getInstanceOf(_type) {
-        return this.dependencyGraph.findDependency(_type)
+        var item = this.dependencyGraph.find(x=>x.name == _type);
+        return item  ? item.resolvedInstance : null;
     }
 
     /**

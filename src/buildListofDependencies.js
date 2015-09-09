@@ -3,30 +3,35 @@
  */
 
 var invariant = require('invariant');
-var logger = require('./logwrapper');
+var logger = require('./logger');
+var _ = require('lodash');
+var extend = require('extend');
+var appRoot = require('./appRoot');
+var path = require('path');
 
 var buildDependency = function buildDependency(dependencyDeclarations, result) {
     return dependencyDeclarations
         .filter(x=> result.every(g=>g.name != x.name))
         .map(x=> {
             return {
-                groupName,
-                name,
-                internal,
-                instantiate,
-                path: x.path ? x.path : x.name
+                name: x.name,
+                internal: x.internal,
+                instantiate: x.instantiate,
+                path: x.path ? x.path : x.name,
+                groupName: x.groupName
+
             }})
 };
 
-var wrapInstances = function wrapInstances(x) {
-    logger.trace('wrapDependency | wrapDependency: module ' + x.name + ' so requiring item using path ' + x.path + '.');
-    x.wrappedInstance = x.internal
-        ? require(x.path)
-        : function() { require(x.path); };
+var wrapInstances = function wrapInstances(item) {
+    logger.trace('buildListOfDependencies | wrapInstance: module ' + item.name + ' so requiring item using path ' + item.path + '.');
+    item.wrappedInstance = item.internal
+        ? require(path.join(appRoot.path, item.path))
+        : function() { return require(item.path); };
 
-    invariant(_.isFunction(x.wrappedInstance),
-        'wrapDependency | wrapDependency: dagon is unable to require the following dependency: ' + x.name + ' at this path: ' + x.path);
-    return x;
+    invariant(_.isFunction(item.wrappedInstance),
+        'buildListOfDependencies | wrapInstance: The following dependency: ' + item.name + ' at this path: ' + path.join(appRoot.path, item.path)+' is not a function');
+    return item;
 };
 
 var updateDependency = function updateDependency(dependencyDeclarations, x) {
@@ -45,28 +50,25 @@ var updateDependency = function updateDependency(dependencyDeclarations, x) {
 var normalizeName = function normalizeName(orig){
     var name = orig.replace(/-/g, '');
     name = name.replace(/\./g, '_');
-    logger.trace('Graph | normalizeName: normalizing name: '+orig+'->'+name);
+    logger.trace('buildListOfDependencies | normalizeName: normalizing name: '+orig+'->'+name);
     return name;
 };
 
 var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(pjson){
-    logger.trace('Graph | buildGraph: reading package.json dependencies');
+    logger.trace('buildListOfDependencies | getDependenciesFromProjectJson: reading package.json dependencies');
     return Object.keys(pjson.dependencies)
-        .map(x=> { name: normalizeName(x), path:x });
+        .map(x=> {return { name: normalizeName(x), path:x }});
 };
 
 module.exports = function(manualDeclarations, pjson) {
     invariant(pjson, 'You must provide a json object to build graph from');
-    invariant(registry, 'Must provide a registry');
-    invariant(projectDeclarations,'Must provide a list of projectDeclarations');
+    invariant(manualDeclarations,'Must provide a list of manualDeclarations');
 
     var result = getDependenciesFromProjectJson(pjson)
         .map(x=>updateDependency(manualDeclarations, x));
 
     // could be problem if the registry has two declarations for one item.
     // maybe put check in registry so that doesn't happen
-    result.concat(buildDependency(manualDeclarations, result))
+    return result.concat(buildDependency(manualDeclarations, result))
         .map(x=> wrapInstances(x));
-
-    return result;
 };

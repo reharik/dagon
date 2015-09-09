@@ -3,7 +3,7 @@
  */
 
 var invariant = require('invariant');
-var logger = require('./logwrapper');
+var logger = require('./logger');
 
 module.exports = class InstantiateDSL {
     constructor() {

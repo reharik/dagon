@@ -4,9 +4,9 @@
 
 var invariant = require('invariant');
 var _ = require('lodash');
-var logger = require('./logwrapper');
+var logger = require('./logger');
 
-module.exports = function(items, groupName, groupAsArray){
+module.exports = function(items, groupName){
 
     var buildGroupAsHash = function(groupName) {
         groupName = groupName.replace('_hash','');
@@ -37,7 +37,7 @@ module.exports = function(items, groupName, groupAsArray){
     };
 
     logger.trace('Graph | findGroupedDependencies: looping through items');
-    if(!groupName.contains('_hash') || groupAsArray){
+    if(groupName.indexOf('_hash') <= 0 ){
         return buildGroupAsArray(groupName);
     }
     return buildGroupAsHash(groupName);

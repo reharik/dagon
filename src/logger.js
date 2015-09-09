@@ -1,7 +1,7 @@
-var yowl = require('./logger/index');
+var logger = require('./logger_module/index');
 var moment = require('moment');
 
-module.exports =  new yowl({
+module.exports =  new logger({
         system: {
             applicationName: "dagon",
             environment    : "dev"

@@ -214,7 +214,7 @@ describe('Dependency Tester', function() {
             });
         });
 
-        context('when calling getCollectionOfDependencies on a dependency that does not resolve', ()=>{
+        context('when calling getFlatCollectionOfDependencies on a dependency that does not resolve', ()=>{
             it('should throw proper error', ()=> {
                 var Graph = require('../src/Graph');
                 var graph = new Graph();

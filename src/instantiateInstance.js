@@ -1,10 +1,10 @@
 /**
  * Created by parallels on 9/8/15.
  */
-var logger = require('./logwrapper');
+var logger = require('./logger');
 
 function instantiateClass(instanceFeatures, resolvedItem) {
-    logger.debug('Dependency | instantiateResolvedInstance: item is class so call new with constructor params if present');
+    logger.debug('instantiateInstance | instantiateClass: item is class so call new with constructor params if present');
     var result;
     if (instanceFeatures.parameters) {
         var i  = Object.create(resolvedItem.prototype);
@@ -17,7 +17,7 @@ function instantiateClass(instanceFeatures, resolvedItem) {
 }
 
 function instantiateFunc(instanceFeatures, resolvedItem) {
-    logger.debug('Dependency | instantiateResolvedInstance: item is func so "call" or just call()');
+    logger.debug('instantiateInstance | instantiateFunc: item is func so "call" or just call()');
     var result;
     if (instanceFeatures.parameters) {
         result = resolvedItem.apply(resolvedItem, instanceFeatures.parameters);
@@ -27,7 +27,7 @@ function instantiateFunc(instanceFeatures, resolvedItem) {
     return result;
 }
 function initialize(instanceFeatures, resolvedItem) {
-    logger.debug('Dependency | instantiateResolvedInstance: item has an initialization method so call that with params if present');
+    logger.debug('instantiateInstance | initialize: item has an initialization method so call that with params if present');
     var result;
     if (instanceFeatures.initParameters) {
         result = resolvedItem[instanceFeatures.initializationMethod].apply(resolvedItem[instanceFeatures.initializationMethod], instanceFeatures.initParameters)
@@ -53,14 +53,15 @@ var instantiateResolvedInstance = function(parent, resolvedItem){
     return result;
 };
 
-module.exports = function(item, resolvedDependencies){
-    logger.trace('Dependency | instantiate: actually resolving instances');
-    logger.trace('Dependency | instantiate: if no dependencies just call wrappedInstance, otherwise apply function with dependencies');
+module.exports = function instantiateInstance(item, resolvedDependencies){
+    logger.trace('instantiateInstance | constructor: actually resolving instances');
+    logger.trace('instantiateInstance | constructor: if no dependencies just call wrappedInstance, otherwise apply function with dependencies');
     var resolvedItem = resolvedDependencies.length>0
         ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies)
         : item.wrappedInstance();
+
     if(item.instantiate){
-        logger.trace('Dependency | instantiate: calling instantiateResolvedInstance to do post resolution modifications');
+        logger.trace('instantiateInstance | constructor: calling instantiateResolvedInstance to do post resolution modifications');
         return instantiateResolvedInstance(item, resolvedItem);  //parent.apply(parent, this.instantiateWith)
     }
     return resolvedItem;
