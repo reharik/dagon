@@ -67,6 +67,7 @@ module.exports = class RegistryDSL{
      */
     groupAllInDirectory(dir, _groupName){
         invariant(dir, 'You must provide a valid directory');
+        invariant(_groupName, 'You must provide a valid Group Name');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
         this.completeDependencyDeclaration();
@@ -112,7 +113,7 @@ module.exports = class RegistryDSL{
      */
     renameTo(name){
         invariant(name, 'You must provide the NEW name for your dependency');
-        invariant(this._declarationInProgress,'You must call "for" before calling "require"');
+        invariant(this._declarationInProgress,'You must call "for" before calling "renameTo"');
         logger.trace('RegistryDSL | rename: renaming');
         this._declarationInProgress.newName = name;
         return this;

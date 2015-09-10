@@ -16,12 +16,15 @@ module.exports = function(dependencyGraph){
     };
 
     var recurseTree = function(items) {
+        //console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxitems')
+        //console.log(items)
         items.forEach(x=> {
             var flattenedChildren = getFlatCollectionOfDependencies(x, dependencyGraph);
+
             if (flattenedChildren.length>0) {
                 recurseTree(flattenedChildren);
             }
-
+            logger.trace('GraphResolver | recurseTree: resolving instance of ' + x.name);
             resolveInstance(x, flattenedChildren, dependencyGraph);
         });
         return items;

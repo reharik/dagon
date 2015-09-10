@@ -12,8 +12,8 @@ var invariant = require('invariant');
 var getDependency = require('./getDependency');
 
 module.exports = function getFinalResolvedDependencies(item, items, groupAsArray) {
-    logger.trace('getFinalResolvedCollectionOfDependency | constructor: getting args from wrapper function and finding instances in graph');
+    logger.trace('getFinalResolvedDependencies | constructor: getting args from wrapper function and finding instances in graph');
     var args = fnArgs(item.wrappedInstance);
-    logger.trace('getFinalResolvedCollectionOfDependency | constructor: args: ' + args);
+    logger.trace('getFinalResolvedDependencies | constructor: args: ' + args);
     return args.map( d => getDependency.resolvedInstance(items, d, groupAsArray) );
 };

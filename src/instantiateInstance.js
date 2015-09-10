@@ -40,6 +40,7 @@ function initialize(instanceFeatures, resolvedItem) {
 var instantiateResolvedInstance = function(parent, resolvedItem){
     var result;
     var instanceFeatures = parent.instantiate;
+    logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : '+ instanceFeatures);
 
     if(instanceFeatures.dependencyType == 'class'){
         result = instantiateClass(instanceFeatures, resolvedItem);
@@ -54,7 +55,7 @@ var instantiateResolvedInstance = function(parent, resolvedItem){
 };
 
 module.exports = function instantiateInstance(item, resolvedDependencies){
-    logger.trace('instantiateInstance | constructor: actually resolving instances');
+    logger.trace('instantiateInstance | constructor: actually resolving instance for '+ item.name);
     logger.trace('instantiateInstance | constructor: if no dependencies just call wrappedInstance, otherwise apply function with dependencies');
     var resolvedItem = resolvedDependencies.length>0
         ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies)
@@ -62,7 +63,7 @@ module.exports = function instantiateInstance(item, resolvedDependencies){
 
     if(item.instantiate){
         logger.trace('instantiateInstance | constructor: calling instantiateResolvedInstance to do post resolution modifications');
-        return instantiateResolvedInstance(item, resolvedItem);  //parent.apply(parent, this.instantiateWith)
+        return instantiateResolvedInstance(item, resolvedItem);
     }
     return resolvedItem;
 };

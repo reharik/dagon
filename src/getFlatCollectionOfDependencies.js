@@ -12,9 +12,15 @@ var flatten = function(array) {
 };
 
 module.exports = function getFlatCollectionOfDependencies(item, items) {
+    invariant(item, 'getFlatCollectionOfDependencies requires an item to get dependencies for.');
+    invariant(items, 'getFlatCollectionOfDependencies requires a collection of items to query for dependencies.');
     logger.trace('getFlatCollectionOfDependencies | constructor: getting args from wrapper function and finding instances in graph');
     var args = fnArgs(item.wrappedInstance);
     logger.trace('getFlatCollectionOfDependencies | constructor: args: ' + args);
-    var dependencies = args.map( d => getDependency.fullDependency(items, d) );
+    var dependencies = args.map( d => {
+        var found = getDependency.fullDependency(items, d);
+        invariant(found, 'Module ' + item.name + ' has a dependency that can not be resolved: ' + d);
+        return found;
+    } );
     return flatten(dependencies);
 };

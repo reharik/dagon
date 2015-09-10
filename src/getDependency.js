@@ -5,23 +5,22 @@ var groupDependencies = require('./groupDependencies');
 var logger = require('./logger');
 var invariant = require('invariant');
 
-
 var tryRequireDependency = function(dependencyName) {
+    invariant(dependencyName, 'You must provide a dependency name to find');
     try {
-        logger.trace('getFlatCollectionOfDependencies | tryRequireDependency: item NOT found, trying to require(dep)');
+        logger.trace('getDependency | tryRequireDependency: trying to "require" ' + dependencyName);
         var tryingRequire = require(dependencyName);
-        logger.trace('getFlatCollectionOfDependencies | tryRequireDependency: trying to "require" ' + dependencyName);
 
         if (tryingRequire) {
-            logger.trace('getFlatCollectionOfDependencies | tryRequireDependency: require found item');
-            logger.trace('getFlatCollectionOfDependencies | tryRequireDependency: adding it to graph');
+            logger.trace('getDependency | tryRequireDependency: require found item');
+            logger.trace('getDependency | tryRequireDependency: adding it to graph');
             return {name        : dependencyName,
                 resolvedInstance: tryingRequire
             };
         }
     } catch (ex) {
-        logger.info('getFlatCollectionOfDependencies | tryRequireDependency: item was not found and require threw an error');
-        logger.info('getFlatCollectionOfDependencies | tryRequireDependency: error' + ex);
+        logger.info('getDependency | tryRequireDependency: item was not found and require threw an error');
+        logger.info('getDependency | tryRequireDependency: error' + ex);
         //swallow, just a hail mary to resolve
     }
 };
@@ -29,44 +28,49 @@ var tryRequireDependency = function(dependencyName) {
 var findDependency = function(_items, dependencyName){
     invariant(dependencyName, 'You must provide a dependency name to find');
     for(let i of _items){
-        logger.trace('getFlatCollectionOfDependencies | findDependency: '+dependencyName+' target :' + i.name);
+        logger.trace('getDependency | findDependency: '+dependencyName+' target :' + i.name);
         if(i.name === dependencyName){
-            logger.trace('getFlatCollectionOfDependencies | findDependency: item found');
+            logger.trace('getDependency | findDependency: item found '+dependencyName);
             return i;
         }
     }
 };
 
-var getDependency = function getDependency(items, dependencyName){
+var fullDependency = function fullDependency(items, dependencyName) {
+    invariant(items, 'You must provide a a collection of dependencies to query');
+    invariant(dependencyName, 'You must provide a dependency name to find');
     var item;
+    logger.trace('getDependency | fullDependency: Trying to find the dependency : ' + dependencyName);
     item = findDependency(items, dependencyName);
-    if(!item){
+    if (!item) {
+        logger.trace('getDependency | fullDependency: Single dependency not found. Trying to build grouped dependency : ' + dependencyName);
         item = groupDependencies(items, dependencyName);
-    } else if(!item){
+    } else if (!item) {
+        logger.trace('getDependency | fullDependency: Grouped dependency not found.  Trying to require dependency: ' + dependencyName);
         item = tryRequireDependency(dependencyName);
     }
     if (!item) {
-        logger.debug('Dependency | getFlatCollectionOfDependencies: can not find dependency: ' + d);
-        logger.debug('Dependency | getFlatCollectionOfDependencies: ' + items.map(x=> x.name));
-        invariant(false, 'Module ' + item.name + ' has a dependency that can not be resolved: ' + d);
+        logger.debug('getDependency | fullDependency: can not find dependency: ' + dependencyName);
+        logger.debug('getDependency | fullDependency: ' + items.map(x=> x.name));
     }
     return item;
 };
 
-module.exports = {
-        fullDependency: function(items, dependencyName){ return getDependency(items, dependencyName); },
-        resolvedInstance: function(items, dependencyName){
-            var dependency = getDependency(items, dependencyName);
-            if(Array.isArray(dependency)){
-                var groupedDependency = [];
-                for (let i of dependency) {
-                    if (i.groupName == dependencyName) {
-                        groupedDependency.push(i.resolvedInstance);
-                    }
-                }
-                return groupedDependency;
+var resolvedInstance = function(items, dependencyName){
+    var dependency = fullDependency(items, dependencyName);
+    if(Array.isArray(dependency)){
+        var groupedDependency = [];
+        for (let i of dependency) {
+            if (i.groupName == dependencyName) {
+                groupedDependency.push(i.resolvedInstance);
             }
-            return dependency.resolvedInstance;
-
         }
+        return groupedDependency;
+    }
+    return dependency.resolvedInstance;
+};
+
+module.exports = {
+        fullDependency: fullDependency,
+        resolvedInstance: resolvedInstance
 };

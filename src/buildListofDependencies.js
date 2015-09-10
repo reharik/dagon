@@ -24,7 +24,7 @@ var buildDependency = function buildDependency(dependencyDeclarations, result) {
 };
 
 var wrapInstances = function wrapInstances(item) {
-    logger.trace('buildListOfDependencies | wrapInstance: module ' + item.name + ' so requiring item using path ' + item.path + '.');
+    logger.trace('buildListOfDependencies | wrapInstance: Wrapping module ' + item.name + ' requiring item using path ' + item.path + '.');
     item.wrappedInstance = item.internal
         ? require(path.join(appRoot.path, item.path))
         : function() { return require(item.path); };
@@ -60,7 +60,7 @@ var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(pjs
         .map(x=> {return { name: normalizeName(x), path:x }});
 };
 
-module.exports = function(manualDeclarations, pjson) {
+module.exports = function buildListOfDependencies(manualDeclarations, pjson) {
     invariant(pjson, 'You must provide a json object to build graph from');
     invariant(manualDeclarations,'Must provide a list of manualDeclarations');
 
