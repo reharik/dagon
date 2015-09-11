@@ -7,7 +7,7 @@ var Winston = require("winston"),
 
 require("winston-logstash");
 
-var Yowl = function(options){
+var loggerBase = function(options){
     var internals = {
         options : {
             system : {
@@ -210,6 +210,8 @@ var Yowl = function(options){
 
     return {
         getContext : function(){return internals.context;},
+        // this is for testing purposes and is just as ugly as it looks
+        exposeInternals: function(){return internals;},
         addConsoleSink : addConsoleSink,
         addDailyRotateFileSink : addDailyRotateFileSink,
         addLogstashSink : addLogstashSink,
@@ -222,6 +224,6 @@ var Yowl = function(options){
     }
 };
 
-module.exports = Yowl
+module.exports = loggerBase;
 module.exports.levels = Enum.logLevels();
 module.exports.environments = Enum.environments();

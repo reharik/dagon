@@ -3,7 +3,8 @@
  */
 
 var logger = require('./logger');
-var getFlatCollectionOfDependencies = require('./getFlatCollectionOfDependencies');
+var getDependenciesForItem = require('./getDependenciesForItem');
+
 var resolveInstance = require('./resolveInstance');
 
 //WARNING dependencyGraph is modified by reference!!
@@ -16,10 +17,8 @@ module.exports = function(dependencyGraph){
     };
 
     var recurseTree = function(items) {
-        //console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxitems')
-        //console.log(items)
         items.forEach(x=> {
-            var flattenedChildren = getFlatCollectionOfDependencies(x, dependencyGraph);
+            var flattenedChildren = getDependenciesForItem.flatDependencyGraph(x, dependencyGraph);
 
             if (flattenedChildren.length>0) {
                 recurseTree(flattenedChildren);

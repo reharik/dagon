@@ -9,10 +9,8 @@ var extend = require('extend');
 var appRoot = require('./appRoot');
 var path = require('path');
 
-var buildDependency = function buildDependency(dependencyDeclarations, result) {
-    return dependencyDeclarations
-        .filter(x=> result.every(g=>g.name != x.name))
-        .map(x=> {
+var buildDependency = function buildDependency(manualCreates) {
+    return manualCreates.map(x=> {
             return {
                 name: x.name,
                 internal: x.internal,
@@ -30,21 +28,21 @@ var wrapInstances = function wrapInstances(item) {
         : function() { return require(item.path); };
 
     invariant(_.isFunction(item.wrappedInstance),
-        'buildListOfDependencies | wrapInstance: The following dependency: ' + item.name + ' at this path: ' + path.join(appRoot.path, item.path)+' is not a function');
+        'The following dependency: ' + item.name + ' at this path: ' + path.join(appRoot.path, item.path)+' is not a function');
     return item;
 };
 
-var updateDependency = function updateDependency(dependencyDeclarations, x) {
-    dependencyDeclarations
-        .filter(d => d.name == x.name)
-        .forEach(d=> {
-            x.groupName   = d.groupName;
-            x.name        = d.newName ? d.newName : x.name;
-            x.path        = d.path ? d.path : x.path;
-            x.internal    = d.internal ? d.internal : x.internal;
-            x.instantiate = d.instantiate ? d.instantiate : x.instantiate;
+var updateDependency = function updateDependency(manualDeclarations, existingDeclaration) {
+
+    manualDeclarations
+        .filter(x=>x.name == existingDeclaration.name)
+        .forEach(i=>{
+            existingDeclaration.groupName   = i.groupName;
+            existingDeclaration.name        = i.newName ? i.newName : existingDeclaration.name;
+            existingDeclaration.path        = i.path ? i.path : existingDeclaration.path;
+            existingDeclaration.internal    = i.internal ? i.internal : existingDeclaration.internal;
+            existingDeclaration.instantiate = i.instantiate ? i.instantiate : existingDeclaration.instantiate;
         });
-    return x;
 };
 
 var normalizeName = function normalizeName(orig){
@@ -55,20 +53,26 @@ var normalizeName = function normalizeName(orig){
 };
 
 var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(pjson){
+    if(!pjson){
+        return [];
+    }
     logger.trace('buildListOfDependencies | getDependenciesFromProjectJson: reading package.json dependencies');
     return Object.keys(pjson.dependencies)
         .map(x=> {return { name: normalizeName(x), path:x }});
 };
 
 module.exports = function buildListOfDependencies(manualDeclarations, pjson) {
-    invariant(pjson, 'You must provide a json object to build graph from');
-    invariant(manualDeclarations,'Must provide a list of manualDeclarations');
 
-    var result = getDependenciesFromProjectJson(pjson)
-        .map(x=>updateDependency(manualDeclarations, x));
+    manualDeclarations = manualDeclarations || [];
+
+    var result = getDependenciesFromProjectJson(pjson);
+    // need to get these before we rename the pjson dependencies
+    var manualCreates= manualDeclarations.filter(x=> result.find(i=>i.name == x.name) == null);
+    result.forEach(x=> updateDependency(manualDeclarations, x));
 
     // could be problem if the registry has two declarations for one item.
     // maybe put check in registry so that doesn't happen
-    return result.concat(buildDependency(manualDeclarations, result))
-        .map(x=> wrapInstances(x));
+    result = result.concat(buildDependency(manualCreates));
+    result.forEach(x=> wrapInstances(x));
+    return result;
 };

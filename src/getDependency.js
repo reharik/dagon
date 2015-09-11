@@ -6,11 +6,8 @@ var logger = require('./logger');
 var invariant = require('invariant');
 
 var tryRequireDependency = function(dependencyName) {
-    invariant(dependencyName, 'You must provide a dependency name to find');
     try {
-        logger.trace('getDependency | tryRequireDependency: trying to "require" ' + dependencyName);
         var tryingRequire = require(dependencyName);
-
         if (tryingRequire) {
             logger.trace('getDependency | tryRequireDependency: require found item');
             logger.trace('getDependency | tryRequireDependency: adding it to graph');
@@ -26,7 +23,6 @@ var tryRequireDependency = function(dependencyName) {
 };
 
 var findDependency = function(_items, dependencyName){
-    invariant(dependencyName, 'You must provide a dependency name to find');
     for(let i of _items){
         logger.trace('getDependency | findDependency: '+dependencyName+' target :' + i.name);
         if(i.name === dependencyName){
@@ -45,7 +41,7 @@ var fullDependency = function fullDependency(items, dependencyName) {
     if (!item) {
         logger.trace('getDependency | fullDependency: Single dependency not found. Trying to build grouped dependency : ' + dependencyName);
         item = groupDependencies(items, dependencyName);
-    } else if (!item) {
+    } if (!item) {
         logger.trace('getDependency | fullDependency: Grouped dependency not found.  Trying to require dependency: ' + dependencyName);
         item = tryRequireDependency(dependencyName);
     }
@@ -67,7 +63,7 @@ var resolvedInstance = function(items, dependencyName){
         }
         return groupedDependency;
     }
-    return dependency.resolvedInstance;
+    return dependency ? dependency.resolvedInstance :undefined;
 };
 
 module.exports = {

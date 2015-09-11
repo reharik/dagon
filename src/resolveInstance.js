@@ -2,10 +2,9 @@
  * Created by parallels on 9/8/15.
  */
 
-var instantiate = require('./instantiateInstance');
+var instantiateInstance = require('./instantiateInstance');
 var logger = require('./logger');
-var getFlatCollectionOfDependencies = require('./getFlatCollectionOfDependencies');
-var getFinalResolvedDependencies = require('./getFinalResolvedDependencies');
+var getDependenciesForItem = require('./getDependenciesForItem');
 var invariant = require('invariant');
 
 module.exports = function resolveInstance(item, flattenedChildren, dependencyGraph){
@@ -14,7 +13,7 @@ module.exports = function resolveInstance(item, flattenedChildren, dependencyGra
         logger.trace('resolveInstance | getResolvedInstanceForCollectionOfDependencies: getting resolved instances recursively');
         var result = [];
         _flattenedChildren.forEach(x=> {
-            result.push(resolveInstance(x, getFlatCollectionOfDependencies(x, dependencyGraph)));
+            result.push(resolveInstance(x, getDependenciesForItem.flatDependencyGraph(x, dependencyGraph)));
         });
         return result;
     };
@@ -28,10 +27,10 @@ module.exports = function resolveInstance(item, flattenedChildren, dependencyGra
         var resolvedChildren = getAllResolvedDependencies(_flattenedChildren);
 
         logger.trace('resolveInstance | attemptToResolveInstance : Get all dependencies in there unwrapped state.');
-        var resolvedDependencies = getFinalResolvedDependencies(item, resolvedChildren);
+        var resolvedDependencies = getDependenciesForItem.resolvedItemsGraph(item, resolvedChildren);
 
         logger.trace('resolveInstance | attemptToResolveInstance : Instantiate item with resolved dependencies.');
-        item.resolvedInstance = instantiate(item, resolvedDependencies);
+        item.resolvedInstance = instantiateInstance(item, resolvedDependencies);
 
         invariant(item.resolvedInstance, 'Dagon was not able to resolve item: '+ item.name);
         return item;

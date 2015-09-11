@@ -2,6 +2,7 @@
  * Created by parallels on 9/8/15.
  */
 var logger = require('./logger');
+var invariant = require('invariant');
 
 function instantiateClass(instanceFeatures, resolvedItem) {
     logger.debug('instantiateInstance | instantiateClass: item is class so call new with constructor params if present');
@@ -49,12 +50,15 @@ var instantiateResolvedInstance = function(parent, resolvedItem){
     }
 
     if(instanceFeatures.initializationMethod){
-        result = initialize(instanceFeatures, resolvedItem);
+        result = initialize(instanceFeatures, result?result:resolvedItem);
     }
     return result;
 };
 
 module.exports = function instantiateInstance(item, resolvedDependencies){
+    invariant(item, 'You must supply an item to instantiate.');
+    invariant(resolvedDependencies, 'You must supply an array of dependencies even if its empty.');
+
     logger.trace('instantiateInstance | constructor: actually resolving instance for '+ item.name);
     logger.trace('instantiateInstance | constructor: if no dependencies just call wrappedInstance, otherwise apply function with dependencies');
     var resolvedItem = resolvedDependencies.length>0
