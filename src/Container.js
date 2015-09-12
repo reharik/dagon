@@ -24,7 +24,7 @@ module.exports =  class Container{
         var packageJson        = require(path.join(this.registry.pathToAppRoot, '/package.json'));
 
         logger.trace('Container | constructor : Build list of Dependencies');
-        this.dependencyGraph = buildListofDependencies(this.registry.dependencyDeclarations, packageJson, this.registry.pathToAppRoot);
+        this.dependencyGraph = buildListofDependencies(this.registry.dependencyDeclarations, packageJson);
 
         logger.trace('Container | constructor : resolve graph');
         graphResolution(this.dependencyGraph);

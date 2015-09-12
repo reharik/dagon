@@ -53,8 +53,8 @@ module.exports = class RegistryDSL{
         invariant(dir,'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectoryRecursively: closing in process declarations and renames');
         this.completeDependencyDeclaration();
-        //var absoluteDir= path.join(appRoot.path, dir);
-        this.recurseDirectories(dir);
+        var absoluteDir= path.join(this._pathToAppRoot, dir);
+        this.recurseDirectories(absoluteDir);
         return this;
     }
 
@@ -94,12 +94,13 @@ module.exports = class RegistryDSL{
      * @param path - the path of the dependency you are registering
      * @returns {this}
      */
-    require(path){
-        invariant(path,'You must provide a valid replacement module');
+    require(_path){
+        invariant(_path,'You must provide a valid replacement module');
         invariant(this._declarationInProgress,'You must call "for" before calling "require"');
-        this._declarationInProgress.path=path;
-        if(path.startsWith('.') || path.includes('/')){
+        this._declarationInProgress.path=_path;
+        if(_path.startsWith('.') || _path.includes('/')){
             this._declarationInProgress.internal=true;
+            this._declarationInProgress.path=path.join(this._pathToAppRoot,_path);
         }
         return this;
     }
