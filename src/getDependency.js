@@ -12,7 +12,8 @@ var tryRequireDependency = function(dependencyName) {
             logger.trace('getDependency | tryRequireDependency: require found item');
             logger.trace('getDependency | tryRequireDependency: adding it to graph');
             return {name        : dependencyName,
-                resolvedInstance: tryingRequire
+                resolvedInstance: tryingRequire,
+                wrappedInstance: function() { return tryingRequire; }
             };
         }
     } catch (ex) {

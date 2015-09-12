@@ -55,8 +55,8 @@ module.exports = class RegistryDSL{
         invariant(dir,'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectoryRecursively: closing in process declarations and renames');
         this.completeDependencyDeclaration();
-        var absoluteDir= path.join(appRoot.path, dir);
-        this.recurseDirectories(absoluteDir);
+        //var absoluteDir= path.join(appRoot.path, dir);
+        this.recurseDirectories(dir);
         return this;
     }
 

@@ -28,7 +28,7 @@ var resolvedItemsGraph = function resolvedItemsGraph(item, items) {
 var flatDependencyGraph = function flatDependencyGraph(item, items) {
     invariant(item, 'flatDependencyGraph requires an item to get dependencies for.');
     invariant(items, 'flatDependencyGraph requires a collection of items to query for dependencies.');
-    logger.trace('getDependenciesForItem | flatDependencyGraph: getting args from wrapper function and finding instances in graph');
+    logger.trace('getDependenciesForItem | flatDependencyGraph: getting args from wrapper function of '+item.name+' and finding instances in graph');
     var args         = fnArgs(item.wrappedInstance);
     logger.trace('getDependenciesForItem | flatDependencyGraph: args: ' + args);
     var dependencies = args.map(d => {

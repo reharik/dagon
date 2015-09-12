@@ -42,7 +42,7 @@ describe('Registry DSL directory Tester', function() {
 
         context('when calling requireDirectoryRecursively with value', function () {
             it('should create dependencyDeclarations for each item', function () {
-                mut.pathToRoot(path.resolve('./')).requireDirectoryRecursively('/tests');
+                mut.pathToRoot(path.resolve('./')).requireDirectoryRecursively('./tests');
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();

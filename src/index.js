@@ -9,6 +9,9 @@ module.exports = function(_options){
     var options={};
     extend(options, _options || {});
     if (options.logger) {
+        if(_logger.exposeInternals().context.logger.transports['console']){
+            _logger.exposeInternals().context.logger.remove('console');
+        }
         var level = options.logger.level || 'silly';
         _logger.addConsoleSink({
             level,

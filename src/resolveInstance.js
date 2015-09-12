@@ -26,7 +26,7 @@ module.exports = function resolveInstance(item, flattenedChildren, dependencyGra
         logger.trace('resolveInstance | attemptToResolveInstance : Get all resolved children.');
         var resolvedChildren = getAllResolvedDependencies(_flattenedChildren);
 
-        logger.trace('resolveInstance | attemptToResolveInstance : Get all dependencies in there unwrapped state.');
+        logger.trace('resolveInstance | attemptToResolveInstance : Get all dependencies in their unwrapped state.');
         var resolvedDependencies = getDependenciesForItem.resolvedItemsGraph(item, resolvedChildren);
 
         logger.trace('resolveInstance | attemptToResolveInstance : Instantiate item with resolved dependencies.');
