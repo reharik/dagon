@@ -57,7 +57,7 @@ describe('Registry DSL Tester', function() {
                 mut.for('someParam');
                 mut.require('/tests/TestModules/TestClass');
                 mut.complete();
-                mut.dependencyDeclarations[0].path.must.equal('/tests/TestModules/TestClass');
+                mut.dependencyDeclarations[0].path.must.equal(path.resolve('./tests/TestModules/TestClass'));
             })
         });
 

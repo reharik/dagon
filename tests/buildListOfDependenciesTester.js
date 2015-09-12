@@ -123,9 +123,9 @@ describe('buildListOfDependencies Test', function() {
         context('when calling buildListOfDependencies with manualDependencies to create dependency', function() {
             it('should require the internal dependency and put it in the wrappedInstance variable', function() {
                 var manDec = [
-                    {name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true}
+                    {name:'pointlessDependency', path:path.resolve('./tests/TestModules/pointlessDependency'), internal:true}
                 ];
-                var result = Mut(manDec,null,path.resolve('./') );
+                var result = Mut(manDec );
                 result.must.have.length(1);
                 result[0].wrappedInstance.must.be.a.function();
                 result[0].wrappedInstance.toString().must.startWith('function (uuid) {');

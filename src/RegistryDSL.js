@@ -41,7 +41,7 @@ module.exports = class RegistryDSL{
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir)));
+            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, absoluteDir)));
         return this;
     }
 
@@ -72,7 +72,7 @@ module.exports = class RegistryDSL{
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir, groupName)));
+            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, absoluteDir, groupName)));
         return this;
     }
 

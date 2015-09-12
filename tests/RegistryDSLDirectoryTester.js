@@ -30,7 +30,7 @@ describe('Registry DSL directory Tester', function() {
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();
-                result[0].path.must.equal('/tests/RegistryDSLTester');
+                result[0].path.must.equal(path.resolve('./tests/RegistryDSLTester'));
             })
         });
 
