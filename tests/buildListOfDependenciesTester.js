@@ -38,7 +38,7 @@ describe('buildListOfDependencies Test', function() {
                     }
                 };
 
-                var result = Mut([], pjson);
+                var result = Mut([], pjson,path.resolve('./'));
                 result.must.have.length(1);
                 result[0].name.must.be('JSON')
             })
@@ -54,7 +54,7 @@ describe('buildListOfDependencies Test', function() {
                 var manDec = [
                     {name:'JSON', newName:'pigfr'}
                 ];
-                var result = Mut(manDec, pjson);
+                var result = Mut(manDec, pjson,path.resolve('./'));
                 result.must.have.length(1);
                 result[0].name.must.be('pigfr');
             })
@@ -65,7 +65,7 @@ describe('buildListOfDependencies Test', function() {
                 var manDec = [
                     {name:'myDependency', path:'./myDependency'}
                 ];
-                var result = Mut(manDec);
+                var result = Mut(manDec,null,path.resolve('./'));
                 result.must.have.length(1);
                 result[0].name.must.be('myDependency');
                 result[0].path.must.be('./myDependency');
@@ -83,7 +83,7 @@ describe('buildListOfDependencies Test', function() {
                 var manDec = [
                     {name:'myDependency', path:'./myDependency'}
                 ];
-                var result = Mut(manDec, pjson);
+                var result = Mut(manDec, pjson,path.resolve('./'));
                 result.must.have.length(2);
                 result[0].name.must.be('JSON');
                 result[0].path.must.be('JSON');
@@ -99,7 +99,7 @@ describe('buildListOfDependencies Test', function() {
                         "a-great.module.for-you": "^1.0.0"
                     }
                 };
-                var result = Mut([], pjson);
+                var result = Mut([], pjson,path.resolve('./'));
                 result.must.have.length(1);
                 result[0].name.must.be('agreat_module_foryou');
             })
@@ -112,7 +112,7 @@ describe('buildListOfDependencies Test', function() {
                         "JSON": "^1.0.0"
                     }
                 };
-                var result = Mut([], pjson);
+                var result = Mut([], pjson,path.resolve('./'));
                 result.must.have.length(1);
                 result[0].wrappedInstance.must.be.a.function();
                 result[0].wrappedInstance.toString().must.startWith('function () {');
@@ -125,8 +125,7 @@ describe('buildListOfDependencies Test', function() {
                 var manDec = [
                     {name:'pointlessDependency', path:'/tests/TestModules/pointlessDependency', internal:true}
                 ];
-                var result = Mut(manDec);
-                console.log(result)
+                var result = Mut(manDec,null,path.resolve('./') );
                 result.must.have.length(1);
                 result[0].wrappedInstance.must.be.a.function();
                 result[0].wrappedInstance.toString().must.startWith('function (uuid) {');
@@ -135,8 +134,6 @@ describe('buildListOfDependencies Test', function() {
 
         context('when calling buildListOfDependencies with manualDependencies to create dependency but its not a wrapped function', function() {
             it('should throw proper error', function() {
-                var path = require('path');
-                var appRoot = require('../src/appRoot');
                 var manDec = [
                     {name:'nonWrappedModule', path:'/tests/nonWrappedModule', internal:true}
                 ];

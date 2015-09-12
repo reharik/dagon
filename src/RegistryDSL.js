@@ -5,13 +5,12 @@
 var invariant = require('invariant');
 var path = require('path');
 var fs = require('fs');
-var appRoot = require('./appRoot');
 var InstantiateDSL = require('./InstantiateDSL');
 var logger = require('./logger');
 
 module.exports = class RegistryDSL{
     constructor(){
-        this._pathToPackageJson;
+        this._pathToAppRoot;
         this.dependencyDeclarations = [];
         this._declarationInProgress;
     }
@@ -22,11 +21,10 @@ module.exports = class RegistryDSL{
      */
     pathToRoot(_path){
         logger.trace('RegistryDSL | pathToRoot: setting path to root: '+_path);
-        appRoot.path = _path;
-        var resolvedPath = path.join(appRoot.path, '/package.json');
+        this._pathToAppRoot = _path;
+        var resolvedPath = path.join(this._pathToAppRoot, '/package.json');
         logger.trace('RegistryDSL | pathToRoot: checking to see if package exists using abspath: '+resolvedPath);
         invariant(fs.existsSync(resolvedPath),'Path to package.json does not resolve: '+ path.resolve(resolvedPath));
-        this._pathToPackageJson = resolvedPath;
         return this;
     }
 
@@ -40,7 +38,7 @@ module.exports = class RegistryDSL{
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
         this.completeDependencyDeclaration();
-        var absoluteDir = path.join(appRoot.path, dir);
+        var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
             .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir)));
@@ -71,7 +69,7 @@ module.exports = class RegistryDSL{
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
         this.completeDependencyDeclaration();
-        var absoluteDir = path.join(appRoot.path, dir);
+        var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
             .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir, groupName)));
@@ -174,7 +172,7 @@ module.exports = class RegistryDSL{
         this.completeDependencyDeclaration();
 
         return {
-            pathToPackageJson:this._pathToPackageJson,
+            pathToAppRoot:this._pathToAppRoot,
             dependencyDeclarations:this.dependencyDeclarations
         };
     }

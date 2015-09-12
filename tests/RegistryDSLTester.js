@@ -27,7 +27,7 @@ describe('Registry DSL Tester', function() {
         context('when calling pathToJson with propervalue', function () {
             it('should set the path field value', function () {
                 mut.pathToRoot(path.resolve('./'));
-                mut._pathToPackageJson.must.equal(path.join(path.resolve('./'),  'package.json'));
+                mut._pathToAppRoot.must.equal(path.join(path.resolve('./')));
             })
         });
 
@@ -127,7 +127,7 @@ describe('Registry DSL Tester', function() {
                 mut.renameTo('newNmae');
                 var result = mut.complete();
                 result.dependencyDeclarations.length.must.equal(1);
-                result.pathToPackageJson.must.be.string();
+                result.pathToAppRoot.must.be.string();
             })
         });
     });

@@ -8,6 +8,8 @@ var graphResolution = require('./graphResolver');
 var invariant = require('invariant');
 var JSON = require('JSON');
 var logger = require('./logger');
+var path = require('path');
+
 
 module.exports =  class Container{
     constructor(registryFunc) {
@@ -19,10 +21,10 @@ module.exports =  class Container{
         this.registry = registryFunc(new RegistryDSL());
 
         logger.trace('Container | constructor : get package.json');
-        var packageJson        = require(this.registry.pathToPackageJson);
+        var packageJson        = require(path.join(this.registry.pathToAppRoot, '/package.json'));
 
         logger.trace('Container | constructor : Build list of Dependencies');
-        this.dependencyGraph = buildListofDependencies(this.registry.dependencyDeclarations, packageJson);
+        this.dependencyGraph = buildListofDependencies(this.registry.dependencyDeclarations, packageJson, this.registry.pathToAppRoot);
 
         logger.trace('Container | constructor : resolve graph');
         graphResolution(this.dependencyGraph);
@@ -76,7 +78,7 @@ module.exports =  class Container{
     //    this.dependencyGraph = new Graph(logger);
     //    this.registry = this.buildRegistry();
     //    logger.trace('Container | injection: get package.json');
-    //    var packageJson =  require(this.registry.pathToPackageJson);
+    //    var packageJson =  require(this.registry.pathToAppRoot);
     //    logger.trace('Container | injection: build new graph');
     //    this.dependencyGraph.buildGraph(packageJson);
     //    logger.trace('Container | injection: apply registry');

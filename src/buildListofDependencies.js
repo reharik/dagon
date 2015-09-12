@@ -6,7 +6,6 @@ var invariant = require('invariant');
 var logger = require('./logger');
 var _ = require('lodash');
 var extend = require('extend');
-var appRoot = require('./appRoot');
 var path = require('path');
 
 var buildDependency = function buildDependency(manualCreates) {
@@ -21,14 +20,14 @@ var buildDependency = function buildDependency(manualCreates) {
             }})
 };
 
-var wrapInstances = function wrapInstances(item) {
+var wrapInstances = function wrapInstances(item, pathToAppRoot) {
     logger.trace('buildListOfDependencies | wrapInstance: Wrapping module ' + item.name + ' requiring item using path ' + item.path + '.');
     item.wrappedInstance = item.internal
-        ? require(path.join(appRoot.path, item.path))
+        ? require(path.join(pathToAppRoot, item.path))
         : function() { return require(item.path); };
 
     invariant(_.isFunction(item.wrappedInstance),
-        'The following dependency: ' + item.name + ' at this path: ' + path.join(appRoot.path, item.path)+' is not a function');
+        'The following dependency: ' + item.name + ' at this path: ' + path.join(pathToAppRoot, item.path)+' is not a function');
     return item;
 };
 
@@ -61,8 +60,9 @@ var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(pjs
         .map(x=> {return { name: normalizeName(x), path:x }});
 };
 
-module.exports = function buildListOfDependencies(manualDeclarations, pjson) {
+module.exports = function buildListOfDependencies(manualDeclarations, pjson, pathToAppRoot) {
 
+    logger.trace('buildListOfDependencies | constructor : get package.json');
     manualDeclarations = manualDeclarations || [];
 
     var result = getDependenciesFromProjectJson(pjson);
@@ -73,6 +73,6 @@ module.exports = function buildListOfDependencies(manualDeclarations, pjson) {
     // could be problem if the registry has two declarations for one item.
     // maybe put check in registry so that doesn't happen
     result = result.concat(buildDependency(manualCreates));
-    result.forEach(x=> wrapInstances(x));
+    result.forEach(x=> wrapInstances(x, pathToAppRoot));
     return result;
 };
