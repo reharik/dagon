@@ -12,12 +12,13 @@ module.exports = function(_options){
         if(_logger.exposeInternals().context.logger.transports['console']){
             _logger.exposeInternals().context.logger.remove('console');
         }
+        var app = options.logger.application ? 'Calling app: '+ options.logger.application +' | ':'';
         var level = options.logger.level || 'silly';
         _logger.addConsoleSink({
             level,
             colorize : true,
             formatter: function(x) {
-                return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
+                return '[' + x.meta.level + '] '+app+' module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
             }
         }).info("added Console Sink");
     }
