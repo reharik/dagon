@@ -3,6 +3,8 @@
  */
 var logger = require('./logger');
 var invariant = require('invariant');
+var exceptionHandler = require('./exceptionHandler');
+
 
 function instantiateClass(instanceFeatures, resolvedItem) {
     logger.debug('instantiateInstance | instantiateClass: item is class so call new with constructor params if present');
@@ -56,18 +58,31 @@ var instantiateResolvedInstance = function(parent, resolvedItem){
 };
 
 module.exports = function instantiateInstance(item, resolvedDependencies){
+    var error;
     invariant(item, 'You must supply an item to instantiate.');
+    invariant(item.wrappedInstance, 'You can not instantiate a dependency with no WrappedInstance. item: '+item.name);
     invariant(resolvedDependencies, 'You must supply an array of dependencies even if its empty.');
 
     logger.trace('instantiateInstance | constructor: actually resolving instance for '+ item.name);
     logger.trace('instantiateInstance | constructor: if no dependencies just call wrappedInstance, otherwise apply function with dependencies');
-    var resolvedItem = resolvedDependencies.length>0
-        ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies)
-        : item.wrappedInstance();
-
+    try {
+        var resolvedItem = resolvedDependencies.length > 0
+            ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies)
+            : item.wrappedInstance();
+    }catch(err){
+        error = exceptionHandler(err,'Error attempting to instantiate wrapped instance.  Wrapped instance looks like this: ' + item.wrappedInstance.toString());
+        error.details={item:item, resolvedDependencies:resolvedDependencies};
+        throw error;
+    }
     if(item.instantiate){
         logger.trace('instantiateInstance | constructor: calling instantiateResolvedInstance to do post resolution modifications');
-        return instantiateResolvedInstance(item, resolvedItem);
+        try {
+            return instantiateResolvedInstance(item, resolvedItem);
+        }catch(err){
+            error = exceptionHandler(err,'Error attempting to instantiate resolved instance for item:' + item.name);
+            error.details = {instantiationInstructions:item.instantiate, resolvedItem:resolvedItem.toString() };
+            throw error;
+        }
     }
     return resolvedItem;
 };

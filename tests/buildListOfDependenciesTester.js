@@ -11,16 +11,16 @@ describe('buildListOfDependencies Test', function() {
 
     before(function() {
         Mut        = require('../src/buildListofDependencies');
-        var logger = require('../src/logger');
-        if(!logger.exposeInternals().options.console.formatter){
-            logger.addConsoleSink({
-                level    : 'silly',
-                colorize : true,
-                formatter: function(x) {
-                    return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
-                }
-            }).info("added Console Sink");
-        }
+        //var logger = require('../src/logger');
+        //if(!logger.exposeInternals().options.console.formatter){
+        //    logger.addConsoleSink({
+        //        level    : 'silly',
+        //        colorize : true,
+        //        formatter: function(x) {
+        //            return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
+        //        }
+        //    }).info("added Console Sink");
+        //}
     });
 
     describe('#buildListOfDependencies', function() {

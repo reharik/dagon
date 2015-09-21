@@ -12,27 +12,39 @@ describe('Container Test', function() {
     before(function(){
         Mut = require('../src/Container');
         var logger = require('../src/logger');
-        if(!logger.exposeInternals().options.console.formatter){
-            logger.addConsoleSink({
-                level    : 'silly',
-                colorize : true,
-                formatter: function(x) {
-                    return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
-                }
-            }).info("added Console Sink");
-        }
+        //if(!logger.exposeInternals().options.console.formatter){
+        //    logger.addConsoleSink({
+        //        level    : 'debug',
+        //        colorize : true,
+        //        formatter: function(x) {
+        //            return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
+        //        }
+        //    }).info("added Console Sink");
+        //}
     });
 
     describe('#instantiate Container', function() {
         context('when instantiating Container without reg func', function () {
             it('should throw proper error', function () {
-                (function(){new Mut()}).must.throw(Error,'Invariant Violation: You must supply a registry function');
+                var error = '';
+                try {
+                    new Mut()
+                }catch(err){
+                    error = err.detailView
+                }
+                error.must.contain('Invariant Violation: You must supply a registry function');
             })
         });
 
         context('when instantiating Container WITH reg func', ()=> {
             it('should NOT throw registry func error', ()=> {
-                (function(){new Mut(x=>x.pathToRoot(path.resolve('./')).complete())}).must.not.throw(Error,'Invariant Violation: Container requires a registry function');
+                var error = '';
+                try {
+                    new Mut(x=>x.pathToRoot(path.resolve('./')).complete());
+                }catch(err){
+                    error = err.detailView
+                }
+                error.must.not.contain('Invariant Violation: You must supply a registry function');
             })
         });
 

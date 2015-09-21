@@ -30,6 +30,7 @@
     "joi": "^6.0.8",
     "lodash": "^3.6.0",
     "moment": "^2.10.6",
+    "nested-error": "^1.0.0",
     "uuid": "^2.0.1",
     "winston": "^1.0.0",
     "winston-logstash": "^0.1.11"

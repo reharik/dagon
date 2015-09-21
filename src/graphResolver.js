@@ -4,12 +4,11 @@
 
 var logger = require('./logger');
 var getDependenciesForItem = require('./getDependenciesForItem');
-
 var resolveInstance = require('./resolveInstance');
 
 //WARNING dependencyGraph is modified by reference!!
 
-module.exports = function(dependencyGraph){
+module.exports = function graphResolver(dependencyGraph){
 
     var recurse = function(items){
         logger.trace('GraphResolver | recurse: beginning recursion');

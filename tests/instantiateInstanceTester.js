@@ -11,16 +11,16 @@ describe('instantiateInstance Test', function() {
 
     before(function() {
         Mut        = require('../src/instantiateInstance');
-        var logger = require('../src/logger');
-        if(!logger.exposeInternals().options.console.formatter){
-            logger.addConsoleSink({
-                level    : 'silly',
-                colorize : true,
-                formatter: function(x) {
-                    return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
-                }
-            }).info("added Console Sink");
-        }
+        //var logger = require('../src/logger');
+        //if(!logger.exposeInternals().options.console.formatter){
+        //    logger.addConsoleSink({
+        //        level    : 'silly',
+        //        colorize : true,
+        //        formatter: function(x) {
+        //            return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
+        //        }
+        //    }).info("added Console Sink");
+        //}
     });
 
     describe('#instantiateInstance', function() {
@@ -32,10 +32,20 @@ describe('instantiateInstance Test', function() {
             })
         });
 
+        context('when calling instantiateInstance with item that has no wrapped instance', function() {
+            it('should throw proper error', function() {
+                (function() {
+                        Mut({name: 'frank'})
+                }).must.throw(Error, 'Invariant Violation: You can not instantiate a dependency with no WrappedInstance. item: frank');
+            })
+        });
+
         context('when calling instantiateInstance with no graph provided', function() {
             it('should throw proper error', function() {
                 (function() {
-                    Mut({})
+                    Mut({wrappedInstance:function(){
+                    //no-op
+                    }})
                 }).must.throw(Error, 'Invariant Violation: You must supply an array of dependencies even if its empty.');
             })
         });

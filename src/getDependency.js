@@ -33,28 +33,24 @@ var findDependency = function(_items, dependencyName){
     }
 };
 
-var fullDependency = function fullDependency(items, dependencyName) {
-    invariant(items, 'You must provide a a collection of dependencies to query');
+var fullDependency = function fullDependency(dependencyGraph, dependencyName) {
+    invariant(dependencyGraph, 'You must provide a a collection of dependencies to query');
     invariant(dependencyName, 'You must provide a dependency name to find');
     var item;
     logger.trace('getDependency | fullDependency: Trying to find the dependency : ' + dependencyName);
-    item = findDependency(items, dependencyName);
+    item = findDependency(dependencyGraph, dependencyName);
     if (!item) {
         logger.trace('getDependency | fullDependency: Single dependency not found. Trying to build grouped dependency : ' + dependencyName);
-        item = groupDependencies(items, dependencyName);
+        item = groupDependencies(dependencyGraph, dependencyName);
     } if (!item) {
         logger.trace('getDependency | fullDependency: Grouped dependency not found.  Trying to require dependency: ' + dependencyName);
         item = tryRequireDependency(dependencyName);
     }
-    if (!item) {
-        logger.debug('getDependency | fullDependency: can not find dependency: ' + dependencyName);
-        logger.debug('getDependency | fullDependency: ' + items.map(x=> x.name));
-    }
     return item;
 };
 
-var resolvedInstance = function(items, dependencyName){
-    var dependency = fullDependency(items, dependencyName);
+var resolvedInstance = function(dependencyGraph, dependencyName){
+    var dependency = fullDependency(dependencyGraph, dependencyName);
     if(Array.isArray(dependency)){
         var groupedDependency = [];
         for (let i of dependency) {
