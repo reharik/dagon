@@ -21,8 +21,15 @@
   ],
   "license": "MIT",
   "node": ">=0.12.0",
+  "badges": {
+    "list": [
+      "npmversion",
+      "npmdownloads"
+    ]
+  },
   "dependencies": {
     "JSON": "^1.0.0",
+    "badges": "^1.0.2",
     "bluebird": "^2.9.27",
     "extend": "^3.0.0",
     "fn-args": "^1.0.0",
