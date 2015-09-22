@@ -12,11 +12,11 @@ var DEBUG = process.env.NODE_ENV === "development";
 gulp.task('clean', function(cb) {
     del(["output"],{force:true}, cb);
 });
-
-gulp.task("copy-example",["clean"], function () {
-    return gulp.src("example/**")
-        .pipe(gulp.dest("./output/example"));
-});
+//
+//gulp.task("copy-example",["clean"], function () {
+//    return gulp.src("example/**")
+//        .pipe(gulp.dest("./output/example"));
+//});
 
 gulp.task("copy-tests",["clean"], function () {
     return gulp.src("tests/**")
@@ -24,7 +24,7 @@ gulp.task("copy-tests",["clean"], function () {
 });
 
 gulp.task("copy-root",["clean"], function () {
-    return gulp.src(["package.json", "testBootstrap.js", "babelhook.js", 'README.md'],{dot:true})
+    return gulp.src(["package.json", "babelhook.js", 'README.md'],{dot:true})
         .pipe(gulp.dest("output"));
 });
 
@@ -36,4 +36,4 @@ gulp.task("compile", ['clean'], function () {
 
 /////////////////////////////////////////////////
 
-gulp.task("deploy",['copy-example','copy-tests', "copy-root", "compile"]);
+gulp.task("deploy",['copy-tests', "copy-root", "compile"]);
