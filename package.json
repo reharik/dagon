@@ -5,9 +5,7 @@
   "main": "src/index.js",
   "homepage": "https://github.com/reharik/dagon",
   "scripts": {
-    "test": "mocha --opts tests/mocha.opts tests",
-    "testSpecific": "mocha --opts tests/mocha.opts ",
-    "testDebug": "node-debug _mocha --timeout 15000 --opts tests/mocha.opts tests"
+    "test": "mocha --opts tests/mocha.opts tests"
   },
   "repository": {
     "type": "git",
@@ -45,14 +43,5 @@
     "mocha": "^2.2.5",
     "mochawait": "^2.0.1",
     "must": "^0.13.0-beta2"
-  },
-  "internalDependencies": {
-    "logger": "/src/logger",
-    "pointlessDependency": "/tests/TestModules/pointlessDependency",
-    "TestClass": "/tests/TestModules/TestClass",
-    "TestClassBase": "/tests/TestModules/TestClassBase",
-    "testFunction": "/tests/TestModules/testFunction",
-    "testObject": "/tests/TestModules/testObject",
-    "testSIM": "/tests/TestModules/testSIM"
   }
 }
