@@ -4,7 +4,6 @@
 
 var demand = require('must');
 var path = require('path');
-var Dependency = require('../src/Dependency');
 
 describe('Registry DSL directory Tester', function() {
     var Mut;
@@ -31,7 +30,7 @@ describe('Registry DSL directory Tester', function() {
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();
-                result[0].path.must.equal('/tests/RegistryDSLTester');
+                result[0].path.must.equal(path.resolve('./tests/RegistryDSLTester'));
             })
         });
 
@@ -43,11 +42,11 @@ describe('Registry DSL directory Tester', function() {
 
         context('when calling requireDirectoryRecursively with value', function () {
             it('should create dependencyDeclarations for each item', function () {
-                mut.pathToRoot(path.resolve('./')).requireDirectoryRecursively('/tests');
+                mut.pathToRoot(path.resolve('./')).requireDirectoryRecursively('./tests');
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();
-                result[0].path.must.equal('/tests/RegistryDSLTester');
+                result[0].name.must.equal('RegistryDSLTester');
             })
         });
 
@@ -60,6 +59,12 @@ describe('Registry DSL directory Tester', function() {
         context('when calling groupAllInDirectory with no groupName value', function () {
             it('should throw proper error', function () {
                 (function(){mut.groupAllInDirectory('someDir')}).must.throw(Error, 'Invariant Violation: You must provide a valid Group Name');
+            })
+        });
+
+        context('when calling groupAllInDirectory with no directory value', function () {
+            it('should throw proper error', function () {
+                (function(){mut.groupAllInDirectory()}).must.throw(Error, 'Invariant Violation: You must provide a valid directory');
             })
         });
 

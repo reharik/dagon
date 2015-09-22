@@ -4,23 +4,47 @@
 
 var demand = require('must');
 var path = require('path');
+var moment = require('moment');
+
 describe('Container Test', function() {
     var Mut;
 
     before(function(){
         Mut = require('../src/Container');
+        var logger = require('../src/logger');
+        //if(!logger.exposeInternals().options.console.formatter){
+        //    logger.addConsoleSink({
+        //        level    : 'debug',
+        //        colorize : true,
+        //        formatter: function(x) {
+        //            return '[' + x.meta.level + '] module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
+        //        }
+        //    }).info("added Console Sink");
+        //}
     });
 
     describe('#instantiate Container', function() {
         context('when instantiating Container without reg func', function () {
             it('should throw proper error', function () {
-                (function(){new Mut()}).must.throw(Error,'Invariant Violation: Container requires at least one registry function');
+                var error = '';
+                try {
+                    new Mut()
+                }catch(err){
+                    error = err.detailView
+                }
+                error.must.contain('Invariant Violation: You must supply a registry function');
             })
         });
 
         context('when instantiating Container WITH reg func', ()=> {
             it('should NOT throw registry func error', ()=> {
-                (function(){new Mut(x=>x.pathToRoot(path.resolve('./')).complete())}).must.not.throw(Error,'Invariant Violation: Container requires a registry function');
+                var error = '';
+                try {
+                    new Mut(x=>x.pathToRoot(path.resolve('./')).complete());
+                }catch(err){
+                    error = err.detailView
+                }
+                error.must.not.contain('Invariant Violation: You must supply a registry function');
             })
         });
 
@@ -35,10 +59,11 @@ describe('Container Test', function() {
             it('should map that object properly', ()=> {
                 var mut = new Mut(x=>x.pathToRoot(path.resolve('./'))
                     .groupAllInDirectory('/tests/TestModules','testGroup')
+                    .for('logger').require('./tests/TestModules/loggerMock')
                     .for('testWithArrayDependency').require('/tests/testWithArrayDependency')
                     .complete());
-                //console.log(mut.getInstanceOf('testWithArrayDependency')());
-                mut.getInstanceOf('testWithArrayDependency')().deps.must.be.array();
+                var result = mut.getInstanceOf('testWithArrayDependency')();
+                result.deps.length.must.be.gt(0);
             })
         });
 
@@ -48,8 +73,8 @@ describe('Container Test', function() {
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').require('/tests/TestModules/loggerMock')
                         .complete());
-                var logger = mut.dependencyGraph._items.find(x=>x.name == 'logger');
-                logger.path.must.equal('/tests/TestModules/loggerMock');
+                var logger = mut.dependencyGraph.find(x=>x.name == 'logger');
+                logger.path.must.equal(path.resolve('./tests/TestModules/loggerMock'));
             })
         });
 
@@ -57,13 +82,13 @@ describe('Container Test', function() {
             it('should resolve graph',()=>{
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
+                        .for('logger').require('/tests/TestModules/loggerMock')
                         .for('TestClass').require('/tests/TestModules/TestClass')
                         .for('TestClassBase').require('/tests/TestModules/TestClassBase')
                         .for('pointlessDependency').require('/tests/TestModules/pointlessDependency')
                         .complete());
-                console.log(mut.dependencyGraph);
-                mut.dependencyGraph._items.forEach(x=> x.resolvedInstance.must.not.null());
-                var TestClass = mut.dependencyGraph._items.find(x=>x.name=='TestClass').resolvedInstance;
+                mut.dependencyGraph.forEach(x=> x.resolvedInstance.must.not.null());
+                var TestClass = mut.dependencyGraph.find(x=>x.name=='TestClass').resolvedInstance;
                 var testClass = new TestClass('fu');
 
                 testClass.getSomeOtherPropVal().must.equal('fu'+testClass.pointlessDependencyId);
@@ -76,6 +101,7 @@ describe('Container Test', function() {
             it('should return resolved instance', function () {
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
+                        .for('logger').require('/tests/TestModules/loggerMock')
                         .complete());
                 mut.getInstanceOf('logger').must.be.object();
             })
@@ -86,7 +112,7 @@ describe('Container Test', function() {
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
                         .complete());
-                demand(mut.getInstanceOf('piglogger')).be.undefined();
+                demand(mut.getInstanceOf('piglogger')).be.null();
                 (function(){mut.getInstanceOf('piglogger')}).must.not.throw(Error);
             })
         });
@@ -98,6 +124,7 @@ describe('Container Test', function() {
             it('should return bunch of stuff', function () {
                 var mut = new Mut(x=>
                     x.pathToRoot(path.resolve('./'))
+                        .for('logger').require('/tests/TestModules/loggerMock')
                         .for('TestClass').require('/tests/TestModules/TestClass')
                         .for('TestClassBase').require('/tests/TestModules/TestClassBase')
                         .for('pointlessDependency').require('/tests/TestModules/pointlessDependency')
@@ -110,17 +137,17 @@ describe('Container Test', function() {
         //TODO write tests for options you lazy fuck
     });
 
-    describe('#inject', function() {
-        context('when calling inject', function () {
-            it('should rebuild container with new dependency', function () {
-                var mut = new Mut(x=>
-                    x.pathToRoot(path.resolve('./'))
-                        .complete());
-                mut.inject({name:'logger', path:'/tests/TestModules/loggerMock', internal:true});
-                var TestClass = mut.getInstanceOf('TestClass');
-                new TestClass().callLogger('worked').must.equal('worked');
-            })
-        });
-    });
+    //describe('#inject', function() {
+    //    context('when calling inject', function () {
+    //        it('should rebuild container with new dependency', function () {
+    //            var mut = new Mut(x=>
+    //                x.pathToRoot(path.resolve('./'))
+    //                    .complete());
+    //            mut.inject({name:'logger', path:'/tests/TestModules/loggerMock', internal:true});
+    //            var TestClass = mut.getInstanceOf('TestClass');
+    //            new TestClass().callLogger('worked').must.equal('worked');
+    //        })
+    //    });
+    //});
 
 });

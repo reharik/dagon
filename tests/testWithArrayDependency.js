@@ -1,7 +1,6 @@
 /**
- * Created by parallels on 7/17/15.
+ * Created by parallels on 9/10/15.
  */
-
 
 module.exports = function(logger, testGroup){
     return function(){

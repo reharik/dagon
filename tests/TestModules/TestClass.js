@@ -4,9 +4,10 @@
 
 
 module.exports = function(TestClassBase, pointlessDependency, logger) {
+    console.log(TestClassBase);
     return class TestClass extends TestClassBase {
         constructor(someOtherProp) {
-            super();
+            super(someOtherProp);
             this.pointlessDependencyId = pointlessDependency();
             this._someOtherProp = someOtherProp + this.pointlessDependencyId;
             this._dateTime = "kid "+ new Date();

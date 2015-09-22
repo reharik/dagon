@@ -3,16 +3,14 @@
  */
 
 var invariant = require('invariant');
-var Dependency = require('./Dependency');
 var path = require('path');
 var fs = require('fs');
-var appRoot = require('./appRoot');
 var InstantiateDSL = require('./InstantiateDSL');
-var logger = require('./yowlWrapper');
+var logger = require('./logger');
 
 module.exports = class RegistryDSL{
     constructor(){
-        this._pathToPackageJson;
+        this._pathToAppRoot;
         this.dependencyDeclarations = [];
         this._declarationInProgress;
     }
@@ -23,11 +21,10 @@ module.exports = class RegistryDSL{
      */
     pathToRoot(_path){
         logger.trace('RegistryDSL | pathToRoot: setting path to root: '+_path);
-        appRoot.path = _path;
-        var resolvedPath = path.join(appRoot.path, '/package.json');
+        this._pathToAppRoot = _path;
+        var resolvedPath = path.join(this._pathToAppRoot, '/package.json');
         logger.trace('RegistryDSL | pathToRoot: checking to see if package exists using abspath: '+resolvedPath);
         invariant(fs.existsSync(resolvedPath),'Path to package.json does not resolve: '+ path.resolve(resolvedPath));
-        this._pathToPackageJson = resolvedPath;
         return this;
     }
 
@@ -41,10 +38,10 @@ module.exports = class RegistryDSL{
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
         this.completeDependencyDeclaration();
-        var absoluteDir = path.join(appRoot.path, dir);
+        var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir)));
+            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, absoluteDir)));
         return this;
     }
 
@@ -56,7 +53,7 @@ module.exports = class RegistryDSL{
         invariant(dir,'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectoryRecursively: closing in process declarations and renames');
         this.completeDependencyDeclaration();
-        var absoluteDir= path.join(appRoot.path, dir);
+        var absoluteDir= path.join(this._pathToAppRoot, dir);
         this.recurseDirectories(absoluteDir);
         return this;
     }
@@ -68,13 +65,14 @@ module.exports = class RegistryDSL{
      */
     groupAllInDirectory(dir, _groupName){
         invariant(dir, 'You must provide a valid directory');
+        invariant(_groupName, 'You must provide a valid Group Name');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
         this.completeDependencyDeclaration();
-        var absoluteDir = path.join(appRoot.path, dir);
+        var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, dir, groupName)));
+            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, absoluteDir, groupName)));
         return this;
     }
 
@@ -96,12 +94,13 @@ module.exports = class RegistryDSL{
      * @param path - the path of the dependency you are registering
      * @returns {this}
      */
-    require(path){
-        invariant(path,'You must provide a valid replacement module');
+    require(_path){
+        invariant(_path,'You must provide a valid replacement module');
         invariant(this._declarationInProgress,'You must call "for" before calling "require"');
-        this._declarationInProgress.path=path;
-        if(path.startsWith('.') || path.includes('/')){
+        this._declarationInProgress.path=_path;
+        if(_path.startsWith('.') || _path.includes('/')){
             this._declarationInProgress.internal=true;
+            this._declarationInProgress.path=path.join(this._pathToAppRoot,_path);
         }
         return this;
     }
@@ -113,7 +112,7 @@ module.exports = class RegistryDSL{
      */
     renameTo(name){
         invariant(name, 'You must provide the NEW name for your dependency');
-        invariant(this._declarationInProgress,'You must call "for" before calling "require"');
+        invariant(this._declarationInProgress,'You must call "for" before calling "renameTo"');
         logger.trace('RegistryDSL | rename: renaming');
         this._declarationInProgress.newName = name;
         return this;
@@ -156,10 +155,10 @@ module.exports = class RegistryDSL{
         logger.trace('RegistryDSL | processFile: creating dependency object');
         if(!file.endsWith('.js')){return;}
         file = file.replace('.js','');
-        var path = dir.replace(appRoot.path,'')+'/'+file;
+        var path = dir + '/'+file;
         var name = this.normalizeName(file);
         logger.trace('RegistryDSL | processFile: properties -' + name +' -'+path+' -'+groupName);
-        return new Dependency({name: name, path: path, internal: true, groupName:groupName||''},logger);
+        return {name: name, path: path, internal: true, groupName:groupName||''};
     }
 
     // not great that this is here and graph
@@ -174,7 +173,7 @@ module.exports = class RegistryDSL{
         this.completeDependencyDeclaration();
 
         return {
-            pathToPackageJson:this._pathToPackageJson,
+            pathToAppRoot:this._pathToAppRoot,
             dependencyDeclarations:this.dependencyDeclarations
         };
     }
