@@ -6,7 +6,7 @@ var Winston = require("winston"),
     Enum = require("./modules/enum.js");
 
 require("winston-logstash");
-
+/* istanbul ignore next */
 var loggerBase = function(options){
     var internals = {
         options : {

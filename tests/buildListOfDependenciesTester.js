@@ -115,8 +115,9 @@ describe('buildListOfDependencies Test', function() {
                 var result = Mut([], pjson,path.resolve('./'));
                 result.must.have.length(1);
                 result[0].wrappedInstance.must.be.a.function();
-                result[0].wrappedInstance.toString().must.startWith('function () {');
-                result[0].wrappedInstance.toString().must.contain('return require(item.path)');
+                var toString = result[0].wrappedInstance.toString();
+                toString.split(' ').join('').must.startWith('function(){');
+                toString.must.contain('return require(item.path)');
             })
         });
 

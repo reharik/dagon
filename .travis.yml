@@ -3,5 +3,10 @@ node_js:
   - "0.12"
   - "0.11"
   - "0.10"
+addons:
+    code_climate:
+        repo_token: d930e3c2021010fa6a850d8b4bea01c8c3a181d42da27932454ceb0f4803d58c
+after_script:
+  - codeclimate-test-reporter < lcov.info
 # uncomment this line if your project needs to run something other than `rake`:
 # script: bundle exec rspec spec

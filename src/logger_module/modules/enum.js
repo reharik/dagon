@@ -1,3 +1,4 @@
+/* istanbul ignore next */
 module.exports = {
     logLevels : function() {
         return [

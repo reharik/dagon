@@ -12,7 +12,7 @@ function instantiateClass(instanceFeatures, resolvedItem) {
     if (instanceFeatures.parameters) {
         var i  = Object.create(resolvedItem.prototype);
         var r  = resolvedItem.apply(i, instanceFeatures.parameters);
-        result = Object(r) === r ? r : i
+        result = Object(r) === r ? r : i;
     } else {
         result = new resolvedItem();
     }
@@ -33,9 +33,9 @@ function initialize(instanceFeatures, resolvedItem) {
     logger.debug('instantiateInstance | initialize: item has an initialization method so call that with params if present');
     var result;
     if (instanceFeatures.initParameters) {
-        result = resolvedItem[instanceFeatures.initializationMethod].apply(resolvedItem[instanceFeatures.initializationMethod], instanceFeatures.initParameters)
+        result = resolvedItem[instanceFeatures.initializationMethod].apply(resolvedItem[instanceFeatures.initializationMethod], instanceFeatures.initParameters);
     } else {
-        result = resolvedItem[instanceFeatures.initializationMethod]()
+        result = resolvedItem[instanceFeatures.initializationMethod]();
     }
     return result;
 }
@@ -45,9 +45,9 @@ var instantiateResolvedInstance = function(parent, resolvedItem){
     var instanceFeatures = parent.instantiate;
     logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : '+ instanceFeatures);
 
-    if(instanceFeatures.dependencyType == 'class'){
+    if(instanceFeatures.dependencyType === 'class'){
         result = instantiateClass(instanceFeatures, resolvedItem);
-    }else if(instanceFeatures.dependencyType == 'func'){
+    }else if(instanceFeatures.dependencyType === 'func'){
         result = instantiateFunc(instanceFeatures, resolvedItem);
     }
 
@@ -59,6 +59,7 @@ var instantiateResolvedInstance = function(parent, resolvedItem){
 
 module.exports = function instantiateInstance(item, resolvedDependencies){
     var error;
+    var resolvedItem;
     invariant(item, 'You must supply an item to instantiate.');
     invariant(item.wrappedInstance, 'You can not instantiate a dependency with no WrappedInstance. item: '+item.name);
     invariant(resolvedDependencies, 'You must supply an array of dependencies even if its empty.');
@@ -66,7 +67,7 @@ module.exports = function instantiateInstance(item, resolvedDependencies){
     logger.trace('instantiateInstance | constructor: actually resolving instance for '+ item.name);
     logger.trace('instantiateInstance | constructor: if no dependencies just call wrappedInstance, otherwise apply function with dependencies');
     try {
-        var resolvedItem = resolvedDependencies.length > 0
+        resolvedItem = resolvedDependencies.length > 0
             ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies)
             : item.wrappedInstance();
     }catch(err){
