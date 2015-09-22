@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/reharik/dagon.svg?branch=functional)](https://travis-ci.org/reharik/dagon)
 [![Code Climate](https://codeclimate.com/github/reharik/dagon/badges/gpa.svg)](https://codeclimate.com/github/reharik/dagon)
+[![Test Coverage](https://codeclimate.com/github/reharik/dagon/badges/coverage.svg)](https://codeclimate.com/github/reharik/dagon/coverage)
 # dagon
 dagon is a dependency injection container.
 

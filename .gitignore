@@ -14,3 +14,5 @@ compiled
 
 .idea
 npm-debug.log
+
+coverage

@@ -46,9 +46,9 @@ var instantiateResolvedInstance = function instantiateResolvedInstance(parent, r
     var instanceFeatures = parent.instantiate;
     logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : ' + instanceFeatures);
 
-    if (instanceFeatures.dependencyType == 'class') {
+    if (instanceFeatures.dependencyType === 'class') {
         result = instantiateClass(instanceFeatures, resolvedItem);
-    } else if (instanceFeatures.dependencyType == 'func') {
+    } else if (instanceFeatures.dependencyType === 'func') {
         result = instantiateFunc(instanceFeatures, resolvedItem);
     }
 
@@ -60,6 +60,7 @@ var instantiateResolvedInstance = function instantiateResolvedInstance(parent, r
 
 module.exports = function instantiateInstance(item, resolvedDependencies) {
     var error;
+    var resolvedItem;
     invariant(item, 'You must supply an item to instantiate.');
     invariant(item.wrappedInstance, 'You can not instantiate a dependency with no WrappedInstance. item: ' + item.name);
     invariant(resolvedDependencies, 'You must supply an array of dependencies even if its empty.');
@@ -67,7 +68,7 @@ module.exports = function instantiateInstance(item, resolvedDependencies) {
     logger.trace('instantiateInstance | constructor: actually resolving instance for ' + item.name);
     logger.trace('instantiateInstance | constructor: if no dependencies just call wrappedInstance, otherwise apply function with dependencies');
     try {
-        var resolvedItem = resolvedDependencies.length > 0 ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies) : item.wrappedInstance();
+        resolvedItem = resolvedDependencies.length > 0 ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies) : item.wrappedInstance();
     } catch (err) {
         error = exceptionHandler(err, 'Error attempting to instantiate wrapped instance.  Wrapped instance looks like this: ' + item.wrappedInstance.toString());
         error.details = { item: item, resolvedDependencies: resolvedDependencies };
