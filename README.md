@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/reharik/dagon.svg?branch=functional)](https://travis-ci.org/reharik/dagon)
 # dagon
 dagon is a dependency injection container.
 
