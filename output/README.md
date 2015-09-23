@@ -314,9 +314,12 @@ You could also do this with an internal function.
 - explain dagon loggin
 - create example app
 
-### Version 0.2.0
+### Version 0.2.1
 
 ##### revisions
+revision 0.2.1
+- fixed goddamn typeo
+- removed console.log
 revision 0.2.0
 - Not really breaking changes but I did add error handling which might change the errors you expect in your tests
 - refactorted all or most of the code to be much more explicit about what it's doing and also be explicit about if it's modifying a reference or returning new value

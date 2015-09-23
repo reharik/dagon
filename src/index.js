@@ -16,7 +16,7 @@ module.exports = function(_options){
         var app = options.logger.application ? 'Calling app: '+ options.logger.application +' | ':'';
         var level = options.logger.level || 'silly';
         _logger.addConsoleSink({
-            levelexceptionHandler,
+            level,
             colorize : true,
             formatter: function(x) {
                 return '[' + x.meta.level + '] '+app+' module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
