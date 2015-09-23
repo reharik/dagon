@@ -32,7 +32,6 @@ var flatDependencyGraph = function flatDependencyGraph(item, dependencyGraph) {
     var args         = fnArgs(item.wrappedInstance);
     logger.trace('getDependenciesForItem | flatDependencyGraph: args: ' + args);
     var dependencies = args.map(d => {
-        console.log('dependncy = '+d);
         var found = getDependency.fullDependency(dependencyGraph, d);
         invariant(found, 'Module ' + item.name + ' has a dependency that can not be resolved: ' + d);
         return found;
