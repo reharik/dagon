@@ -51,7 +51,7 @@ module.exports =  class Container{
      * @returns {type}
      */
     getArrayOfGroup(_groupName){
-        return this.dependencyGraph.map(x=>x.groupName == _groupName);
+        return this.dependencyGraph.filter(x=>x.groupName == _groupName);
     }
 
     getHashOfGroup(_groupName) {
