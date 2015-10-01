@@ -55,7 +55,7 @@ module.exports =  class Container{
     }
 
     getHashOfGroup(_groupName) {
-        var group = getArrayOfGroup(_groupName);
+        var group = this.getArrayOfGroup(_groupName);
         var hash = {};
         group.forEach(x=> hash[x.name] = x);
         return hash;
