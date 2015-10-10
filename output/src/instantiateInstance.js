@@ -6,6 +6,7 @@
 var logger = require('./logger');
 var invariant = require('invariant');
 var exceptionHandler = require('./exceptionHandler');
+var JSON = require('JSON');
 
 function instantiateClass(instanceFeatures, resolvedItem) {
     logger.debug('instantiateInstance | instantiateClass: item is class so call new with constructor params if present');
@@ -44,7 +45,7 @@ function initialize(instanceFeatures, resolvedItem) {
 var instantiateResolvedInstance = function instantiateResolvedInstance(parent, resolvedItem) {
     var result;
     var instanceFeatures = parent.instantiate;
-    logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : ' + instanceFeatures);
+    logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : ' + JSON.stringify(instanceFeatures));
 
     if (instanceFeatures.dependencyType === 'class') {
         result = instantiateClass(instanceFeatures, resolvedItem);
