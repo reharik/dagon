@@ -71,7 +71,7 @@ module.exports = function instantiateInstance(item, resolvedDependencies) {
     try {
         resolvedItem = resolvedDependencies.length > 0 ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies) : item.wrappedInstance();
     } catch (err) {
-        error = exceptionHandler(err, 'Error attempting to instantiate wrapped instance.  Wrapped instance looks like this: ' + item.wrappedInstance.toString());
+        error = exceptionHandler(err, 'Error attempting to instantiate wrapped instance of ' + item.name + '.  Wrapped instance looks like this: ' + item.wrappedInstance.toString());
         error.details = { item: item, resolvedDependencies: resolvedDependencies };
         throw error;
     }
