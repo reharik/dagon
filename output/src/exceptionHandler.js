@@ -13,15 +13,13 @@ module.exports = function (err, message) {
 };
 
 var errorHandler = function errorHandler(error) {
-    var message = ` ${ error.message }
-
-     ${error.stack.split("\n")}
-    `;
+    var message = error.message;
+    message += "\n";
+    message += error.stack.split("\n");
     if (error.innerException) {
-        message +=`
-        --------------- Nested Exception --------------
-        ${errorHandler(error.innerException, message)}
-        `
+        message += "\n";
+        message += '--------------- Nested Exception --------------';
+        message += "\n" + errorHandler(error.innerException, message);
     }
     return message;
 };
