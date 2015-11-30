@@ -8,18 +8,19 @@ var NestedError = require('nested-error');
 module.exports = function (err, message) {
     var error = new NestedError(err);
     error.message = message;
-    error.detailView = errorHandler(error);
+    error.detailView = errorHandler(error,[]);
     return error;
 };
 
-var errorHandler = function errorHandler(error) {
-    var message = error.message;
-    message += "\n";
-    message += error.stack.split("\n");
+var errorHandler = function errorHandler(error, result) {
+    var ex = {
+        message:error.message,
+        stack:error.stack.split("\n")
+    };
+    result.push(ex);
     if (error.innerException) {
-        message += "\n";
-        message += '--------------- Nested Exception --------------';
-        message += "\n" + errorHandler(error.innerException, message);
+        result.push({message: '--------------- Nested Exception --------------'});
+        errorHandler(error.innerException, result);
     }
-    return message;
+    return result;
 };
