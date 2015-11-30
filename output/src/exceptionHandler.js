@@ -15,9 +15,9 @@ module.exports = function (err, message) {
 var errorHandler = function errorHandler(error, result) {
     var ex = {
         message:error.message,
-        stack:error.stack.split("\n")
+        stack:JSON.stringify(error.stack.split("\n"))
     };
-    result.push(JSON.stringify(ex));
+    result.push(ex);
     if (error.innerException) {
         result.push({message: '--------------- Nested Exception --------------'});
         errorHandler(error.innerException, result);
