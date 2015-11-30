@@ -17,7 +17,7 @@ var errorHandler = function errorHandler(error, result) {
         message:error.message,
         stack:error.stack.split("\n")
     };
-    result.push(ex);
+    result.push(JSON.stringify(ex));
     if (error.innerException) {
         result.push({message: '--------------- Nested Exception --------------'});
         errorHandler(error.innerException, result);
