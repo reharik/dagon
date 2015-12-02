@@ -20,7 +20,13 @@ describe('Registry DSL directory Tester', function() {
     describe('#testing directory DSL', function() {
         context('when calling requireDirectory with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.requireDirectory()}).must.throw(Error, 'Invariant Violation: You must provide a valid directory');
+                var error = '';
+                try{
+                    mut.requireDirectory()
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('You must provide a valid directory');
             })
         });
 
@@ -36,7 +42,13 @@ describe('Registry DSL directory Tester', function() {
 
         context('when calling requireDirectoryRecursively with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.requireDirectoryRecursively()}).must.throw(Error, 'Invariant Violation: You must provide a valid directory');
+                var error = '';
+                try{
+                    mut.requireDirectoryRecursively()
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('You must provide a valid directory');
             })
         });
 
@@ -52,19 +64,23 @@ describe('Registry DSL directory Tester', function() {
 
         context('when calling groupAllInDirectory with no Directory value', function () {
             it('should throw proper error', function () {
-                (function(){mut.groupAllInDirectory()}).must.throw(Error, 'Invariant Violation: You must provide a valid directory');
+                var error = '';
+                try{
+                    mut.groupAllInDirectory()
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('You must provide a valid directory');
             })
         });
 
-        context('when calling groupAllInDirectory with no groupName value', function () {
-            it('should throw proper error', function () {
-                (function(){mut.groupAllInDirectory('someDir')}).must.throw(Error, 'Invariant Violation: You must provide a valid Group Name');
-            })
-        });
-
-        context('when calling groupAllInDirectory with no directory value', function () {
-            it('should throw proper error', function () {
-                (function(){mut.groupAllInDirectory()}).must.throw(Error, 'Invariant Violation: You must provide a valid directory');
+        context('when calling groupAllInDirectory with value but no groupname', function () {
+            it('should create dependencyDeclarations with groupname of the dir for each item', function () {
+                mut.pathToRoot(path.resolve('./')).groupAllInDirectory('/tests');
+                mut.dependencyDeclarations.length.must.be.gt(1);
+                var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
+                result[0].must.not.be.null();
+                result[0].groupName.must.equal('tests');
             })
         });
 
@@ -76,7 +92,5 @@ describe('Registry DSL directory Tester', function() {
                 result[0].must.not.be.null();
                 result[0].groupName.must.equal('groupTest');
             })
-        });
-
-    });
+        });    });
 });

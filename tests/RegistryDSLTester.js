@@ -33,7 +33,13 @@ describe('Registry DSL Tester', function() {
 
         context('when calling forDependency with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.for()}).must.throw(Error,'Invariant Violation: You must provide a valid dependency parameter');
+                var error = '';
+                try{
+                    mut.for()
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('You must provide a valid dependency parameter');
             })
         });
 
@@ -47,7 +53,13 @@ describe('Registry DSL Tester', function() {
 
         context('when calling require with no value', function () {
             it('should throw proper error', function () {
-                (function(){mut.require()}).must.throw(Error,'Invariant Violation: You must provide a valid replacement module');
+                var error = '';
+                try{
+                    mut.require()
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('You must provide a valid replacement module');
             })
         });
 
@@ -63,8 +75,13 @@ describe('Registry DSL Tester', function() {
 
         context('when calling require with out calling forDependency first', function () {
             it('should throw proper error', function () {
-                (function(){mut.require('/package.json')})
-                    .must.throw(Error,'Invariant Violation: You must call "for" before calling "require"');
+                var error = '';
+                try{
+                    mut.require('/package.json')
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('You must call "for" before calling "require"');
             })
         });
 
@@ -106,29 +123,39 @@ describe('Registry DSL Tester', function() {
             });
         });
 
-        context('when calling instantiate with out first calling for',()=>{
-            it('should throw proper error', function(){
-                (function(){mut.instantiate(x=>x.asClass())}).must.throw(Error, 'Invariant Violation: You must call "for" before calling "instantiate"');
-            });
-        });
+        ///
+        ///
+        ///we are not instantiating here anymore
 
-        context('when calling instantiate',()=>{
-            it('should return results of func', ()=>{
-                mut.for('some depemdency').instantiate(x=>x.asClass().withParameters(['someParam']).initializeWithMethod('method'));
-                mut._declarationInProgress.instantiate.must.eql({dependencyType:'class', parameters:['someParam'], initializationMethod:'method'});
-            })
-        });
+        //context('when calling instantiate with out first calling for',()=>{
+        //    it('should throw proper error', function(){
+        //        var error = '';
+        //        try{
+        //            mut.instantiate(x=>x.asClass())
+        //        }catch(ex){
+        //            error = ex.message;
+        //        }
+        //        error.must.equal('You must call "for" before calling "instantiate"');
+        //    });
+        //});
 
-        context('when calling complete with one rename, and one declaration', function () {
-            it('should return object with proprer properties', function () {
-                mut.pathToRoot(path.resolve('./'));
-                mut.for('someParam');
-                mut.require('/tests/TestModules/TestClass');
-                mut.renameTo('newNmae');
-                var result = mut.complete();
-                result.dependencyDeclarations.length.must.equal(1);
-                result.pathToAppRoot.must.be.string();
-            })
-        });
+        //context('when calling instantiate',()=>{
+        //    it('should return results of func', ()=>{
+        //        mut.for('some depemdency').instantiate(x=>x.asClass().withParameters(['someParam']).initializeWithMethod('method'));
+        //        mut._declarationInProgress.instantiate.must.eql({dependencyType:'class', parameters:['someParam'], initializationMethod:'method'});
+        //    })
+        //});
+        //
+        //context('when calling complete with one rename, and one declaration', function () {
+        //    it('should return object with proprer properties', function () {
+        //        mut.pathToRoot(path.resolve('./'));
+        //        mut.for('someParam');
+        //        mut.require('/tests/TestModules/TestClass');
+        //        mut.renameTo('newNmae');
+        //        var result = mut.complete();
+        //        result.dependencyDeclarations.length.must.equal(1);
+        //        result.pathToAppRoot.must.be.string();
+        //    })
+        //});
     });
 });

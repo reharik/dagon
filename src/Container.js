@@ -20,14 +20,8 @@ module.exports =  class Container{
             logger.trace('Container | constructor : Building registry');
             this.registry = registryFunc(new RegistryDSL());
 
-            logger.trace('Container | constructor : get package.json');
-            var packageJson = require(path.join(this.registry.pathToAppRoot, '/package.json'));
-
-            logger.trace('Container | constructor : Build list of Dependencies');
-            this.dependencyGraph = buildListofDependencies(this.registry.dependencyDeclarations, packageJson);
-
-            logger.trace('Container | constructor : resolve graph');
-            graphResolution(this.dependencyGraph);
+            //logger.trace('Container | constructor : resolve graph');
+            //graphResolution(this.dependencyGraph);
         }catch(err){
             throw exceptionHandler(err, 'Error building dependency graph.  Check nested exceptions for more details.');
         }

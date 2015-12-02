@@ -1,6 +1,7 @@
 /**
  * Created by rharik on 6/24/15.
  */
+"use strict";
 
 var invariant = require('invariant');
 var path = require('path');
@@ -10,6 +11,7 @@ var logger = require('./logger');
 
 module.exports = class RegistryDSL{
     constructor(){
+        this.dependentRegistries = [];
         this._pathToAppRoot;
         this.dependencyDeclarations = [];
         this._declarationInProgress;
@@ -25,6 +27,15 @@ module.exports = class RegistryDSL{
         var resolvedPath = path.join(this._pathToAppRoot, '/package.json');
         logger.trace('RegistryDSL | pathToRoot: checking to see if package exists using abspath: '+resolvedPath);
         invariant(fs.existsSync(resolvedPath),'Path to package.json does not resolve: '+ path.resolve(resolvedPath));
+        return this;
+    }
+
+    /**
+     * @param moduleRegistries - an array of 'requireable' modules that return moduleRegistries
+     * @returns {this}
+     */
+    requiredModuleRegistires(moduleRegistries){
+        this.dependentRegistries = moduleRegistries;
         return this;
     }
 
@@ -65,7 +76,6 @@ module.exports = class RegistryDSL{
      */
     groupAllInDirectory(dir, _groupName){
         invariant(dir, 'You must provide a valid directory');
-        invariant(_groupName, 'You must provide a valid Group Name');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
         this.completeDependencyDeclaration();
@@ -125,17 +135,6 @@ module.exports = class RegistryDSL{
         }
     }
 
-    /**
-     * @param function - create a function to define how you would like this object instantiated
-     * @returns {this}
-     */
-    instantiate(func){
-        invariant(func, 'You must provide func for instanciation');
-        invariant(this._declarationInProgress,'You must call "for" before calling "instantiate"');
-        logger.trace('RegistryDSL | instantiate: building new instantiationDSL func');
-        this._declarationInProgress.instantiate = func(new InstantiateDSL(logger)).getOptions();
-        return this;
-    }
 
     recurseDirectories(dir) {
         logger.trace('RegistryDSL | recurseDirectories: looping through '+dir);
@@ -171,10 +170,12 @@ module.exports = class RegistryDSL{
 
     complete(){
         this.completeDependencyDeclaration();
-
-        return {
-            pathToAppRoot:this._pathToAppRoot,
-            dependencyDeclarations:this.dependencyDeclarations
+        var newVar = {
+            pathToAppRoot         : this._pathToAppRoot,
+            dependencyDeclarations: this.dependencyDeclarations,
+            dependentRegistries   : this.dependentRegistries
         };
+
+        return newVar;
     }
 };

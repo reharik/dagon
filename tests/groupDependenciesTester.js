@@ -27,13 +27,25 @@ describe('groupDependencies Test', function() {
     describe('#groupDependencies', function() {
         context('when calling groupDependencies with no items provided', function () {
             it('should throw proper error', function () {
-                (function(){Mut()}).must.throw(Error,'Invariant Violation: groupDependencies requires graph of items to query.');
+                var error = '';
+                try{
+                    Mut()
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('groupDependencies requires graph of items to query.');
             })
         });
 
         context('when calling groupDependencies with no groupname provided', function () {
             it('should throw proper error', function () {
-                (function(){Mut([])}).must.throw(Error,'Invariant Violation: groupDependencies requires an group name to try and build.');
+                var error = '';
+                try{
+                    Mut([])
+                }catch(ex){
+                    error = ex.message;
+                }
+                error.must.equal('groupDependencies requires an group name to try and build.');
             })
         });
     });

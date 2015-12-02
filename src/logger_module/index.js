@@ -1,3 +1,5 @@
+"use strict";
+
 var Winston = require("winston"),
     Joi = require("joi"),
     _ = require("lodash"),

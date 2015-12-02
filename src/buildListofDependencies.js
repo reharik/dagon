@@ -1,6 +1,7 @@
 /**
  * Created by rharik on 6/30/15.
  */
+"use strict";
 
 var invariant = require('invariant');
 var logger = require('./logger');
@@ -31,18 +32,22 @@ var wrapInstances = function wrapInstances(item) {
     return item;
 };
 
-var updateDependency = function updateDependency(manualDeclarations, existingDeclaration) {
 
-    manualDeclarations
-        .filter(x=>x.name == existingDeclaration.name)
-        .forEach(i=>{
-            existingDeclaration.groupName   = i.groupName;
-            existingDeclaration.name        = i.newName ? i.newName : existingDeclaration.name;
-            existingDeclaration.path        = i.path ? i.path : existingDeclaration.path;
-            existingDeclaration.internal    = i.internal ? i.internal : existingDeclaration.internal;
-            existingDeclaration.instantiate = i.instantiate ? i.instantiate : existingDeclaration.instantiate;
-        });
-};
+///
+/// this happens at top level only
+///
+//var updateDependency = function updateDependency(manualDeclarations, existingDeclaration) {
+//
+//    manualDeclarations
+//        .filter(x=>x.name == existingDeclaration.name)
+//        .forEach(i=>{
+//            existingDeclaration.groupName   = i.groupName;
+//            existingDeclaration.name        = i.newName ? i.newName : existingDeclaration.name;
+//            existingDeclaration.path        = i.path ? i.path : existingDeclaration.path;
+//            existingDeclaration.internal    = i.internal ? i.internal : existingDeclaration.internal;
+//            existingDeclaration.instantiate = i.instantiate ? i.instantiate : existingDeclaration.instantiate;
+//        });
+//};
 
 var normalizeName = function normalizeName(orig){
     var name = orig.replace(/-/g, '');
@@ -60,19 +65,39 @@ var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(pjs
         .map(x=> {return { name: normalizeName(x), path:x }});
 };
 
-module.exports = function buildListOfDependencies(manualDeclarations, pjson) {
+var getDependenciesFromDependentMdoules = function(moduleRegistries){
+    try {
+        var result = moduleRegistries.map(x=> require(x)())
+            .reduce((m, a) => {
+                a.wrappedDependencies.concat(registry.wrappedDependencies);
+                a.overrides.concat(registry.overrides);
+                return a;
+            },{});
+    }catch(ex){
+        console.log(ex);
+    }
+    return result
+};
+
+module.exports = function buildListOfDependencies(_manualDeclarations, dependentRegistries, pjson) {
 
     logger.trace('buildListOfDependencies | constructor : get package.json');
-    manualDeclarations = manualDeclarations || [];
-
-    var result = getDependenciesFromProjectJson(pjson);
+    var manualDeclarations = _manualDeclarations || [];
+    var result             = getDependenciesFromProjectJson(pjson) || [];
     // need to get these before we rename the pjson dependencies
-    var manualCreates= manualDeclarations.filter(x=> result.find(i=>i.name == x.name) == null);
-    result.forEach(x=> updateDependency(manualDeclarations, x));
+    var manualCreates = manualDeclarations.filter(x=> result.find(i=>i.name == x.name) == null);
+    //result.forEach(x=> updateDependency(manualDeclarations, x));
 
     // could be problem if the registry has two declarations for one item.
     // maybe put check in registry so that doesn't happen
     result = result.concat(buildDependency(manualCreates));
+    
+    var processedDependentRegistries = getDependenciesFromDependentMdoules(dependentRegistries);
     result.forEach(x=> wrapInstances(x));
-    return result;
+    result                           = processedDependentRegistries && processedDependentRegistries.wrappedDependencies ? result.concat(processedDependentRegistries.wrappedDependencies) : result;
+    manualDeclarations               = processedDependentRegistries && processedDependentRegistries.overrides ? manualDeclarations.concat(processedDependentRegistries.overrides) : manualDeclarations;
+    return {
+        wrappedDependencies: result,
+        overrides          : manualDeclarations
+    };
 };
