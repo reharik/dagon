@@ -63,14 +63,16 @@ module.exports = (function () {
     }, {
         key: 'getArrayOfGroup',
         value: function getArrayOfGroup(_groupName) {
-            return this.dependencyGraph.map(function (x) {
+            return this.dependencyGraph.filter(function (x) {
                 return x.groupName == _groupName;
+            }).map(function (x) {
+                return x.resolvedInstance;
             });
         }
     }, {
         key: 'getHashOfGroup',
         value: function getHashOfGroup(_groupName) {
-            var group = getArrayOfGroup(_groupName);
+            var group = this.getArrayOfGroup(_groupName);
             var hash = {};
             group.forEach(function (x) {
                 return hash[x.name] = x;

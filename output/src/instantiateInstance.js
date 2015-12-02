@@ -6,6 +6,7 @@
 var logger = require('./logger');
 var invariant = require('invariant');
 var exceptionHandler = require('./exceptionHandler');
+var JSON = require('JSON');
 
 function instantiateClass(instanceFeatures, resolvedItem) {
     logger.debug('instantiateInstance | instantiateClass: item is class so call new with constructor params if present');
@@ -44,7 +45,7 @@ function initialize(instanceFeatures, resolvedItem) {
 var instantiateResolvedInstance = function instantiateResolvedInstance(parent, resolvedItem) {
     var result;
     var instanceFeatures = parent.instantiate;
-    logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : ' + instanceFeatures);
+    logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : ' + JSON.stringify(instanceFeatures));
 
     if (instanceFeatures.dependencyType === 'class') {
         result = instantiateClass(instanceFeatures, resolvedItem);
@@ -70,7 +71,7 @@ module.exports = function instantiateInstance(item, resolvedDependencies) {
     try {
         resolvedItem = resolvedDependencies.length > 0 ? item.wrappedInstance.apply(item.wrappedInstance, resolvedDependencies) : item.wrappedInstance();
     } catch (err) {
-        error = exceptionHandler(err, 'Error attempting to instantiate wrapped instance.  Wrapped instance looks like this: ' + item.wrappedInstance.toString());
+        error = exceptionHandler(err, 'Error attempting to instantiate wrapped instance of ' + item.name + ' at path: ' + item.path + '.  Wrapped instance looks like this: ' + item.wrappedInstance.toString());
         error.details = { item: item, resolvedDependencies: resolvedDependencies };
         throw error;
     }
