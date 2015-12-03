@@ -65,14 +65,16 @@ var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(pjs
         .map(x=> {return { name: normalizeName(x), path:x }});
 };
 
+var buildResult = (m, a) => {
+    a.wrappedDependencies.concat(registry.wrappedDependencies);
+    a.overrides.concat(registry.overrides);
+    return a;
+};
+
 var getDependenciesFromDependentMdoules = function(moduleRegistries){
     try {
         var result = moduleRegistries.map(x=> require(x)())
-            .reduce((m, a) => {
-                a.wrappedDependencies.concat(registry.wrappedDependencies);
-                a.overrides.concat(registry.overrides);
-                return a;
-            },{});
+            .reduce(buildResult,{wrappedDependencies:[],overrides:[]});
     }catch(ex){
         console.log(ex);
     }
@@ -83,15 +85,15 @@ module.exports = function buildListOfDependencies(_manualDeclarations, dependent
 
     logger.trace('buildListOfDependencies | constructor : get package.json');
     var manualDeclarations = _manualDeclarations || [];
-    var result             = getDependenciesFromProjectJson(pjson) || [];
+    var jsonDeclarations             = getDependenciesFromProjectJson(pjson) || [];
     // need to get these before we rename the pjson dependencies
     var manualCreates = manualDeclarations.filter(x=> result.find(i=>i.name == x.name) == null);
     //result.forEach(x=> updateDependency(manualDeclarations, x));
 
     // could be problem if the registry has two declarations for one item.
     // maybe put check in registry so that doesn't happen
-    result = result.concat(buildDependency(manualCreates));
-    
+    var result = R.concat(jsonDeclarations, buildDependency(manualCreates));
+
     var processedDependentRegistries = getDependenciesFromDependentMdoules(dependentRegistries);
     result.forEach(x=> wrapInstances(x));
     result                           = processedDependentRegistries && processedDependentRegistries.wrappedDependencies ? result.concat(processedDependentRegistries.wrappedDependencies) : result;

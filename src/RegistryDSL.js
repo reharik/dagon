@@ -168,6 +168,16 @@ module.exports = class RegistryDSL{
         return name;
     }
 
+    var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(){
+        if(!this._pathToAppRoot){
+            return [];
+        }
+        logger.trace('buildListOfDependencies | getDependenciesFromProjectJson: reading package.json dependencies');
+        var packageJson      = require(path.join(registry.pathToAppRoot, '/package.json'));
+        var dependencies =  Object.keys(packageJson.dependencies)
+            .map(x=> {return { name: normalizeName(x), path:x }});
+        
+    };
     complete(){
         this.completeDependencyDeclaration();
         var newVar = {

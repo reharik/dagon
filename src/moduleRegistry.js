@@ -17,6 +17,7 @@ module.exports =  function(registryFunc) {
 
         var registry        = registryFunc(new RegistryDSL());
         var packageJson      = require(path.join(registry.pathToAppRoot, '/package.json'));
+        var getDependantRegistgries =
         var wrappedDependencies = buildListofDependencies(registry.dependencyDeclarations, registry.dependentRegistries, packageJson);
         return {
             dependencies: wrappedDependencies,
