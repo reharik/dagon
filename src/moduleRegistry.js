@@ -4,25 +4,33 @@
 "use strict";
 
 var RegistryDSL = require('./RegistryDSL');
-var buildListofDependencies = require('./buildListofDependencies');
+var buildRegistryDto = require('./buildRegistryDto');
 var invariant = require('invariant');
 var logger = require('./logger');
 var path = require('path');
 var exceptionHandler = require('./exceptionHandler');
 var _ = require('lodash');
-module.exports =  function(registryFunc) {
+
+
+var moduleRegistry = function(registryFunc) {
+
     try {
         invariant(registryFunc && _.isFunction(registryFunc),
             'You must supply a registry function');
 
-        var registry        = registryFunc(new RegistryDSL());
-        var packageJson      = require(path.join(registry.pathToAppRoot, '/package.json'));
-        var getDependantRegistgries =
-        var wrappedDependencies = buildListofDependencies(registry.dependencyDeclarations, registry.dependentRegistries, packageJson);
-        return {
-            dependencies: wrappedDependencies,
-            overrides:registry.dependencyDeclarations
-        }
+        var dto = buildRegistryDto(registryFunc);
+
+        // this may return the initiating value ( dto ) if there are no dependentRegistries.
+        // or it may blow the fuck up
+
+        // there's something wrong here,but I"m too tired to see it
+        return dto.dependentRegistries.map(x=> require(x)())
+            .reduce((m, a) => {
+                a.wrappedDependencies.concat(registry.wrappedDependencies);
+                a.overrides.concat(registry.overrides);
+                return a;
+            },dto);
+
     } catch (err) {
         throw exceptionHandler(err, 'Error collecting dependencies.  Check nested exceptions for more details.');
     }

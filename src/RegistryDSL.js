@@ -51,8 +51,9 @@ module.exports = class RegistryDSL{
         this.completeDependencyDeclaration();
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, absoluteDir)));
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
+            .map(x=> this.processFile(x, absoluteDir));
+        addDependenciesToCollection(dependencies);
         return this;
     }
 
@@ -81,8 +82,9 @@ module.exports = class RegistryDSL{
         this.completeDependencyDeclaration();
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .forEach(x=> this.dependencyDeclarations.push(this.processFile(x, absoluteDir, groupName)));
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
+            .map(x=> this.processFile(x, absoluteDir, groupName));
+        addDependenciesToCollection(dependencies);
         return this;
     }
 
@@ -130,7 +132,7 @@ module.exports = class RegistryDSL{
 
     completeDependencyDeclaration() {
         if(this._declarationInProgress) {
-            this.dependencyDeclarations.push(this._declarationInProgress);
+            addDependenciesToCollection(this._declarationInProgress);
             this._declarationInProgress = null;
         }
     }
@@ -138,7 +140,7 @@ module.exports = class RegistryDSL{
 
     recurseDirectories(dir) {
         logger.trace('RegistryDSL | recurseDirectories: looping through '+dir);
-        return fs.readdirSync(dir).map(x=> {
+        var dependencies = fs.readdirSync(dir).map(x=> {
             var stat = fs.statSync(dir + '/' + x);
             if (stat && stat.isDirectory()) {
                 this.recurseDirectories(dir + '/' + x);
@@ -146,8 +148,8 @@ module.exports = class RegistryDSL{
             return x;
         })
         .filter(x=>x.endsWith('.js'))
-        .map(x => this.processFile(x, dir))
-        .forEach(x=> this.dependencyDeclarations.push(x));
+        .map(x => this.processFile(x, dir));
+        addDependenciesToCollection(dependencies);
     }
 
     processFile(file,dir, groupName){
@@ -176,16 +178,24 @@ module.exports = class RegistryDSL{
         var packageJson      = require(path.join(registry.pathToAppRoot, '/package.json'));
         var dependencies =  Object.keys(packageJson.dependencies)
             .map(x=> {return { name: normalizeName(x), path:x }});
-        
+        addDependenciesToCollection(dependencies);
     };
+
+    var addDependenciesToCollection = function(_items){
+        var items = _items;
+        if(!Array.isArray(items)){
+            items = [_items];
+        }
+
+        this.dependencyDeclarations = this.dependencyDeclarations.concat(items);
+    };
+
     complete(){
         this.completeDependencyDeclaration();
-        var newVar = {
-            pathToAppRoot         : this._pathToAppRoot,
+        return {
+            dependencyItems: this.getDependenciesFromProjectJson(),
             dependencyDeclarations: this.dependencyDeclarations,
             dependentRegistries   : this.dependentRegistries
         };
-
-        return newVar;
     }
 };
