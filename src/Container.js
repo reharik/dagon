@@ -3,6 +3,7 @@
  */
 var _ = require('lodash');
 var RegistryDSL = require('./RegistryDSL');
+var ContainerDSL = require('./ContainerDSL');
 var buildListofDependencies = require('./buildListofDependencies');
 var graphResolution = require('./graphResolver');
 var invariant = require('invariant');
@@ -10,9 +11,10 @@ var JSON = require('JSON');
 var logger = require('./logger');
 var path = require('path');
 var exceptionHandler = require('./exceptionHandler');
+var moduleRegistry = require('./moduleRegistry');
 
 module.exports =  class Container{
-    constructor(registryFunc) {
+    constructor(registryFunc, containerFunc) {
         try {
             invariant(registryFunc && _.isFunction(registryFunc),
                 'You must supply a registry function');

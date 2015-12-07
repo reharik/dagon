@@ -33,7 +33,7 @@ describe('groupDependencies Test', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('groupDependencies requires graph of items to query.');
+                error.must.equal('Invariant Violation: groupDependencies requires graph of items to query.');
             })
         });
 
@@ -45,7 +45,7 @@ describe('groupDependencies Test', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('groupDependencies requires an group name to try and build.');
+                error.must.equal('Invariant Violation: groupDependencies requires an group name to try and build.');
             })
         });
     });

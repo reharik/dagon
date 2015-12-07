@@ -53,7 +53,7 @@ module.exports = class RegistryDSL{
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
             .map(x=> this.processFile(x, absoluteDir));
-        addDependenciesToCollection(dependencies);
+        this.addDependenciesToCollection(dependencies);
         return this;
     }
 
@@ -84,7 +84,7 @@ module.exports = class RegistryDSL{
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
             .map(x=> this.processFile(x, absoluteDir, groupName));
-        addDependenciesToCollection(dependencies);
+        this.addDependenciesToCollection(dependencies);
         return this;
     }
 
@@ -132,7 +132,7 @@ module.exports = class RegistryDSL{
 
     completeDependencyDeclaration() {
         if(this._declarationInProgress) {
-            addDependenciesToCollection(this._declarationInProgress);
+            this.addDependenciesToCollection(this._declarationInProgress);
             this._declarationInProgress = null;
         }
     }
@@ -149,7 +149,7 @@ module.exports = class RegistryDSL{
         })
         .filter(x=>x.endsWith('.js'))
         .map(x => this.processFile(x, dir));
-        addDependenciesToCollection(dependencies);
+        this.addDependenciesToCollection(dependencies);
     }
 
     processFile(file,dir, groupName){
@@ -170,18 +170,18 @@ module.exports = class RegistryDSL{
         return name;
     }
 
-    var getDependenciesFromProjectJson = function getDependenciesFromProjectJson(){
+    getDependenciesFromProjectJson(){
         if(!this._pathToAppRoot){
             return [];
         }
         logger.trace('buildListOfDependencies | getDependenciesFromProjectJson: reading package.json dependencies');
-        var packageJson      = require(path.join(registry.pathToAppRoot, '/package.json'));
+        var packageJson      = require(path.join(this._pathToAppRoot, '/package.json'));
         var dependencies =  Object.keys(packageJson.dependencies)
-            .map(x=> {return { name: normalizeName(x), path:x }});
-        addDependenciesToCollection(dependencies);
+            .map(x=> {return { name: this.normalizeName(x), path:x }});
+        this.addDependenciesToCollection(dependencies);
     };
 
-    var addDependenciesToCollection = function(_items){
+    addDependenciesToCollection(_items){
         var items = _items;
         if(!Array.isArray(items)){
             items = [_items];
@@ -192,10 +192,16 @@ module.exports = class RegistryDSL{
 
     complete(){
         this.completeDependencyDeclaration();
+        this.getDependenciesFromProjectJson();
+
+        var dependencies = this.dependencyDeclarations.map(x=> {
+            x.path = x.path ? x.path : x.name;
+            return x;
+        });
+
         return {
-            dependencyItems: this.getDependenciesFromProjectJson(),
-            dependencyDeclarations: this.dependencyDeclarations,
-            dependentRegistries   : this.dependentRegistries
+            dependencyDeclarations: dependencies || [],
+            dependentRegistries   : this.dependentRegistries || []
         };
     }
 };

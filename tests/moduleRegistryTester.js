@@ -12,6 +12,7 @@ describe('moduleRegistry Test', function() {
 
     before(function(){
         mut = require('../src/moduleRegistry');
+        console.log(mut);
         var logger = require('../src/logger');
         //if(!logger.exposeInternals().options.console.formatter){
         //    logger.addConsoleSink({
@@ -33,7 +34,7 @@ describe('moduleRegistry Test', function() {
                 }catch(err){
                     error = err;
                 }
-                error.must.contain('Error building dependency graph.  Check nested exceptions for more details.');
+                error.must.contain('Error collecting dependencies.  Check nested exceptions for more details.');
             })
         });
 
@@ -45,28 +46,20 @@ describe('moduleRegistry Test', function() {
                 }catch(err){
                     error = err.detailView
                 }
-                error.must.not.contain('Error building dependency graph.  Check nested exceptions for more details.');
+                error.must.not.contain('Error collecting dependencies.  Check nested exceptions for more details.');
             })
         });
 
-        context('when instantiating moduleRegistry', ()=> {
-            it('should put new grpah on dependencyGraph property', ()=> {
-
-                var result = mut(x=>x.pathToRoot(path.resolve('./')).complete());
-                demand(result.dependencyGraph);
-            })
-        });
-    
-        context('when instantiating moduleRegistry with object that takes array of deps', ()=> {
-            it('should map that object properly', ()=> {
-                var result =  mut(x=>x.pathToRoot(path.resolve('./'))
-                    .groupAllInDirectory('/tests/TestModules','testGroup')
-                    .for('logger').require('./tests/TestModules/loggerMock')
-                    .for('testWithArrayDependency').require('/tests/testWithArrayDependency')
-                    .complete());
-                result.dependencies.length.must.be.gt(0);
-            })
-        });
+        //context('when instantiating moduleRegistry with object that takes array of deps', ()=> {
+        //    it('should map that object properly', ()=> {
+        //        var result =  mut(x=>x.pathToRoot(path.resolve('./'))
+        //            .groupAllInDirectory('/tests/TestModules','testGroup')
+        //            .for('logger').require('./tests/TestModules/loggerMock')
+        //            .for('testWithArrayDependency').require('/tests/testWithArrayDependency')
+        //            .complete());
+        //        result.wrappedDependencies.length.must.be.gt(0);
+        //    })
+        //});
 
         context('when instantiating moduleregistry with manual registry', ()=>{
             it('should return item in list',()=>{
@@ -74,7 +67,7 @@ describe('moduleRegistry Test', function() {
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').require('/tests/TestModules/loggerMock')
                         .complete());
-                var logger = result.dependencies.find(x=>x.name == 'logger');
+                var logger = result.dependencyDeclarations.find(x=>x.name == 'logger');
                 logger.path.must.equal(path.resolve('./tests/TestModules/loggerMock'));
             })
         });
@@ -85,10 +78,36 @@ describe('moduleRegistry Test', function() {
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').renameTo('damnLogger')
                         .complete());
-                var logger = result.overrides.find(x=>x.name == 'damnLogger');
-                demand(logger);
+                var logger = result.dependencyDeclarations.find(x=>x.name == 'logger');
+                demand(logger).must.not.be.undefined();
+                logger.newName.must.equal('damnLogger');
             })
         });
+
+        context('when calling moduleReg with dependent dagon modules', function() {
+            it('should add their dependencies', function() {
+                var result = mut(x=>
+                    x.pathToRoot(path.resolve('./'))
+                        .for('logger').requiredModuleRegistires(['./../tests/TestModules/dependentModule1/dependentMod1.js'])
+                        .complete());
+                console.log(result)
+            });
+        });
+
+        context('when calling moduleReg with dependent dagon modules', function() {
+            it('should add their dependencies', function() {
+
+                var a = [{name:'a', path:'aaa'}, {name:'b', path:'bbb'}];
+                var b = [{name:'a', path:'aaa'}, {name:'c', path:'ccc'}];
+                var objA = {name:'a', path:'aaa'};
+                var objB = {name:'a', path:'aaa'};
+                var c = a.concat(b);
+                console.log(objA == objB);
+                console.log(c);
+
+            });
+        });
+
 
     });
 });

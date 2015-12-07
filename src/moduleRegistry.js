@@ -18,16 +18,10 @@ var moduleRegistry = function(registryFunc) {
         invariant(registryFunc && _.isFunction(registryFunc),
             'You must supply a registry function');
 
-        var dto = buildRegistryDto(registryFunc);
-
-        // this may return the initiating value ( dto ) if there are no dependentRegistries.
-        // or it may blow the fuck up
-
-        // there's something wrong here,but I"m too tired to see it
+        var dto = registryFunc(new RegistryDSL());
         return dto.dependentRegistries.map(x=> require(x)())
             .reduce((m, a) => {
-                a.wrappedDependencies.concat(registry.wrappedDependencies);
-                a.overrides.concat(registry.overrides);
+                a.dependencyDeclarations = a.dependencyDeclarations.concat(m.dependencyDeclarations);
                 return a;
             },dto);
 
@@ -36,3 +30,4 @@ var moduleRegistry = function(registryFunc) {
     }
 };
 
+module.exports = moduleRegistry;
