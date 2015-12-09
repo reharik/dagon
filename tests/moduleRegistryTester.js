@@ -12,7 +12,6 @@ describe('moduleRegistry Test', function() {
 
     before(function(){
         mut = require('../src/moduleRegistry');
-        console.log(mut);
         var logger = require('../src/logger');
         //if(!logger.exposeInternals().options.console.formatter){
         //    logger.addConsoleSink({
@@ -67,8 +66,9 @@ describe('moduleRegistry Test', function() {
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').require('/tests/TestModules/loggerMock')
                         .complete());
-                var logger = result.dependencyDeclarations.find(x=>x.name == 'logger');
+                var logger = result.overrideDeclarations.find(x=>x.name == 'logger');
                 logger.path.must.equal(path.resolve('./tests/TestModules/loggerMock'));
+                logger.internal.must.be.true();
             })
         });
 
@@ -78,7 +78,7 @@ describe('moduleRegistry Test', function() {
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').renameTo('damnLogger')
                         .complete());
-                var logger = result.dependencyDeclarations.find(x=>x.name == 'logger');
+                var logger = result.overrideDeclarations.find(x=>x.name == 'logger');
                 demand(logger).must.not.be.undefined();
                 logger.newName.must.equal('damnLogger');
             })
@@ -88,8 +88,10 @@ describe('moduleRegistry Test', function() {
             it('should add their dependencies', function() {
                 var result = mut(x=>
                     x.pathToRoot(path.resolve('./'))
-                        .for('logger').requiredModuleRegistires(['./../tests/TestModules/dependentModule1/dependentMod1.js'])
+                        .for('logger').require('/tests/TestModules/loggerMock')
+                        .requiredModuleRegistires(['./../tests/TestModules/dependentModule1/dependentMod1.js'])
                         .complete());
+                result.dependencyDeclarations.some(x=>x.name == 'treis').must.be.true();
                 console.log(result)
             });
         });

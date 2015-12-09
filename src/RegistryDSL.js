@@ -14,6 +14,7 @@ module.exports = class RegistryDSL{
         this.dependentRegistries = [];
         this._pathToAppRoot;
         this.dependencyDeclarations = [];
+        this.overrideDeclarations = [];
         this._declarationInProgress;
     }
 
@@ -48,7 +49,6 @@ module.exports = class RegistryDSL{
     requireDirectory(dir) {
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
-        this.completeDependencyDeclaration();
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
@@ -64,7 +64,6 @@ module.exports = class RegistryDSL{
     requireDirectoryRecursively(dir){
         invariant(dir,'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectoryRecursively: closing in process declarations and renames');
-        this.completeDependencyDeclaration();
         var absoluteDir= path.join(this._pathToAppRoot, dir);
         this.recurseDirectories(absoluteDir);
         return this;
@@ -79,7 +78,6 @@ module.exports = class RegistryDSL{
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
-        this.completeDependencyDeclaration();
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
         var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
@@ -98,7 +96,7 @@ module.exports = class RegistryDSL{
         logger.trace('RegistryDSL | for: closing in process declarations');
         this.completeDependencyDeclaration();
         logger.trace('RegistryDSL | for: beginning new dependency declaration ');
-        this._declarationInProgress = this.dependencyDeclarations.find(x=>x.name == param) || { name: param };
+        this._declarationInProgress = { name: param };
         return this;
     }
     /**
@@ -132,7 +130,7 @@ module.exports = class RegistryDSL{
 
     completeDependencyDeclaration() {
         if(this._declarationInProgress) {
-            this.addDependenciesToCollection(this._declarationInProgress);
+            this.addOverrideToCollection(this._declarationInProgress);
             this._declarationInProgress = null;
         }
     }
@@ -190,6 +188,14 @@ module.exports = class RegistryDSL{
         this.dependencyDeclarations = this.dependencyDeclarations.concat(items);
     };
 
+    addOverrideToCollection(_items){
+        var items = _items;
+        if(!Array.isArray(items)){
+            items = [_items];
+        }
+        this.overrideDeclarations = this.overrideDeclarations.concat(items);
+    };
+
     complete(){
         this.completeDependencyDeclaration();
         this.getDependenciesFromProjectJson();
@@ -200,6 +206,7 @@ module.exports = class RegistryDSL{
         });
 
         return {
+            overrideDeclarations: this.overrideDeclarations,
             dependencyDeclarations: dependencies || [],
             dependentRegistries   : this.dependentRegistries || []
         };

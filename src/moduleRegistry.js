@@ -22,6 +22,7 @@ var moduleRegistry = function(registryFunc) {
         return dto.dependentRegistries.map(x=> require(x)())
             .reduce((m, a) => {
                 a.dependencyDeclarations = a.dependencyDeclarations.concat(m.dependencyDeclarations);
+                a.overrideDeclarations = a.overrideDeclarations.concat(m.overrideDeclarations);
                 return a;
             },dto);
 
