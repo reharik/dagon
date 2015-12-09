@@ -7,32 +7,45 @@ var logger = require('./logger');
 
 module.exports = class InstantiateDSL {
     constructor() {
-        this._currentInstance = {};
+        this._dependecies = [];
+        this._declarationInProgress = {};
     }
-
+    
+    instantiate(name) {
+        invariant(name, 'You must provide a name for the dependency to instanciate');
+        logger.trace('InstantiateDSL | instantiate: building new instantiation');
+        this.completeDependencyDeclaration();
+        this._declarationInProgress = { name };
+        return this;
+    }
+    
     asClass() {
+         invariant(this._declarationInProgress.name,
+            'You must provide a dependency name before calling asClass');
         logger.trace('InstantiateDSL | asClass');
-        this._currentInstance.dependencyType = 'class';
+        this._declarationInProgress.dependencyType = 'class';
         return this;
     }
 
     asFunc() {
+         invariant(this._declarationInProgress.name,
+            'You must provide a dependency name before calling asClass');
         logger.trace('InstantiateDSL | asFunc');
-        this._currentInstance.dependencyType = 'func';
+        this._declarationInProgress.dependencyType = 'func';
         return this;
     }
 
     withParameters(parameters) {
-        invariant(this._currentInstance.dependencyType,
+        invariant(this._declarationInProgress.dependencyType,
             'You must set dependency type before calling withParameters. e.g. asClass, asFunc');
         invariant(arguments[0], 'You must provide parameters when calling withParameters');
         logger.trace('InstantiateDSL | withParameters: putting parameters in array form if not or if object specified');
         if (!Array.isArray(arguments[0])) {
             var _params = [];
             Object.keys(arguments).forEach(x=> _params.push(arguments[x]));
-            this._currentInstance.parameters = _params;
+            this._declarationInProgress.parameters = _params;
         } else {
-            this._currentInstance.parameters = parameters;
+            this._declarationInProgress.parameters = parameters;
         }
         return this;
     }
@@ -41,12 +54,12 @@ module.exports = class InstantiateDSL {
         invariant(method,
             'You must provide method to call for initilization');
         logger.trace('InstantiateDSL | initializeWithMethod: specifying dependency should be initialized with following method: '+method);
-        this._currentInstance.initializationMethod = method;
+        this._declarationInProgress.initializationMethod = method;
         return this;
     }
 
     withInitParameters(params) {
-        invariant(this._currentInstance.initializationMethod,
+        invariant(this._declarationInProgress.initializationMethod,
             'You must call initializeWithMethod before calling withInitParameters');
         invariant(params,
             'You must provide parameters when calling withInitParameters');
@@ -55,15 +68,23 @@ module.exports = class InstantiateDSL {
         if (!Array.isArray(arguments[0])) {
             var _params = [];
             Object.keys(arguments).forEach(x=> _params.push(arguments[x]));
-            this._currentInstance.initParameters = _params;
+            this._declarationInProgress.initParameters = _params;
         } else {
-            this._currentInstance.initParameters = params;
+            this._declarationInProgress.initParameters = params;
         }
         return this;
     }
+    
+     completeDependencyDeclaration() {
+        if(this._declarationInProgress) {
+            this._dependecies = this.dependencies.concat([this._declarationInProgress]);
+            this._declarationInProgress = null;
+        }
+    }
 
-    getOptions() {
-        return this._currentInstance;
+    complete(){
+        this.completeDependencyDeclaration();
+        return this.dependencies;
     }
 };
 
