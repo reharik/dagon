@@ -6,6 +6,7 @@ var getDependency = require('./getDependency');
 var logger = require('./logger');
 var invariant = require('invariant');
 var fnArgs = require('fn-args');
+var R = require('ramda');
 
 var flatten = function(array) {
     return Array.isArray(array) ? [].concat.apply([], array.map(x=>flatten(x)) || []) : array;
@@ -36,7 +37,7 @@ var flatDependencyGraph = function flatDependencyGraph(item, dependencyGraph) {
         invariant(found, 'Module ' + item.name + ' has a dependency that can not be resolved: ' + d);
         return found;
     });
-    return flatten(dependencies);
+    return R.flatten(dependencies);
 };
 
 

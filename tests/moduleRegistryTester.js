@@ -92,7 +92,6 @@ describe('moduleRegistry Test', function() {
                         .requiredModuleRegistires(['./../tests/TestModules/dependentModule1/dependentMod1.js'])
                         .complete());
                 result.dependencyDeclarations.some(x=>x.name == 'treis').must.be.true();
-                console.log(result)
             });
         });
 

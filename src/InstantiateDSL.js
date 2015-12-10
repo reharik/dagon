@@ -6,13 +6,14 @@ var invariant = require('invariant');
 var logger = require('./logger');
 
 module.exports = class InstantiateDSL {
-    constructor() {
-        this._dependecies = [];
-        this._declarationInProgress = {};
+    constructor(standardDeps) {
+        this._dependencies = [];
+        this._standardDeps = standardDeps;
     }
     
     instantiate(name) {
         invariant(name, 'You must provide a name for the dependency to instanciate');
+        invariant(this._standardDeps.some(x=>x.name == name), 'There is no dependency name '+name+' declared to instantiate');
         logger.trace('InstantiateDSL | instantiate: building new instantiation');
         this.completeDependencyDeclaration();
         this._declarationInProgress = { name };
@@ -77,14 +78,14 @@ module.exports = class InstantiateDSL {
     
      completeDependencyDeclaration() {
         if(this._declarationInProgress) {
-            this._dependecies = this.dependencies.concat([this._declarationInProgress]);
+            this._dependencies = this._dependencies.concat([this._declarationInProgress]);
             this._declarationInProgress = null;
         }
     }
 
     complete(){
         this.completeDependencyDeclaration();
-        return this.dependencies;
+        return this._dependencies;
     }
 };
 

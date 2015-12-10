@@ -42,7 +42,8 @@ var fullDependency = function fullDependency(dependencyGraph, dependencyName) {
     if (!item) {
         logger.trace('getDependency | fullDependency: Single dependency not found. Trying to build grouped dependency : ' + dependencyName);
         item = groupDependencies(dependencyGraph, dependencyName);
-    } if (!item) {
+    }
+    if (!item) {
         logger.trace('getDependency | fullDependency: Grouped dependency not found.  Trying to require dependency: ' + dependencyName);
         item = tryRequireDependency(dependencyName);
     }

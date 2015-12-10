@@ -4,6 +4,7 @@
 
 
 var ContainerDSL = require('./ContainerDSL');
+var InstantiateDSL = require('./InstantiateDSL');
 var logger = require('./logger');
 var exceptionHandler = require('./exceptionHandler');
 var moduleRegistry = require('./moduleRegistry');
@@ -12,7 +13,6 @@ var R = require('ramda');
 module.exports = function(registryFunc, containerFunc){
 
     var dto = moduleRegistry(registryFunc);
-
     var dependencies = R.uniqWith((a,b) => a.name == b.name, dto.dependencyDeclarations)
         .concat(dto.overrideDeclarations.filter(x=>!x.newName));
 
@@ -23,9 +23,13 @@ module.exports = function(registryFunc, containerFunc){
         clone.name = x.newName;
         return clone;
     };
-    //var result = R.concat(renames.map(f), dependencies);
-    var dependencies = R.map(rename, renames);
-    
-    var instantiations = containerFunc(new InstantiateDSL(dependencies))
+
+    var finalDependencies = R.concat(R.map(rename, renames), dependencies);
+    var instantiations = containerFunc ? containerFunc(new InstantiateDSL(finalDependencies)) : [];
+
+    return {
+        dependencies: finalDependencies,
+        instantiations
+    }
 
 };
