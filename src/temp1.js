@@ -3,11 +3,6 @@
  */
 
 
-module.exports = function resolvedItemsGraph(item, resolvedChildren) {
-    var args = fnArgs(item.wrappedInstance);
-    return args.map(d => getDependency.resolvedInstance(resolvedChildren, d));
-
-};
 
 
 
