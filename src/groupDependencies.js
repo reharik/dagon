@@ -42,5 +42,5 @@ module.exports = function(items, groupName){
     if(groupName.indexOf('_hash') <= 0 ){
         return buildGroupAsArray(groupName);
     }
-    return buildGroupAsHash(groupName);
+    return buildGroup   AsHash(groupName);
 };
