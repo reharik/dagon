@@ -25,6 +25,11 @@ module.exports = function(registryFunc, containerFunc){
     };
 
     var finalDependencies = R.concat(R.map(rename, renames), dependencies);
+
+    //need to resolve this by putting instanciations onto finalDependencies
+    // or something perhaps return something differnt from containerfunc
+    // also container func is just instantiation dsl so don't wrap that
+
     var instantiations = containerFunc ? containerFunc(new InstantiateDSL(finalDependencies)) : [];
 
     return {

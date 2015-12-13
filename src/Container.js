@@ -14,89 +14,69 @@ var path = require('path');
 var exceptionHandler = require('./exceptionHandler');
 var moduleRegistry = require('./moduleRegistry');
 
-module.exports =  class Container{
-    constructor(registryFunc, containerFunc) {
-        try {
-            invariant(registryFunc && _.isFunction(registryFunc),
-                'You must supply a registry function');
+module.exports = function container(registryFunc, containerFunc){
 
-            logger.trace('Container | constructor : Building registry');
-            this.dependencyGraph = containerBuilder(registryFunc, containerFunc);
-
-            logger.trace('Container | constructor : resolve graph');
-            graphResolution(this.dependencyGraph);
-        }catch(err){
-            throw exceptionHandler(err, 'Error building dependency graph.  Check nested exceptions for more details.');
-        }
-    }
-
+    var unresolvedGrpah = [];
+    var resolvedGrpah = [];
     /**
      *
      * @param type - the type of dependency you want to get
      * @returns {type}
      */
-    getInstanceOf(_type) {
-        var item = this.dependencyGraph.find(x=>x.name == _type);
+    var getInstanceOf = function(_type) {
+        var item = resolvedGrpah.find(x=>x.name == _type);
         return item  ? item.resolvedInstance : null;
-    }
+    };
 
     /**
      *
      * @param groupName - the groupName of dependencies you want to get
      * @returns {type}
      */
-    getArrayOfGroup(_groupName){
-        return this.dependencyGraph.filter(x=>x.groupName == _groupName).map(x=> x.resolvedInstance);
-    }
+    var getArrayOfGroup = function(_grovar container upName){
+        return resolvedGrpah.filter(x=>x.groupName == _groupName).map(x=> x.resolvedInstance);
+    };
 
-    getHashOfGroup(_groupName) {
-        var group = this.getArrayOfGroup(_groupName);
+    var getHashOfGroup = function(_groupName) {
+        var group = getArrayOfGroup(_groupName);
         var hash = {};
         group.forEach(x=> hash[x.name] = x);
         return hash;
-    }
+    };
 
     /**
      *
      * @param type - return graph of all registered dependencies
      * @returns {json}
      */
-    whatDoIHave(_options) {
+    var whatDoIHave = function(_options) {
         var options = _options || {};
-        return this.dependencyGraph.map(x=>{
+        return resolvedGrpah.map(x=>{
             var dependency = {name: x.name};
             if(options.showResolved) { dependency.resolvedInstance = x.resolvedInstance ;}
             if(options.showWrappedInstance) { dependency.wrappedInstance = x.wrappedInstance;}
             return dependency
         });
+    };
+
+    try {
+        invariant(registryFunc && _.isFunction(registryFunc),
+            'You must supply a registry function');
+
+        logger.trace('Container | constructor : Building registry');
+        unresolvedGrpah = containerBuilder(registryFunc, containerFunc);
+
+        logger.trace('Container | constructor : resolve graph');
+        resolvedGrpah = graphResolver(unresolvedGrpah);
+
+        return {
+            getInstanceOf,
+            getArrayOfGroup,
+            getHashOfGroup,
+            whatDoIHave
+        };
+    }catch(err){
+        throw exceptionHandler(err, 'Error building dependency graph.  Check nested exceptions for more details.');
     }
-
-    //inject(dependencies) {
-    //    if(!_.isArray(dependencies)){ dependencies = [dependencies];}
-    //    logger.trace('Container | injection: instantiate new graph');
-    //    this.dependencyGraph = new Graph(logger);
-    //    this.registry = this.buildRegistry();
-    //    logger.trace('Container | injection: get package.json');
-    //    var packageJson =  require(this.registry.pathToAppRoot);
-    //    logger.trace('Container | injection: build new graph');
-    //    this.dependencyGraph.buildGraph(packageJson);
-    //    logger.trace('Container | injection: apply registry');
-    //    applyRegistry(this.registry, this.dependencyGraph);
-    //
-    //    logger.trace('Container | injection: build injected dependencies');
-    //    dependencies.forEach(d => {
-    //        invariant(d.name, 'injected dependecy must have a name');
-    //        invariant(d.resolvedInstance || d.path, 'injected dependency must have either a resolvedInstance or a path');
-    //        var newDep = new Dependency(d, logger);
-    //        logger.trace('Container | injection: add new dependency to graph');
-    //        this.dependencyGraph.addItem(newDep);
-    //    });
-    //    logger.trace('Container | injection: resolve new graph');
-    //    new GraphResolution(logger).recurse(this.dependencyGraph);
-    //
-    //}
-
 };
-
-
 
