@@ -9,8 +9,7 @@ module.exports = function() {
     var result;
     try {
         result = dagon(x=> x.pathToRoot(__dirname)
-            .for('ramda').renameTo('R')
-            .for('ramdafantasy').renameTo('_fantasy')
+            .for('treis').renameTo('treisxxx')
             .complete());
     } catch (ex) {
         console.log(ex);

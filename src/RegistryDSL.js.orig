@@ -130,7 +130,11 @@ module.exports = class RegistryDSL{
 
     completeDependencyDeclaration() {
         if(this._declarationInProgress) {
+<<<<<<< HEAD
+            addDependenciesToCollection(this._declarationInProgress);
+=======
             this.addOverrideToCollection(this._declarationInProgress);
+>>>>>>> 9abc7ae1bffb9aa588f2438f02c0d179f88bb88a
             this._declarationInProgress = null;
         }
     }
@@ -138,7 +142,11 @@ module.exports = class RegistryDSL{
 
     recurseDirectories(dir) {
         logger.trace('RegistryDSL | recurseDirectories: looping through '+dir);
+<<<<<<< HEAD
+        addDependenciesToCollection(fs.readdirSync(dir).map(x=> {
+=======
         var dependencies = fs.readdirSync(dir).map(x=> {
+>>>>>>> 9abc7ae1bffb9aa588f2438f02c0d179f88bb88a
             var stat = fs.statSync(dir + '/' + x);
             if (stat && stat.isDirectory()) {
                 this.recurseDirectories(dir + '/' + x);
@@ -146,8 +154,12 @@ module.exports = class RegistryDSL{
             return x;
         })
         .filter(x=>x.endsWith('.js'))
+<<<<<<< HEAD
+        .map(x => this.processFile(x, dir)));
+=======
         .map(x => this.processFile(x, dir));
         this.addDependenciesToCollection(dependencies);
+>>>>>>> 9abc7ae1bffb9aa588f2438f02c0d179f88bb88a
     }
 
     processFile(file,dir, groupName){
@@ -175,6 +187,19 @@ module.exports = class RegistryDSL{
         logger.trace('buildListOfDependencies | getDependenciesFromProjectJson: reading package.json dependencies');
         var packageJson      = require(path.join(this._pathToAppRoot, '/package.json'));
         var dependencies =  Object.keys(packageJson.dependencies)
+<<<<<<< HEAD
+            .map(x=> {return { name: normalizeName(x), path:x }});
+        addDependenciesToCollection(dependencies);
+        
+    };
+
+    var addDependenciesToCollection = function(_items){
+        var items = _items;
+        if(!Array.isArray(items)){
+            items = [items];
+        }
+        this.dependencyDeclarations = this.dependencyDeclarations.concat(items);
+=======
             .map(x=> {return { name: this.normalizeName(x), path:x }});
         this.addDependenciesToCollection(dependencies);
     };
@@ -194,6 +219,7 @@ module.exports = class RegistryDSL{
             items = [_items];
         }
         this.overrideDeclarations = this.overrideDeclarations.concat(items);
+>>>>>>> 9abc7ae1bffb9aa588f2438f02c0d179f88bb88a
     };
 
     complete(){

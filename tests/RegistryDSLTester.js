@@ -39,7 +39,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must provide a valid dependency parameter');
+                error.must.equal('Invariant Violation: You must provide a valid dependency parameter');
             })
         });
 
@@ -59,7 +59,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must provide a valid replacement module');
+                error.must.equal('Invariant Violation: You must provide a valid replacement module');
             })
         });
 
@@ -69,7 +69,7 @@ describe('Registry DSL Tester', function() {
                 mut.for('someParam');
                 mut.require('/tests/TestModules/TestClass');
                 mut.complete();
-                mut.dependencyDeclarations[0].path.must.equal(path.resolve('./tests/TestModules/TestClass'));
+                mut.overrideDeclarations[0].path.must.equal(path.resolve('./tests/TestModules/TestClass'));
             })
         });
 
@@ -81,7 +81,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must call "for" before calling "require"');
+                error.must.equal('Invariant Violation: You must call "for" before calling "require"');
             })
         });
 
@@ -91,7 +91,7 @@ describe('Registry DSL Tester', function() {
                 mut.for('someParam');
                 mut.require('/tests/TestModules/TestClass');
                 mut.complete();
-                demand(mut.dependencyDeclarations[0]).not.be.null();
+                demand(mut.overrideDeclarations[0]).not.be.null();
             })
         });
 
@@ -101,7 +101,7 @@ describe('Registry DSL Tester', function() {
                 mut.for('someParam');
                 mut.require('/tests/TestModules/TestClass');
                 mut.complete();
-                mut.dependencyDeclarations[0].internal.must.be.true();
+                mut.overrideDeclarations[0].internal.must.be.true();
             })
         });
 

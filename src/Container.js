@@ -3,6 +3,8 @@
  */
 var _ = require('lodash');
 var RegistryDSL = require('./RegistryDSL');
+var ContainerDSL = require('./ContainerDSL');
+var containerBuilder = require('./containerBuilder');
 var buildListofDependencies = require('./buildListofDependencies');
 var graphResolution = require('./graphResolver');
 var invariant = require('invariant');
@@ -10,24 +12,23 @@ var JSON = require('JSON');
 var logger = require('./logger');
 var path = require('path');
 var exceptionHandler = require('./exceptionHandler');
+var moduleRegistry = require('./moduleRegistry');
 
 module.exports =  class Container{
-    constructor(registryFunc) {
+    constructor(registryFunc, containerFunc) {
         try {
             invariant(registryFunc && _.isFunction(registryFunc),
                 'You must supply a registry function');
 
             logger.trace('Container | constructor : Building registry');
-            this.registry = registryFunc(new RegistryDSL());
+            this.dependencyGraph = containerBuilder(registryFunc, containerFunc);
 
-            //logger.trace('Container | constructor : resolve graph');
-            //graphResolution(this.dependencyGraph);
+            logger.trace('Container | constructor : resolve graph');
+            graphResolution(this.dependencyGraph);
         }catch(err){
             throw exceptionHandler(err, 'Error building dependency graph.  Check nested exceptions for more details.');
         }
     }
-
-
 
     /**
      *

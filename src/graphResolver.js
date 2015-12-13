@@ -11,19 +11,17 @@ var resolveInstance = require('./resolveInstance');
 module.exports = function graphResolver(dependencyGraph){
 
     var recurse = function(items){
-        logger.trace('GraphResolver | recurse: beginning recursion');
         recurseTree(items);
     };
 
     var recurseTree = function(items) {
-        items.forEach(x=> {
-            var flattenedChildren = getDependenciesForItem.flatDependencyGraph(x, dependencyGraph);
+        items.forEach(item=> {
+            var dependenciesForItem = getDependenciesForItem(item, items);
 
-            if (flattenedChildren.length>0) {
-                recurseTree(flattenedChildren);
+            if (dependenciesForItem.length>0) {
+                recurseTree(dependenciesForItem);
             }
-            logger.trace('GraphResolver | recurseTree: resolving instance of ' + x.name);
-            resolveInstance(x, flattenedChildren, dependencyGraph);
+            resolveInstance(item, dependenciesForItem, items);
         });
         return items;
     };
