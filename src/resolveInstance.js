@@ -10,7 +10,6 @@ var invariant = require('invariant');
 module.exports = function resolveInstance(item, flattenedChildren, dependencyGraph){
 
     var getAllResolvedDependencies = function(_flattenedChildren){
-        logger.trace('resolveInstance | getResolvedInstanceForCollectionOfDependencies: getting resolved instances recursively');
         var result = [];
         _flattenedChildren.forEach(x=> {
             result.push(resolveInstance(x, getDependenciesForItem.flatDependencyGraph(x, dependencyGraph)));
@@ -20,19 +19,11 @@ module.exports = function resolveInstance(item, flattenedChildren, dependencyGra
 
     var attemptToResolveInstance = function(item, _flattenedChildren) {
         if (item.resolvedInstance) {
-            logger.trace('resolveInstance | attemptToResolveInstance : item ' + item.name + ' already resolved.');
             return item;
         }
-        logger.trace('resolveInstance | attemptToResolveInstance : Get all resolved children.');
         var resolvedChildren = getAllResolvedDependencies(_flattenedChildren);
-
-        logger.trace('resolveInstance | attemptToResolveInstance : Get all dependencies in their unwrapped state.');
         var resolvedDependencies = getDependenciesForItem.resolvedItemsGraph(item, resolvedChildren);
-
-        logger.trace('resolveInstance | attemptToResolveInstance : Instantiate item with resolved dependencies.');
         item.resolvedInstance = instantiateInstance(item, resolvedDependencies);
-
-        invariant(item.resolvedInstance, 'Dagon was not able to resolve item: '+ item.name);
         return item;
     };
 
