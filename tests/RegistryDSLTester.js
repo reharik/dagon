@@ -10,7 +10,7 @@ describe('Registry DSL Tester', function() {
     var mut;
 
     before(function(){
-        Mut = require('../src/RegistryDSL');
+        Mut = require('../src/containerModules/RegistryDSL');
     });
 
     beforeEach(function(){

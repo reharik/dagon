@@ -3,7 +3,7 @@
  */
 
 var wrapDependencies = require('./wrapDependencies');
-var RegistryDSL = require('./RegistryDSL');
+var RegistryDSL = require('./containerModules/RegistryDSL');
 
 module.exports = function buildRegistryDto(func) {
     var dependencies = registry

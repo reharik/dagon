@@ -3,7 +3,7 @@
  */
 
 var instantiateInstance = require('./instantiateInstance');
-var logger = require('./logger');
+var logger = require('./../logger');
 var getDependenciesForItem = require('./getDependenciesForItem');
 var resolveDependenciesForItem = require('./resolveDependenciesForItem');
 var invariant = require('invariant');

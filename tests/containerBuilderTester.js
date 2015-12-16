@@ -10,7 +10,7 @@ describe('container builder Test', function() {
     var mut;
 
     before(function(){
-        mut = require('../src/containerBuilder');
+        mut = require('../src/containerModules/containerBuilder');
         var logger = require('../src/logger');
 
     });

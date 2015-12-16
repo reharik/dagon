@@ -2,7 +2,7 @@
  * Created by rharik on 6/30/15.
  */
 
-var logger = require('./logger');
+var logger = require('./../logger');
 var getDependenciesForItem = require('./getDependenciesForItem');
 var resolveInstance = require('./resolveInstance');
 

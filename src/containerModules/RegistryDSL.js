@@ -7,7 +7,7 @@ var invariant = require('invariant');
 var path = require('path');
 var fs = require('fs');
 var InstantiateDSL = require('./InstantiateDSL');
-var logger = require('./logger');
+var logger = require('./../logger');
 
 module.exports = class RegistryDSL{
     constructor(){

@@ -11,7 +11,7 @@ describe('moduleRegistry Test', function() {
     var mut;
 
     before(function(){
-        mut = require('../src/moduleRegistry');
+        mut = require('../src/containerModules/moduleRegistry');
         var logger = require('../src/logger');
         //if(!logger.exposeInternals().options.console.formatter){
         //    logger.addConsoleSink({

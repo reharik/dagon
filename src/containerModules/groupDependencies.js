@@ -4,7 +4,7 @@
 
 var invariant = require('invariant');
 var _ = require('lodash');
-var logger = require('./logger');
+var logger = require('./../logger');
 
 module.exports = function(items, groupName){
 

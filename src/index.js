@@ -24,5 +24,5 @@ module.exports = function(_options){
         }).info("added Console Sink");
     }
 
-    return require('./Container');
+    return require('./containerModules/Container');
 };

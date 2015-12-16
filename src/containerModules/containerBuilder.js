@@ -3,9 +3,8 @@
  */
 
 
-var ContainerDSL = require('./ContainerDSL');
 var InstantiateDSL = require('./InstantiateDSL');
-var logger = require('./logger');
+var logger = require('./../logger');
 var exceptionHandler = require('./exceptionHandler');
 var moduleRegistry = require('./moduleRegistry');
 var R = require('ramda');
@@ -26,15 +25,14 @@ module.exports = function(registryFunc, containerFunc){
 
     var finalDependencies = R.concat(R.map(rename, renames), dependencies);
 
-    //need to resolve this by putting instanciations onto finalDependencies
-    // or something perhaps return something differnt from containerfunc
-    // also container func is just instantiation dsl so don't wrap that
-
     var instantiations = containerFunc ? containerFunc(new InstantiateDSL(finalDependencies)) : [];
+    instantiations.forEach(x=>{
+        var item = finalDependencies.find(d=>d.name === x.name);
+        item.instantiate = x
+    });
 
     return {
-        dependencies: finalDependencies,
-        instantiations
+        dependencies: finalDependencies
     }
 
 };

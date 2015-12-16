@@ -3,7 +3,7 @@
  */
 
 var getDependency = require('./getDependency');
-var logger = require('./logger');
+var logger = require('./../logger');
 var invariant = require('invariant');
 var fnArgs = require('fn-args');
 var R = require('ramda');

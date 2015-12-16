@@ -5,7 +5,7 @@
 var invariant = require('invariant');
 var path = require('path');
 var fs = require('fs');
-var InstantiateDSL = require('./InstantiateDSL');
+var InstantiateDSL = require('./containerModules/InstantiateDSL');
 var logger = require('./logger');
 
 module.exports = class ContainerDSL {

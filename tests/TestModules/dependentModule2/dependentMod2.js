@@ -2,7 +2,7 @@
  * Created by rharik on 12/2/15.
  */
 
-var dagon = require('./../../../src/moduleRegistry');
+var dagon = require('./../../../src/containerModules/moduleRegistry');
 var path = require('path');
 
 module.exports = function() {

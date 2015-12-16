@@ -4,13 +4,10 @@
 "use strict";
 
 var RegistryDSL = require('./RegistryDSL');
-var buildRegistryDto = require('./buildRegistryDto');
 var invariant = require('invariant');
-var logger = require('./logger');
+var logger = require('./../logger');
 var path = require('path');
 var exceptionHandler = require('./exceptionHandler');
-var _ = require('lodash');
-
 
 var moduleRegistry = function(registryFunc) {
 

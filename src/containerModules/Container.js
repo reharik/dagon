@@ -1,18 +1,11 @@
 /**
  * Created by rharik on 6/23/15.
  */
-var _ = require('lodash');
-var RegistryDSL = require('./RegistryDSL');
-var ContainerDSL = require('./ContainerDSL');
 var containerBuilder = require('./containerBuilder');
-var buildListofDependencies = require('./buildListofDependencies');
-var graphResolution = require('./graphResolver');
+var graphResolver = require('./graphResolver');
 var invariant = require('invariant');
-var JSON = require('JSON');
-var logger = require('./logger');
-var path = require('path');
+var logger = require('./../logger');
 var exceptionHandler = require('./exceptionHandler');
-var moduleRegistry = require('./moduleRegistry');
 
 module.exports = function container(registryFunc, containerFunc){
 
@@ -33,7 +26,7 @@ module.exports = function container(registryFunc, containerFunc){
      * @param groupName - the groupName of dependencies you want to get
      * @returns {type}
      */
-    var getArrayOfGroup = function(_grovar container upName){
+    var getArrayOfGroup = function(_groupName){
         return resolvedGrpah.filter(x=>x.groupName == _groupName).map(x=> x.resolvedInstance);
     };
 

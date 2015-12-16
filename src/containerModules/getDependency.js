@@ -2,7 +2,7 @@
  * Created by parallels on 9/9/15.
  */
 var groupDependencies = require('./groupDependencies');
-var logger = require('./logger');
+var logger = require('./../logger');
 var invariant = require('invariant');
 
 var tryRequireDependency = function(dependencyName) {

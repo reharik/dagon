@@ -66,4 +66,4 @@ module.exports = function instantiateInstance(item){
         error.details = {instantiationInstructions:item.instantiate, resolvedItem:resolvedItem.toString() };
         throw error;
     }
-}
+};
