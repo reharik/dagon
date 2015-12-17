@@ -2,10 +2,10 @@
  * Created by rharik on 6/23/15.
  */
 var containerBuilder = require('./containerBuilder');
-var graphResolver = require('./graphResolver');
+var graphResolver = require('./graphResolution/graphResolver');
 var invariant = require('invariant');
 var logger = require('./../logger');
-var exceptionHandler = require('./exceptionHandler');
+var exceptionHandler = require('./../exceptionHandler');
 
 module.exports = function container(registryFunc, containerFunc){
 

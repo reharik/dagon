@@ -2,7 +2,7 @@
  * Created by rharik on 12/13/15.
  */
 
-var logger = require('./logger');
+var logger = require('./../logger');
 
 var fnArgs = require('fnargs');
 var instantiateInstance = require('./instantiateInstance');

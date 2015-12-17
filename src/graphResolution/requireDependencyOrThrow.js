@@ -2,8 +2,8 @@
  * Created by rharik on 12/13/15.
  */
 
-var logger = require('./logger');
-var exceptionHandler = require('./exceptionHandler');
+var logger = require('./../logger');
+var exceptionHandler = require('./../exceptionHandler');
 
 module.epxorts = function requireDependencyOrThrow(dependencyName, resDeps) {
     try {

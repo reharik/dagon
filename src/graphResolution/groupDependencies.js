@@ -2,7 +2,7 @@
  * Created by rharik on 12/13/15.
  */
 
-var logger = require('./logger');
+var logger = require('./../logger');
 var resolveInstance = require('./resolveInstance');
 
 module.exports = function groupDependencies(name, unResDeps, resolvedDependencies){

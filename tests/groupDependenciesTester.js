@@ -11,7 +11,7 @@ describe('groupDependencies Test', function() {
     var Mut;
 
     before(function() {
-        Mut        = require('../src/containerModules/groupDependencies');
+        Mut        = require('../src/graphResolution/groupDependencies');
         //var logger = require('../src/logger');
         //if(!logger.exposeInternals().options.console.formatter){
         //    logger.addConsoleSink({

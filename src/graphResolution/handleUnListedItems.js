@@ -2,7 +2,7 @@
  * Created by rharik on 12/13/15.
  */
 
-var logger = require('./logger');
+var logger = require('./../logger');
 var groupDependencies = require('./groupDependencies');
 var requireDependencyOrThrow = require('./requireDependencyOrThrow');
 

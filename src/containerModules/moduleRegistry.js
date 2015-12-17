@@ -7,7 +7,7 @@ var RegistryDSL = require('./RegistryDSL');
 var invariant = require('invariant');
 var logger = require('./../logger');
 var path = require('path');
-var exceptionHandler = require('./exceptionHandler');
+var exceptionHandler = require('./../exceptionHandler');
 
 var moduleRegistry = function(registryFunc) {
 

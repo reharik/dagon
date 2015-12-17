@@ -5,7 +5,7 @@
 
 var InstantiateDSL = require('./InstantiateDSL');
 var logger = require('./../logger');
-var exceptionHandler = require('./exceptionHandler');
+var exceptionHandler = require('./../exceptionHandler');
 var moduleRegistry = require('./moduleRegistry');
 var R = require('ramda');
 
