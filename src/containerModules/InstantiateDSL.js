@@ -12,7 +12,7 @@ module.exports = class InstantiateDSL {
     }
     
     instantiate(name) {
-        invariant(name, 'You must provide a name for the dependency to instanciate');
+        invariant(name, 'You must provide a name for the dependency to instantiate');
         invariant(this._resolvedDependencies.some(x=>x.name == name), 'There is no dependency name '+name+' declared to instantiate');
         logger.trace('InstantiateDSL | instantiate: building new instantiation');
         this.completeDependencyDeclaration();
@@ -21,7 +21,7 @@ module.exports = class InstantiateDSL {
     }
     
     asClass() {
-         invariant(this._declarationInProgress.name,
+         invariant(this._declarationInProgress && this._declarationInProgress.name,
             'You must provide a dependency name before calling asClass');
         logger.trace('InstantiateDSL | asClass');
         this._declarationInProgress.dependencyType = 'class';

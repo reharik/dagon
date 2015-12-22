@@ -33,11 +33,11 @@ function initialize(instanceFeatures, resolvedInstance) {
     logger.debug('instantiateInstance | initialize: item has an initialization method so call that with params if present');
     var result;
     if (instanceFeatures.initParameters) {
-        result = resolvedInstance[instanceFeatures.initializationMethod].apply(resolvedInstance[instanceFeatures.initializationMethod], instanceFeatures.initParameters);
+        result = resolvedInstance[instanceFeatures.initializationMethod].apply(resolvedInstance, instanceFeatures.initParameters);
     } else {
         result = resolvedInstance[instanceFeatures.initializationMethod]();
     }
-    return result;
+    return instanceFeatures.dependencyType === 'class' ? resolvedInstance : result;
 }
 
 var instantiateResolvedInstance = function(item){
@@ -62,8 +62,8 @@ module.exports = function instantiateInstance(item){
     try {
         return instantiateResolvedInstance(item);
     }catch(err){
-        error = exceptionHandler(err,'Error attempting to instantiate resolved instance for item:' + item.name);
-        error.details = {instantiationInstructions:item.instantiate, resolvedItem:resolvedItem.toString() };
+        var error = exceptionHandler(err,'Error attempting to instantiate resolved instance for item:' + item.name);
+        error.details = {instantiationInstructions:item.instantiate, resolvedInstance:item.resolvedInstance.toString() };
         throw error;
     }
 };

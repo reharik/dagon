@@ -10,7 +10,7 @@ describe('Registry DSL directory Tester', function() {
     var mut;
 
     before(function(){
-        Mut = require('../src/containerModules/RegistryDSL');
+        Mut = require('../../src/containerModules/RegistryDSL');
     });
 
     beforeEach(function(){
@@ -26,17 +26,17 @@ describe('Registry DSL directory Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('Invariant Violation: You must provide a valid directory');
+                error.must.equal('You must provide a valid directory');
             })
         });
 
         context('when calling requireDirectory with value', function () {
             it('should create dependencyDeclarations for each item', function () {
-                mut.pathToRoot(path.resolve('./')).requireDirectory('/tests');
+                mut.pathToRoot(path.resolve('./')).requireDirectory('/tests/unit');
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();
-                result[0].path.must.equal(path.resolve('./tests/RegistryDSLTester'));
+                result[0].path.must.equal(path.resolve('./tests/unit/RegistryDSLTester'));
             })
         });
 
@@ -48,13 +48,13 @@ describe('Registry DSL directory Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('Invariant Violation: You must provide a valid directory');
+                error.must.equal('You must provide a valid directory');
             })
         });
 
         context('when calling requireDirectoryRecursively with value', function () {
             it('should create dependencyDeclarations for each item', function () {
-                mut.pathToRoot(path.resolve('./')).requireDirectoryRecursively('./tests');
+                mut.pathToRoot(path.resolve('./')).requireDirectoryRecursively('./tests/unit');
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();
@@ -70,27 +70,28 @@ describe('Registry DSL directory Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('Invariant Violation: You must provide a valid directory');
+                error.must.equal('You must provide a valid directory');
             })
         });
 
         context('when calling groupAllInDirectory with value but no groupname', function () {
             it('should create dependencyDeclarations with groupname of the dir for each item', function () {
-                mut.pathToRoot(path.resolve('./')).groupAllInDirectory('/tests');
+                mut.pathToRoot(path.resolve('./')).groupAllInDirectory('/tests/unit');
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();
-                result[0].groupName.must.equal('tests');
+                result[0].groupName.must.equal('unit');
             })
         });
 
         context('when calling groupAllInDirectory with value', function () {
             it('should create dependencyDeclarations with groupname for each item', function () {
-                mut.pathToRoot(path.resolve('./')).groupAllInDirectory('/tests','groupTest');
+                mut.pathToRoot(path.resolve('./')).groupAllInDirectory('/tests/unit','groupTest');
                 mut.dependencyDeclarations.length.must.be.gt(1);
                 var result = mut.dependencyDeclarations.filter(x=>x.name == 'RegistryDSLTester');
                 result[0].must.not.be.null();
                 result[0].groupName.must.equal('groupTest');
             })
-        });    });
+        });
+    });
 });

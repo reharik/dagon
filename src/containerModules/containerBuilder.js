@@ -31,6 +31,16 @@ module.exports = function(registryFunc, containerFunc){
         item.instantiate = x
     });
 
+
+    var wrapInstances = function wrapInstances(item) {
+        item.wrappedInstance = item.internal
+            ? require(item.path)
+            : function() { return require(item.path); };
+        return item;
+    };
+
+    finalDependencies.forEach(wrapInstances);
+    
     return {
         dependencies: finalDependencies
     }

@@ -10,7 +10,7 @@ module.exports = function(){
     var result;
     try {
         result = dagon(x=> x.pathToRoot(__dirname)
-            .requiredModuleRegistires(['./../tests/TestModules/dependentModule2/dependentMod2'])
+            .requiredModuleRegistires(['tests/TestModules/dependentModule2/dependentMod2.js'])
             .for('ramda').renameTo('R')
             .for('ramdafantasy').renameTo('_fantasy')
             .complete());

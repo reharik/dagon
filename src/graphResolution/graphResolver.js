@@ -9,6 +9,6 @@ var resolveInstance = require('./resolveInstance');
 
 module.exports = function resolveGraph(unResDeps){
     var resolvedDependencies = [];
-    unResDeps.forEach(x=> resolveInstance(x, unResDeps, resolvedDependencies));
+    unResDeps.forEach(x=> resolveInstance(unResDeps, resolvedDependencies, x));
     return resolvedDependencies;
 };

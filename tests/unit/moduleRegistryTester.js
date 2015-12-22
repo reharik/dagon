@@ -11,8 +11,8 @@ describe('moduleRegistry Test', function() {
     var mut;
 
     before(function(){
-        mut = require('../src/containerModules/moduleRegistry');
-        var logger = require('../src/logger');
+        mut = require('../../src/containerModules/moduleRegistry');
+        var logger = require('../../src/logger');
         //if(!logger.exposeInternals().options.console.formatter){
         //    logger.addConsoleSink({
         //        level    : 'debug',
@@ -88,8 +88,8 @@ describe('moduleRegistry Test', function() {
             it('should add their dependencies', function() {
                 var result = mut(x=>
                     x.pathToRoot(path.resolve('./'))
-                        .for('logger').require('/tests/TestModules/loggerMock')
-                        .requiredModuleRegistires(['./../tests/TestModules/dependentModule1/dependentMod1.js'])
+                        .for('logger').require('./tests/TestModules/loggerMock')
+                        .requiredModuleRegistires(['./tests/TestModules/dependentModule1/dependentMod1.js'])
                         .complete());
                 result.dependencyDeclarations.some(x=>x.name == 'treis').must.be.true();
             });

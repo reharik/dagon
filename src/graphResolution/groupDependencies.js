@@ -3,13 +3,34 @@
  */
 
 var logger = require('./../logger');
-var resolveInstance = require('./resolveInstance');
 
-module.exports = function groupDependencies(name, unResDeps, resolvedDependencies){
-    var groupedItems = unResDeps.filter(x=>groupName === name);
-    if(!groupedItems || groupedItems.length === 0){
-        return false;
+module.exports = function groupDependencies(resDeps, name) {
+    var groupedItems = resDeps.filter(x=> x.groupName === name);
+    var groupType    = name.indexOf('_array') > -1 ? 'array' : 'hash';
+    var group        = groupType === 'array'
+        ? buildGroupAsArray(groupedItems)
+        : buildGroupAsHash(groupedItems);
+
+    resDeps.push({name  : name,
+        resolvedInstance: group,
+        type            : groupType
+    });
+};
+
+var buildGroupAsHash = function(groupedItems) {
+    var item = {};
+    for (let i of groupedItems) {
+        item[i.name] = i.resolvedInstance;
     }
-    groupedItems.forEach(x=> resolveInstance(x, unResDeps, resolvedDependencies));
-    return true;
+    return item;
+};
+
+var buildGroupAsArray = function(groupedItems) {
+    var item = [];
+    for (let i of groupedItems) {
+        item.push(i.resolvedInstance);
+    }
+    if (item.length > 0) {
+        return item;
+    }
 };

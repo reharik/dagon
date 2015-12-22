@@ -10,7 +10,7 @@ describe('Registry DSL Tester', function() {
     var mut;
 
     before(function(){
-        Mut = require('../src/containerModules/RegistryDSL');
+        Mut = require('../../src/containerModules/RegistryDSL');
     });
 
     beforeEach(function(){
@@ -39,7 +39,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('Invariant Violation: You must provide a valid dependency parameter');
+                error.must.equal('You must provide a valid dependency parameter');
             })
         });
 
@@ -59,7 +59,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('Invariant Violation: You must provide a valid replacement module');
+                error.must.equal('You must provide a valid replacement module');
             })
         });
 
@@ -81,7 +81,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('Invariant Violation: You must call "for" before calling "require"');
+                error.must.equal('You must call "for" before calling "require"');
             })
         });
 

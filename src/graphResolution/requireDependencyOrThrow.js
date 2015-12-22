@@ -5,7 +5,7 @@
 var logger = require('./../logger');
 var exceptionHandler = require('./../exceptionHandler');
 
-module.epxorts = function requireDependencyOrThrow(dependencyName, resDeps) {
+module.exports = function requireDependencyOrThrow(resDeps, dependencyName) {
     try {
         var tryingRequire = require(dependencyName);
         if (tryingRequire) {
@@ -18,7 +18,6 @@ module.epxorts = function requireDependencyOrThrow(dependencyName, resDeps) {
     } catch (ex) {
         logger.info('getDependency | tryRequireDependency: item was not found and require threw an error');
         logger.info('getDependency | tryRequireDependency: error' + ex);
-        error = exceptionHandler(err,'item was not found and require threw an error:' + dependencyName);
-        throw error;
+        throw exceptionHandler(ex,'item was not found and require threw an error: ' + dependencyName);
     }
 };
