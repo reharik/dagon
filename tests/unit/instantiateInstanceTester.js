@@ -1,6 +1,8 @@
 /**
  * Created by rharik on 12/21/15.
  */
+
+"use strict";
 var demand = require('must');
 
 describe('INSTANTIATE INSTANCE TESTER', function() {

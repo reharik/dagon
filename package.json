@@ -5,7 +5,7 @@
   "main": "output/src/index.js",
   "homepage": "https://github.com/reharik/dagon",
   "scripts": {
-    "test": "mocha --opts tests/mocha.opts tests"
+    "test": "./node_modules/.bin/istanbul cover _mocha -- --opts tests/mocha.opts tests/unit"
   },
   "repository": {
     "type": "git",
