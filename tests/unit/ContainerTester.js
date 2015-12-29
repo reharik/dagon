@@ -10,7 +10,7 @@ describe('Container Test', function() {
     var Mut;
 
     before(function(){
-        Mut = require('../../src/containerModules/Container');
+        Mut = require('../../src/containerModules/container');
         var logger = require('../../src/logger');
     });
 
