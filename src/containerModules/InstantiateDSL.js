@@ -1,6 +1,7 @@
 /**
  * Created by rharik on 6/24/15.
  */
+"use strict";
 
 var invariant = require('invariant');
 var logger = require('./../logger');
