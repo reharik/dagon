@@ -2,7 +2,7 @@
   "name": "dagon",
   "version": "0.2.1",
   "description": "an IOC container for javascript",
-  "main": "output/src/index.js",
+  "main": "src/index.js",
   "homepage": "https://github.com/reharik/dagon",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover _mocha -- --opts tests/mocha.opts tests/unit"
