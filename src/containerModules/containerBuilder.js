@@ -49,7 +49,7 @@ module.exports = function(registryFunc, containerFunc){
             }
 
             if (!instance) {
-                throw('unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
+                exceptionHandler(err,'unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
             }
             return instance;
         };
