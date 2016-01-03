@@ -8,6 +8,7 @@ var logger = require('./../logger');
 var exceptionHandler = require('./../exceptionHandler');
 var moduleRegistry = require('./moduleRegistry');
 var R = require('ramda');
+var path = require('path');
 
 module.exports = function(registryFunc, containerFunc){
 
@@ -31,23 +32,50 @@ module.exports = function(registryFunc, containerFunc){
         item.instantiate = x
     });
 
+    var tryRequire = function(path){
+        var instance;
+        try{
+            instance = require(path);
+        }catch(ex){
+            //swallow
+        }
+        return instance;
+    };
+
+    var recurseItemAltPath = function(path, name){
+        console.log('path')
+        console.log(path)
+        var b = path === '/' + name;
+        if(!path || b){
+            console.log('returning undefinde')
+            return undefined;
+        }
+        var tried = tryRequire(path);
+        if(tried) {
+            console.log('returning tied')
+            return tried;
+        } else {
+            var propertyName = 'node_modules/' + name;
+            var preslugs = path.replace(propertyName,'');
+            var slugs = preslugs.split('/');
+            var trimmedSlugs = R.dropLastWhile(x=>x!='node_modules', slugs);
+            var trimmedPath = trimmedSlugs.join('/') + '/' + name;
+            return recurseItemAltPath(trimmedPath, name)
+        }
+    };
+
+    // fuck we have to dig through this altPath recursively for all mf node_modules till we find this pig fucker
     var externalWrappedInstance = function(item) {
         return function() {
-            var instance;
-            try {
-                instance = require(item.path);
-            } catch (ex) {
-                //swallow
-            }
+            var instance = tryRequire(item.path);
 
             if (!instance) {
-                try {
-                    instance = require(item.altPath);
-                } catch (err) {
-                    exceptionHandler(err,'unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
-                }
+                instance = recurseItemAltPath(item.altPath, item.path);
             }
 
+            if(!instance) {
+                throw exceptionHandler([], 'unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
+            }
             return instance;
         };
     };
@@ -61,7 +89,7 @@ module.exports = function(registryFunc, containerFunc){
     };
 
     finalDependencies.forEach(wrapInstances);
-    
+
     return {
         dependencies: finalDependencies
     }

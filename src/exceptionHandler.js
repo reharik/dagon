@@ -13,7 +13,7 @@ module.exports = function (err, message) {
 };
 
 var errorHandler = function errorHandler(error, result) {
-    var stackArray = error.stack.split("\n");
+    var stackArray = error.stack ? error.stack.split("\n") : result;
 
     result.push(stackArray);
     if (error.innerException) {
