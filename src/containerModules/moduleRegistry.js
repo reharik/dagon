@@ -23,7 +23,7 @@ var moduleRegistry = function(registryFunc) {
         //    console.log(fs.realpathSync(x));
         //    console.log(fs.existsSync(x));
         //});
-        return dto.dependentRegistries.map(x=> require(fs.realpathSync(x))())
+        return dto.dependentRegistries.map(x=> require(x)())
             .reduce((m, a) => {
                 a.dependencyDeclarations = a.dependencyDeclarations.concat(m.dependencyDeclarations);
                 a.overrideDeclarations = a.overrideDeclarations.concat(m.overrideDeclarations);

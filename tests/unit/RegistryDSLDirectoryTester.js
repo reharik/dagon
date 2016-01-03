@@ -26,7 +26,7 @@ describe('Registry DSL directory Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must provide a valid directory');
+                error.must.contain('You must provide a valid directory');
             })
         });
 
@@ -48,7 +48,7 @@ describe('Registry DSL directory Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must provide a valid directory');
+                error.must.contain('You must provide a valid directory');
             })
         });
 
@@ -70,7 +70,7 @@ describe('Registry DSL directory Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must provide a valid directory');
+                error.must.contain('You must provide a valid directory');
             })
         });
 

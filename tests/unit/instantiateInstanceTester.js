@@ -39,7 +39,7 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     constructor(param1) {
                         this.param = param1;
                     }
-                    returnResult = function(){
+                    returnResult(){
                         return this.param;
                     }
                 };
@@ -65,10 +65,10 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                         this.param = param1;
                         this.initVal = '';
                     }
-                    initFunc = function(){
+                    initFunc() {
                         this.initVal = 'init value';
                     };
-                    returnResult = function(){
+                    returnResult() {
                         return {param:this.param, init:this.initVal};
                     };
                 };
@@ -97,11 +97,11 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                         this.initVal = '';
                         this.initFuncParam = '';
                     }
-                    initFunc = function(initFunc){
+                    initFunc(initFunc) {
                         this.initVal = 'init value';
                         this.initFuncParam = initFunc;
                     };
-                    returnResult = function(){
+                    returnResult() {
                         return {param:this.param, init:this.initVal, initFuncParam: this.initFuncParam};
                     };
                 };

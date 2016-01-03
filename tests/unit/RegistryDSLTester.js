@@ -39,7 +39,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must provide a valid dependency parameter');
+                error.must.contain('You must provide a valid dependency parameter');
             })
         });
 
@@ -59,7 +59,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must provide a valid replacement module');
+                error.must.contain('You must provide a valid replacement module');
             })
         });
 
@@ -81,7 +81,7 @@ describe('Registry DSL Tester', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('You must call "for" before calling "require"');
+                error.must.contain('You must call "for" before calling "require"');
             })
         });
 

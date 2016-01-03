@@ -23,7 +23,7 @@ describe('RESOLVE ITEM', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('Item to resolve must be provided.');
+                error.must.contain('Item to resolve must be provided.');
             })
         });
     });

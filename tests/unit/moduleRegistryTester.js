@@ -6,6 +6,7 @@
 var demand = require('must');
 var path = require('path');
 var moment = require('moment');
+var fs = require('fs');
 
 describe('moduleRegistry Test', function() {
     var mut;
@@ -86,10 +87,11 @@ describe('moduleRegistry Test', function() {
 
         context('when calling moduleReg with dependent dagon modules', function() {
             it('should add their dependencies', function() {
+                var dependentMod1 = fs.realpathSync('tests/TestModules/dependentModule1/dependentMod1.js');
                 var result = mut(x=>
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').require('./tests/TestModules/loggerMock')
-                        .requiredModuleRegistires(['./tests/TestModules/dependentModule1/dependentMod1.js'])
+                        .requiredModuleRegistires([dependentMod1])
                         .complete());
                 result.dependencyDeclarations.some(x=>x.name == 'treis').must.be.true();
             });

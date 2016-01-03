@@ -20,11 +20,12 @@ describe('container builder Test', function() {
     describe('#dependencies', function() {
         context('when calling ', function() {
             it('should rename and leave the original', function() {
-    var result = mut(x=>
+                var dependentMod1 = fs.realpathSync('tests/TestModules/dependentModule1/dependentMod1.js');
+                var result = mut(x=>
         x.pathToRoot(path.resolve('./'))
             .for('logger').require('tests/TestModules/loggerMock')
             .for('logger').renameTo('xxxLogger')
-            .requiredModuleRegistires(['tests/TestModules/dependentModule1/dependentMod1.js'])
+            .requiredModuleRegistires([dependentMod1])
             .complete());
         demand(result.dependencies.find(x=> x.name == 'treis')).must.not.be.undefined();
         demand(result.dependencies.find(x=> x.name == 'treisxxx')).must.not.be.undefined();
@@ -35,11 +36,12 @@ describe('container builder Test', function() {
 
         context('when calling ', function() {
             it('should reduce to only unique values', function() {
+                var dependentMod1 = fs.realpathSync('tests/TestModules/dependentModule1/dependentMod1.js');
                 var result = mut(x=>
                     x.pathToRoot(path.resolve('./'))
                         .for('logger').require('/tests/TestModules/loggerMock')
                         .for('logger').renameTo('xxxLogger')
-                        .requiredModuleRegistires(['tests/TestModules/dependentModule1/dependentMod1.js'])
+                        .requiredModuleRegistires([dependentMod1])
                         .complete());
 
                 R.uniq(result.dependencies).length.must.equal(result.dependencies.length)
@@ -75,7 +77,7 @@ describe('container builder Test', function() {
                 }catch(ex){
                     err = ex.message;
                 }
-                err.must.equal('There is no dependency name flogger declared to instantiate')
+                err.must.contain('There is no dependency name flogger declared to instantiate')
             });
         });
 

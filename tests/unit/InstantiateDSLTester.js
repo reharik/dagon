@@ -25,7 +25,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('You must provide a name for the dependency to instantiate');
+                error.must.contain('You must provide a name for the dependency to instantiate');
             })
         });
 
@@ -37,7 +37,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('There is no dependency name someclass declared to instantiate');
+                error.must.contain('There is no dependency name someclass declared to instantiate');
             })
         });
 
@@ -49,7 +49,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('You must provide a dependency name before calling asClass');
+                error.must.contain('You must provide a dependency name before calling asClass');
             })
         });
 
@@ -81,7 +81,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('You must set dependency type before calling withParameters. e.g. asClass, asFunc');
+                error.must.contain('You must set dependency type before calling withParameters. e.g. asClass, asFunc');
             })
         });
 
@@ -93,7 +93,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('You must provide parameters when calling withParameters');
+                error.must.contain('You must provide parameters when calling withParameters');
             })
         });
 
@@ -114,7 +114,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('You must provide method to call for initilization');
+                error.must.contain('You must provide method to call for initilization');
             })
         });
 
@@ -135,7 +135,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('You must call initializeWithMethod before calling withInitParameters');
+                error.must.contain('You must call initializeWithMethod before calling withInitParameters');
             })
         });
 
@@ -147,7 +147,7 @@ describe('Instantiate DSL Tester', function() {
                 } catch (ex) {
                     error = ex.message;
                 }
-                error.must.equal('You must provide parameters when calling withInitParameters');
+                error.must.contain('You must provide parameters when calling withInitParameters');
             })
         });
 
