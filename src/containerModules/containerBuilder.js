@@ -31,33 +31,35 @@ module.exports = function(registryFunc, containerFunc){
         item.instantiate = x
     });
 
-    var externalWrappedInstance = function() {
-        var instance;
-        try {
-            instance = require(item.path);
-        }catch(ex){
-            //swallow
-        }
-
-        if(!instance){
+    var externalWrappedInstance = function(item) {
+        return function() {
+            var instance;
             try {
-                instance = require(item.altPath);
-            }catch(ex){
+                instance = require(item.path);
+            } catch (ex) {
                 //swallow
             }
-        }
 
-        if(!instance){
-            throw('unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
-        }
-        return instance;
+            if (!instance) {
+                try {
+                    instance = require(item.altPath);
+                } catch (ex) {
+                    //swallow
+                }
+            }
+
+            if (!instance) {
+                throw('unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
+            }
+            return instance;
+        };
     };
 
 
     var wrapInstances = function wrapInstances(item) {
         item.wrappedInstance = item.internal
             ? require(item.path)
-            : externalWrappedInstance;
+            : externalWrappedInstance(item);
         return item;
     };
 
