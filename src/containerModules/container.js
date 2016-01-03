@@ -2,6 +2,7 @@
  * Created by rharik on 6/23/15.
  */
 var containerBuilder = require('./containerBuilder');
+var declarationReducer = require('./declarationReducer');
 var graphResolver = require('./../graphResolution/graphResolver');
 var invariant = require('invariant');
 var logger = require('./../logger');
@@ -57,7 +58,8 @@ module.exports = function container(registryFunc, containerFunc){
             'You must supply a registry function');
 
         logger.trace('Container | constructor : Building registry');
-        unresolvedGrpah = containerBuilder(registryFunc, containerFunc);
+        var finalDeclarations = declarationReducer(registryFunc, containerFunc);
+        unresolvedGrpah = containerBuilder(finalDeclarations);
 
         logger.trace('Container | constructor : resolve graph');
         resolvedGrpah = graphResolver(unresolvedGrpah.dependencies);

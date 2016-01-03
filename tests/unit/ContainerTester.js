@@ -41,7 +41,8 @@ describe('Container Test', function() {
 
         context('when instantiating Container', ()=> {
             it('should put new grpah on dependencyGraph property', ()=> {
-                var mut = new Mut(x=>x.pathToRoot(path.resolve('./')).complete());
+                var mut = Mut(x=>x.pathToRoot(path.resolve('./')).complete());
+                console.log(mut)
                 demand(mut.dependencyGraph);
             })
         });

@@ -111,10 +111,21 @@ module.exports = class RegistryDSL{
         if(_path.startsWith('.') || _path.includes('/')){
             this._declarationInProgress.internal=true;
             this._declarationInProgress.path=path.join(this._pathToAppRoot,_path);
+            this._declarationInProgress.isOverride = true;
         }
         return this;
     }
-
+    /**
+     * This completes the open declaration.
+     * @param name - name of the existing declaration to replace the declaration named in the 'for' with
+     * @returns {this}
+     */
+    replaceWith(name){
+        invariant(name,'You must provide a valid replacement module');
+        invariant(this._declarationInProgress,'You must call "for" before calling "replaceWith"');
+        this._declarationInProgress.replaceWith = name;
+        return this;
+    };
     /**
      * This opens a new dependency declaration.
      * @param name - the original name of the dependency you are renaming
