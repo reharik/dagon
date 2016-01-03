@@ -175,7 +175,7 @@ module.exports = class RegistryDSL{
         logger.trace('buildListOfDependencies | getDependenciesFromProjectJson: reading package.json dependencies');
         var packageJson      = require(path.join(this._pathToAppRoot, '/package.json'));
         var dependencies =  Object.keys(packageJson.dependencies)
-            .map(x=> {return { name: this.normalizeName(x), path:x }});
+            .map(x=> {return { name: this.normalizeName(x), path:x, altPath: this._pathToAppRoot + '/node_modules/' + x }});
         this.addDependenciesToCollection(dependencies);
     };
 
