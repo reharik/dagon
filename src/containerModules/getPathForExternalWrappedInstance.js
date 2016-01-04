@@ -7,13 +7,11 @@ var R = require('ramda');
 var path = require('path');
 
 var tryRequire = function(path){
-    var instance;
     try{
-        instance = require(path);
+        return require(path);
     }catch(ex){
         //swallow
     }
-    return instance;
 };
 
 //this noise is necessary for npm 2.* in 3.* all the deps ( usually ) are at the root level so not necessary
