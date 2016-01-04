@@ -18,7 +18,7 @@ describe('declaration reducer Test', function() {
 
     });
 
-    describe('#declaration', function() {
+    describe('#RENAME', function() {
         context('when calling ', function() {
             it('should rename and leave the original', function() {
                 var dependentMod1 = fs.realpathSync('tests/TestModules/dependentModule1/dependentMod1.js');
@@ -34,7 +34,27 @@ describe('declaration reducer Test', function() {
                 demand(result.find(x=> x.name == 'logger')).must.not.be.undefined();
             });
         });
+    });
 
+    describe('#REPLACE', function() {
+        context('when calling ', function() {
+            it('should replace the target', function() {
+                var dependentMod1 = fs.realpathSync('tests/TestModules/dependentModule1/dependentMod1.js');
+                var result = mut(x=>
+                    x.pathToRoot(path.resolve('./'))
+                        .for('logger').require('tests/TestModules/loggerMock')
+                        .for('ramda').replaceWith('logger')
+                        .requiredModuleRegistires([dependentMod1])
+                        .complete());
+
+                demand(result.find(x=> x.name == 'ramda')).must.not.be.undefined();
+                demand(result.find(x=> x.name == 'logger')).must.not.be.undefined();
+                result.find(x=> x.name == 'ramda').path.must.contain('tests/TestModules/loggerMock');
+            });
+        });
+    });
+
+    describe('#UNIQUE', function() {
         context('when calling ', function() {
             it('should reduce to only unique values', function() {
                 var dependentMod1 = fs.realpathSync('tests/TestModules/dependentModule1/dependentMod1.js');
@@ -49,32 +69,16 @@ describe('declaration reducer Test', function() {
             });
         });
     });
-    describe('#instantiations', function() {
-        //    context('when calling ', function() {
-        //        it('should return array of instantiation objects', function() {
-        //            var result = mut(
-        //                    x=>x.pathToRoot(path.resolve('./'))
-        //                        .for('logger').require('tests/TestModules/loggerMock')
-        //                        .complete(),
-        //                    x=>x.instantiate('logger').asClass().complete());
-        //
-        //            demand(result.instantiations).must.not.be.undefined();
-        //            console.log(result.instantiations);
-        //            result.instantiations[0].name.must.equal('logger');
-        //            result.instantiations[0].dependencyType.must.equal('class');
-        //        });
-        //    });
-
+    describe('#INSTANTIATIONS', function() {
         context('when calling with bad dep name', function() {
-            it('should return array of instantiation objects', function() {
+            it('should return proper error', function() {
                 var err;
                 try {
-                    mut(
-                            x=>x.pathToRoot(path.resolve('./'))
+                    mut(x=>x.pathToRoot(path.resolve('./'))
                             .for('logger').require('tests/TestModules/loggerMock')
                             .complete(),
                             x=>x.instantiate('flogger').asClass().complete());
-                }catch(ex){
+                } catch (ex) {
                     err = ex.message;
                 }
                 err.must.contain('There is no dependency name flogger declared to instantiate')

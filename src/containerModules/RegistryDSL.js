@@ -111,7 +111,6 @@ module.exports = class RegistryDSL{
         if(_path.startsWith('.') || _path.includes('/')){
             this._declarationInProgress.internal=true;
             this._declarationInProgress.path=path.join(this._pathToAppRoot,_path);
-            this._declarationInProgress.isOverride = true;
         }
         return this;
     }

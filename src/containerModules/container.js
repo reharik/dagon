@@ -1,7 +1,7 @@
 /**
  * Created by rharik on 6/23/15.
  */
-var containerBuilder = require('./containerBuilder');
+var containerBuilder = require('./createWrappedInstances');
 var declarationReducer = require('./declarationReducer');
 var graphResolver = require('./../graphResolution/graphResolver');
 var invariant = require('invariant');
