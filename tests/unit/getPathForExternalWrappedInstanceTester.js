@@ -3,6 +3,9 @@
  */
 var demand = require('must');
 
+// crap this is very hard to test since there are two versions of npm.
+// currently it works for a 2.* tree structure, although it's running in 3.* so wtfk
+
 describe('container builder Test', function() {
     var mut;
 
