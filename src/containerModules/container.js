@@ -49,6 +49,7 @@ module.exports = function container(registryFunc, containerFunc){
             var dependency = {name: x.name};
             if(options.showResolved) { dependency.resolvedInstance = x.resolvedInstance ;}
             if(options.showWrappedInstance) { dependency.wrappedInstance = x.wrappedInstance;}
+            if(options.showAll) { dependency = x;}
             return dependency
         });
     };

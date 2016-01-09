@@ -20,6 +20,7 @@ function instantiateClass(instanceFeatures, resolvedInstance) {
 }
 
 function instantiateFunc(instanceFeatures, resolvedInstance) {
+
     logger.debug('instantiateInstance | instantiateFunc: item is func so "call" or just call()');
     var result;
     if (instanceFeatures.parameters) {
@@ -27,6 +28,7 @@ function instantiateFunc(instanceFeatures, resolvedInstance) {
     } else {
         result = resolvedInstance();
     }
+
     return result;
 }
 function initialize(instanceFeatures, resolvedInstance) {
@@ -40,30 +42,27 @@ function initialize(instanceFeatures, resolvedInstance) {
     return instanceFeatures.dependencyType === 'class' ? resolvedInstance : result;
 }
 
-var instantiateResolvedInstance = function(item){
-    var instance;
-    var instanceFeatures = item.instantiate;
+var instantiateResolvedInstance = function(instanceFeatures, resolvedInstance){
     logger.trace('instantiateInstance | instantiateResolvedInstance: instantiation features requested : '+ JSON.stringify(instanceFeatures));
 
+    var instance;
     if(instanceFeatures.dependencyType === 'class'){
-        instance = instantiateClass(instanceFeatures, item.resolvedInstance);
+        instance = instantiateClass(instanceFeatures, resolvedInstance);
     }else if(instanceFeatures.dependencyType === 'func'){
-        instance = instantiateFunc(instanceFeatures, item.resolvedInstance);
+        instance = instantiateFunc(instanceFeatures, resolvedInstance);
     }
 
-    if(instanceFeatures.initializationMethod){
-        instance = initialize(instanceFeatures, instance?instance:item.resolvedInstance);
+    if(instanceFeatures.initializationMethod) {
+        instance = initialize(instanceFeatures, instance ? instance : resolvedInstance);
     }
-    return item.resolvedInstance = instance;
+    return instance;
 };
 
-module.exports = function instantiateInstance(item){
+module.exports = function instantiateInstance(instanceFeatures, resolvedInstance){
     logger.trace('instantiateInstance | constructor: calling instantiateResolvedInstance to do post resolution modifications');
     try {
-        return instantiateResolvedInstance(item);
+        return instantiateResolvedInstance(instanceFeatures, resolvedInstance);
     }catch(err){
-        var error = exceptionHandler(err,'Error attempting to instantiate resolved instance for item:' + item.name);
-        error.details = {instantiationInstructions:item.instantiate, resolvedInstance:item.resolvedInstance.toString() };
-        throw error;
+        throw exceptionHandler(err, 'Error attempting to instantiate resolved instance for item: ' + instanceFeatures.name);
     }
 };

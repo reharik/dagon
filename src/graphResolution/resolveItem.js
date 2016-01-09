@@ -22,8 +22,8 @@ module.exports = function resolveItem(resolvedDependencies,item){
         ? item.wrappedInstance.apply(item.wrappedInstance, resolvedArgs)
         : item.wrappedInstance();
 
-    if(resolvedInstance.instantiate){
-        instantiateInstance(resolvedInstance);
+    if(item.instantiate) {
+        resolvedInstance = instantiateInstance(item.instantiate, resolvedInstance);
     }
 
     return resolvedInstance;
