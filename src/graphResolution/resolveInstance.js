@@ -23,7 +23,7 @@ var resolveGroup = function resolveGroup(unResDeps, resDeps, name){
 };
 
 var resolveInstance = function resolveInstance(unResDeps, resDeps, item){
-    if(resDeps.find(x=>x.name === item.name)){
+    if(resDeps.find(x=>x.name === item.name && x.groupName === item.groupName)){
         return
     }
     //shit is blowin up if item.wrappedinstance is not a function for some reason
