@@ -9,12 +9,13 @@ var R = require('ramda');
 module.exports = function(registryFunc, containerFunc) {
 
     var dto          = moduleRegistry(registryFunc);
-    var dependencies = R.uniqWith((a, b) => a.name == b.name, dto.dependencyDeclarations)
+    var dependencies = R.uniqWith((a, b) => a.name == b.name && a.groupName == b.groupName, dto.dependencyDeclarations)
         .concat(dto.overrideDeclarations.filter(x=>!x.newName && !x.replaceWith));
 
     var renames = R.filter(x=>x.newName, dto.overrideDeclarations);
     var rename  = x=> {
         var clone  = R.clone(dependencies.find(d=>d.name == x.name));
+       //shit's blowin up here. if the dep is not there for some reason
         clone.name = x.newName;
         return clone;
     };
