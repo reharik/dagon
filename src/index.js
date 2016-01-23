@@ -1,6 +1,7 @@
 /**
  * Created by rharik on 7/13/15.
  */
+"use strict";
 
 var _logger = require('./logger');
 var extend = require('extend');

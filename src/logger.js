@@ -1,6 +1,5 @@
 "use strict";
 
-
 var logger = require('./logger_module/index');
 var moment = require('moment');
 

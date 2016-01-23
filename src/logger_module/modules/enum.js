@@ -1,4 +1,6 @@
 /* istanbul ignore next */
+"use strict";
+
 module.exports = {
     logLevels : function() {
         return [

@@ -1,6 +1,7 @@
 /**
  * Created by reharik on 12/6/15.
  */
+"use strict";
 
 var getPathForExternalWrappedInstance = require('./getPathForExternalWrappedInstance');
 

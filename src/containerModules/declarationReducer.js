@@ -1,6 +1,7 @@
 /**
  * Created by rharik on 1/3/16.
  */
+"use strict";
 
 var InstantiateDSL = require('./InstantiateDSL');
 var moduleRegistry = require('./moduleRegistry');
