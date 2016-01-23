@@ -1,0 +1,10 @@
+{
+  "name": "test1",
+  "version": "0.2.1",
+  "license": "MIT",
+  "node": ">=0.12.0",
+  "dependencies": {
+    "JSON": "^1.0.0",
+    "bluebird": "^2.9.27"
+  }
+}

@@ -5,6 +5,8 @@
 var _logger = require('./logger');
 var extend = require('extend');
 var moment = require('moment');
+var registry = require('./containerModules/moduleRegistry');
+var container = require('./containerModules/container');
 
 module.exports = function(_options){
     var options={};
@@ -24,5 +26,8 @@ module.exports = function(_options){
         }).info("added Console Sink");
     }
 
-    return require('./Container');
+    return {
+        registry,
+        container
+    }
 };

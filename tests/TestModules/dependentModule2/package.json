@@ -1,0 +1,13 @@
+{
+  "name": "test2",
+  "version": "0.2.1",
+  "license": "MIT",
+  "node": ">=0.12.0",
+  "dependencies": {
+    "lodash": "^3.6.0",
+    "bluebird": "^2.9.27",
+    "treis": "^2.3.16",
+    "ramda": "^0.18.0",
+    "ramda-fantasy": "^0.4.1"
+  }
+}

@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "homepage": "https://github.com/reharik/dagon",
   "scripts": {
-    "test": "./node_modules/.bin/istanbul cover _mocha -- --opts tests/mocha.opts tests"
+    "test": "./node_modules/.bin/istanbul cover _mocha -- --opts tests/mocha.opts tests/unit"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "lodash": "^3.6.0",
     "moment": "^2.10.6",
     "nested-error": "^1.0.0",
+    "ramda": "^0.18.0",
     "uuid": "^2.0.1",
     "winston": "^1.0.0",
     "winston-logstash": "^0.1.11"
