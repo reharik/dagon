@@ -1,6 +1,7 @@
 /**
  * Created by rharik on 12/13/15.
  */
+"use strict";
 
 var logger = require('./../logger');
 var exceptionHandler = require('./../exceptionHandler');

@@ -1,6 +1,7 @@
 /**
  * Created by rharik on 1/3/16.
  */
+"use strict";
 
 var exceptionHandler = require('./../exceptionHandler');
 var R = require('ramda');

@@ -15,7 +15,7 @@ describe('container builder Test', function() {
             it('should put proper wrapped function', function() {
 
                 var dep = { name: 'logger',
-                    path: '/home/rharik/Development/MethodFitness/dagon/tests/TestModules/loggerMock',
+                    path: '../../tests/TestModules/loggerMock',
                     internal: true};
                 var result = mut([dep]);
                 var instance = require(dep.path).toString();

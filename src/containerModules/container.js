@@ -1,6 +1,8 @@
 /**
  * Created by rharik on 6/23/15.
  */
+"use strict";
+
 var containerBuilder = require('./createWrappedInstances');
 var declarationReducer = require('./declarationReducer');
 var graphResolver = require('./../graphResolution/graphResolver');

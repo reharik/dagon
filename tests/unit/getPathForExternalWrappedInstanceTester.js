@@ -28,7 +28,7 @@ describe('container builder Test', function() {
             it('should return proper path', function() {
                 var dep = { name: 'js-tokens',
                     path: 'js-tokens',
-                    altPath: '/home/rharik/Development/MethodFitness/dagon/node_modules/invariant/node_modules/loose-envify/node_modules/js-tokens'};
+                    altPath: '/node_modules/invariant/node_modules/loose-envify/node_modules/js-tokens'};
                 var result = mut(dep);
                 demand(result).must.not.be.undefined();
                 result.must.eql('/home/rharik/Development/MethodFitness/dagon/node_modules/invariant/node_modules/loose-envify/node_modules/js-tokens');
