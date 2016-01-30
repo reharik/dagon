@@ -13,6 +13,14 @@ describe('GROUP DEPENDENCIES TESTER', function() {
 
     describe('#GROUPDEPENDENCIES', function() {
 
+
+
+
+// these tests are all wrong look what result is! it's just reading from the array just collected
+// that's not true. this is just a good example of why you should not modify a parameter. what a bunch of crap
+
+
+
         context('when calling groupdependencies with a name that has _array', function () {
             it('should add item that has an array for the resolved instance', function () {
                 var resDeps = [
