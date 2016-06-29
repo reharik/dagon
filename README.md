@@ -45,13 +45,20 @@ Here is your simplest registry file
 ```sh
 
 var dagon = require('dagon');
-
-module.exports = function(_options) {
+module.exports = function (_options) {
     var options = _options || {};
-    var Container = dagon(options.dagon);
-    return new Container(x=> x.pathToRoot(__dirname)
-     .requireDirectoryRecursively('./src')
-     .complete());
+    var container = dagon(options.dagon).container;
+    var result;
+    try {
+        result = container(x => x.pathToRoot(__dirname)
+                    .requireDirectoryRecursively('./src')
+                    .complete());
+    } catch (ex) {
+        console.log(ex);
+        console.log(ex.stack);
+    }
+    return result;
+}
 ```
 Explained
 ```sh
@@ -67,12 +74,12 @@ module.exports = function(_options) {
     var options = _options || {};
 ```
 ```sh
-// pass dagon specific options into the container factory.
-    var Container = dagon(options.dagon);
+// pass dagon specific options into dagon and access the container
+    var container = dagon(options.dagon).container;
 ```
 ```sh
-    // instatiate the container
-    return new Container(x=> x.pathToRoot(__dirname)
+// wrap the registry in a try catch so you can log your errors and see what happened
+    try{
 ```
 ```sh
         // Path to root is really looking for where you package.json lives.
@@ -92,23 +99,26 @@ module.exports = function(_options) {
 And here is a registry using all of the features.
 ```sh
 var dagon = require('dagon');
-module.exports = function(_options) {
+module.exports = function (_options) {
     var options = _options || {};
-    var Container = dagon(options.dagon);
-    return new Container(x=> x.pathToRoot(__dirname)
-        x.pathToRoot(__dirname)
-        .requireDirectoryRecursively('./src')
-        .requireDirectory('./somewhereelse')
-        .groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
-        .for('bluebird').renameTo('Promise')
-        .for('lodash').renameTo('_')
-        .for('genericLogger').require('./src/myPersonalLogger')
-        .for('someModule').instantiate(i=>i
-            .asClass() // alternately .asFunc()
-            .withParameters('myConnectionString', 'someOtherSetting')
-            .initializeWithMethod('init')
-            .withInitParameters(options.someModuleConfigs)
-        .complete());
+    var container = dagon(options.dagon).container;
+    var result;
+    try {
+        result = container(x => x.pathToRoot(__dirname)
+                    .requireDirectoryRecursively('./src')
+                    .requireDirectory('./somewhereelse')
+                    .groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
+                    .for('bluebird').renameTo('Promise')
+                    .for('lodash').renameTo('_')
+                    .for('genericLogger').require('./src/myPersonalLogger')
+                    .for('genericLogger').require('./src/myPersonalLogger')
+                    .complete(),
+                    i=>i
+                        .asClass() // alternately .asFunc()
+                        .withParameters('myConnectionString', 'someOtherSetting')
+                        .initializeWithMethod('init')
+                        .withInitParameters(options.someModuleConfigs)
+                    .complete());
 ```
 Explained
 ```sh
@@ -120,16 +130,16 @@ var dagon = require('dagon');
 module.exports = function(_options) {
 ```
 ```sh
-    // safety precaution for if you don't pass any options in
+// safety precaution for if you don't pass any options in
     var options = _options || {};
 ```
 ```sh
-    // pass dagon specific options into the container factory.
-    var Container = dagon(options.dagon);
+// pass dagon specific options into dagon and access the container
+    var container = dagon(options.dagon).container;
 ```
 ```sh
-    // instatiate the container
-    return new Container(x=> x.pathToRoot(__dirname)
+// wrap the registry in a try catch so you can log your errors and see what happened
+    try{
 ```
 ```sh
         // Path to root is really looking for where you package.json lives.
@@ -138,7 +148,7 @@ module.exports = function(_options) {
         x.pathToRoot(__dirname)
 ```
 ```sh
-        // this will require all ogf the modules found in said directory
+        // this will require all modules found in said directory
         // and it will do so recursively
         .requireDirectoryRecursively('./src')
 ```
@@ -150,6 +160,8 @@ module.exports = function(_options) {
 ```sh
         // this will group a number of modules such that you can then
         // require the groupname and recieve an array of modules.
+        // the groupname is optional and will default to the directory
+        // name specified
         .groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
 ```
 ```sh
@@ -163,15 +175,28 @@ module.exports = function(_options) {
         // ( say, through the "requireDirectory" method )
         // or just register a generically named dependecy
         // and point to it's location. Very nice for testing purposes
-        // A "for" requires a "require"
+        // A "require" requires a "for"
         .for('genericLogger').require('./src/myPersonalLogger')
+```
+```sh
+        // here you can override either a previously declared dependency
+        // ( say, through the "requireDirectory" method )
+        // and point it to a previously registered dependency.
+        // useful if you have something like 'logger', 'myLogger' and 'lager'
+        // and want to have them all point to just one implementation
+        // A "replaceWith" requires a "for"
+        .for('genericLogger').replaceWith('./src/myPersonalLogger')
+```
+```sh
+        // here you end your registration of dependencies and, optionally, begin 
+        // configuring some of these dependencies to be instantiated
+        .complete(),
 ```
 ```sh
         // Here we can do some post registration configuration.
         // You must specify which dependency instantiate refers to
-        // I will nned to write a section on this
-        .for('someModule').instantiate(i=>i
-            .asClass() // alternately .asFunc()
+        // using the "instantiate" method
+            i=>i.instantiate('someModule').asClass() // alternately .asFunc()
 ```
 ```sh
             // if your module is an object then you do not need to specify
@@ -295,7 +320,7 @@ What you can't do ( unless I'm wrong ) is configure said singleton.
 with dagon you can do
 ```
     bla bla bla
-    .instantiate(x=> x.asFunc().withParameters('myLocalDBConnectionString')
+    x => x.instantiate('database').asFunc().withParameters('myLocalDBConnectionString')
 ```
 This could then return an object and voila you have an object that is a singleton that is specific to your dev environment.
 
