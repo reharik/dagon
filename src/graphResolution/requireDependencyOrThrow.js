@@ -5,6 +5,7 @@
 
 var logger = require('./../logger');
 var exceptionHandler = require('./../exceptionHandler');
+var ono = require('ono');
 
 module.exports = function requireDependencyOrThrow(resDeps, dependencyName) {
     try {
@@ -19,6 +20,6 @@ module.exports = function requireDependencyOrThrow(resDeps, dependencyName) {
     } catch (ex) {
         logger.info('getDependency | tryRequireDependency: item was not found and require threw an error');
         logger.info('getDependency | tryRequireDependency: error' + ex);
-        throw exceptionHandler(ex,'item was not found and require threw an error: ' + dependencyName);
+        throw ono(ex,'item was not found and require threw an error: ' + dependencyName);
     }
 };

@@ -6,14 +6,15 @@
 var logger = require('./../logger');
 var exceptionHandler = require('./../exceptionHandler');
 var JSON = require('JSON');
+var ono = require('ono');
 
 function instantiateClass(instanceFeatures, resolvedInstance) {
     logger.debug('instantiateInstance | instantiateClass: item is class so call new with constructor params if present');
     var result;
     if (instanceFeatures.parameters) {
-        var i  = Object.create(resolvedInstance.prototype);
-        var r  = resolvedInstance.apply(i, instanceFeatures.parameters);
-        result = Object(r) === r ? r : i;
+        // var i  = Object.create(resolvedInstance.prototype);
+        result  = Reflect.construct(resolvedInstance, instanceFeatures.parameters);
+        // result = Object(r) === r ? r : i;
     } else {
         result = new resolvedInstance();
     }
@@ -64,6 +65,6 @@ module.exports = function instantiateInstance(instanceFeatures, resolvedInstance
     try {
         return instantiateResolvedInstance(instanceFeatures, resolvedInstance);
     }catch(err){
-        throw exceptionHandler(err, 'Error attempting to instantiate resolved instance for item: ' + instanceFeatures.name);
+        throw ono(err, 'Error attempting to instantiate resolved instance for item: ' + instanceFeatures.name);
     }
 };

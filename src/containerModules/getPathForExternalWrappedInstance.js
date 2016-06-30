@@ -4,6 +4,7 @@
 "use strict";
 
 var exceptionHandler = require('./../exceptionHandler');
+var ono = require('ono');
 var R = require('ramda');
 var path = require('path');
 
@@ -15,7 +16,7 @@ var tryRequire = function(path){
     }
 };
 
-//this noise is necessary for npm 2.* in 3.* all the deps ( usually ) are at the root level so not necessary
+//this noise is necessary for npm 2.*. In 3.* all the deps ( usually ) are at the root level so not necessary
 var recurseItemAltPath = function(path, name){
     if(!path || path === '/' + name){
         return undefined;
@@ -36,7 +37,7 @@ module.exports =  function(item) {
     var path = tryRequire(item.path) ? item.path : recurseItemAltPath(item.altPath, item.path);
 
     if (!path) {
-        throw exceptionHandler([], 'unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
+        throw ono([], 'unable to resolve dependency: ' + item.name + ' at either: ' + item.path + ' or: ' + item.altPath)
     }
 
     return path;

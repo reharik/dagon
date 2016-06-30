@@ -34,19 +34,19 @@ describe('moduleRegistry Test', function() {
                 }catch(err){
                     error = err;
                 }
-                error.must.contain('Error collecting dependencies.  Check nested exceptions for more details.');
+                error.message.must.contain('Error collecting dependencies.  Check nested exceptions for more details.');
             })
         });
 
         context('when instantiating moduleRegistry WITH reg func', ()=> {
             it('should NOT throw registry func error', ()=> {
-                var error = '';
+                var error;
                 try {
                     mut(x=>x.pathToRoot(path.resolve('./')).complete());
                 }catch(err){
-                    error = err.detailView
+                    error = err;
                 }
-                error.must.not.contain('Error collecting dependencies.  Check nested exceptions for more details.');
+                demand(error).must.be.undefined();
             })
         });
 

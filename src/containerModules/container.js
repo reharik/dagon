@@ -9,6 +9,7 @@ var graphResolver = require('./../graphResolution/graphResolver');
 var invariant = require('invariant');
 var logger = require('./../logger');
 var exceptionHandler = require('./../exceptionHandler');
+var ono = require('ono');
 
 module.exports = function container(registryFunc, containerFunc){
 
@@ -74,7 +75,7 @@ module.exports = function container(registryFunc, containerFunc){
             whatDoIHave
         };
     }catch(err){
-        throw exceptionHandler(err, 'Error building dependency graph.  Check nested exceptions for more details.');
+        throw ono(err, 'Error building dependency graph.  Check nested exceptions for more details.');
     }
 };
 

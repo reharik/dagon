@@ -28,8 +28,8 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an(testClass);
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an(testClass);
             })
         });
 
@@ -52,9 +52,9 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an(testClass);
-                item.resolvedInstance.returnResult().must.equal('this is the param');
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an(testClass);
+                result.returnResult().must.equal('this is the param');
             })
         });
 
@@ -82,10 +82,10 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an(testClass);
-                item.resolvedInstance.returnResult().param.must.equal('this is the param');
-                item.resolvedInstance.returnResult().init.must.equal('init value');
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an(testClass);
+                result.returnResult().param.must.equal('this is the param');
+                result.returnResult().init.must.equal('init value');
             })
         });
 
@@ -116,11 +116,11 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an(testClass);
-                item.resolvedInstance.returnResult().param.must.equal('this is the param');
-                item.resolvedInstance.returnResult().init.must.equal('init value');
-                item.resolvedInstance.returnResult().initFuncParam.must.equal('init func param');
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an(testClass);
+                result.returnResult().param.must.equal('this is the param');
+                result.returnResult().init.must.equal('init value');
+                result.returnResult().initFuncParam.must.equal('init func param');
             })
         });
     });
@@ -142,9 +142,9 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an.object();
-                item.resolvedInstance.returnVal.must.equal('this');
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an.object();
+                result.returnVal.must.equal('this');
             })
         });
 
@@ -165,10 +165,10 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an.object();
-                item.resolvedInstance.returnVal.must.equal('this');
-                item.resolvedInstance.param.must.equal('thisParam');
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an.object();
+                result.returnVal.must.equal('this');
+                result.param.must.equal('thisParam');
             })
         });
 
@@ -195,10 +195,10 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an.object();
-                item.resolvedInstance.returnVal.must.equal('this');
-                item.resolvedInstance.param.must.equal('thisParam');
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an.object();
+                result.returnVal.must.equal('this');
+                result.param.must.equal('thisParam');
             })
         });
 
@@ -227,11 +227,11 @@ describe('INSTANTIATE INSTANCE TESTER', function() {
                     }
                 };
 
-                mut(item);
-                item.resolvedInstance.must.be.an.object();
-                item.resolvedInstance.returnVal.must.equal('this');
-                item.resolvedInstance.param.must.equal('thisParam');
-                item.resolvedInstance.initParam.must.equal('init param');
+                var result= mut(item.instantiate, item.resolvedInstance);
+                result.must.be.an.object();
+                result.returnVal.must.equal('this');
+                result.param.must.equal('thisParam');
+                result.initParam.must.equal('init param');
             })
         });
     });
