@@ -9,8 +9,6 @@ var moment = require('moment');
 describe('Container Test', function() {
     var Mut;
 
-
-
     before(function(){
         Mut = require('../../src/containerModules/container');
         var logger = require('../../src/logger');
