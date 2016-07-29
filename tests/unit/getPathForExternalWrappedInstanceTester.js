@@ -8,8 +8,13 @@ var demand = require('must');
 
 describe('container builder Test', function() {
     var mut;
-
+    function npmVersion() {
+        var cp = require('child_process');
+        return cp.execSync('npm -v').toString();
+    }
+    var npmV;
     before(function(){
+        npmV = npmVersion();
         mut = require('../../src/containerModules/getPathForExternalWrappedInstance');
     });
 
@@ -31,7 +36,11 @@ describe('container builder Test', function() {
                     altPath: '/node_modules/invariant/node_modules/loose-envify/node_modules/js-tokens'};
                 var result = mut(dep);
                 demand(result).must.not.be.undefined();
-                result.must.eql('/home/rharik/Development/MethodFitness/dagon/node_modules/invariant/node_modules/loose-envify/node_modules/js-tokens');
+                if(npmV<3) {
+                    result.must.eql('/home/rharik/Development/MethodFitness/dagon/node_modules/invariant/node_modules/loose-envify/node_modules/js-tokens');
+                }else{
+                    result.must.eql('js-tokens');
+                }
             });
         });
 
@@ -43,7 +52,11 @@ describe('container builder Test', function() {
                     altPath: '/home/rharik/Development/MethodFitness/dagon/node_modules/mocha/node_modules/glob/node_modules/minimatch/node_modules/sigmund/node_modules/diff'};
                 var result = mut(dep);
                 demand(result).must.not.be.undefined();
-                result.must.eql('/home/rharik/Development/MethodFitness/dagon/node_modules/mocha/node_modules/diff');
+                if(npmV<3) {
+                    result.must.eql('/home/rharik/Development/MethodFitness/dagon/node_modules/mocha/node_modules/diff');
+                }else{
+                    result.must.eql('diff');
+                }
             });
         });
 
