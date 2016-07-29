@@ -32,7 +32,7 @@ describe('REQUIRE DEPENDENCY OF THROW TESTER', function() {
                 }catch(ex){
                     error = ex.message;
                 }
-                error.must.equal('item was not found and require threw an error: fiddlesticks');
+                error.must.contain('item was not found and require threw an error: fiddlesticks');
             })
         });
     });

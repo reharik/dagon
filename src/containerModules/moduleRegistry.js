@@ -10,6 +10,7 @@ var path = require('path');
 var exceptionHandler = require('./../exceptionHandler');
 var R = require('ramda');
 var fs = require('fs');
+var ono = require('ono');
 
 var moduleRegistry = function(registryFunc) {
 
@@ -31,7 +32,7 @@ var moduleRegistry = function(registryFunc) {
             },dto);
 
     } catch (err) {
-        throw exceptionHandler(err, 'Error collecting dependencies.  Check nested exceptions for more details.');
+        throw ono(err, 'Error collecting dependencies.  Check nested exceptions for more details.');
     }
 };
 

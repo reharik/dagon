@@ -21,28 +21,27 @@ describe('Container Test', function() {
                 try {
                     new Mut()
                 }catch(err){
-                    error = err.detailView
+                    error = err;
                 }
-                error[0][0].must.contain('Invariant Violation: You must supply a registry function');
+                error.message.must.contain('You must supply a registry function');
             })
         });
 
         context('when instantiating Container WITH reg func', ()=> {
             it('should NOT throw registry func error', ()=> {
-                var error = '';
+                var error;
                 try {
                     new Mut(x=>x.pathToRoot(path.resolve('./')).complete());
                 }catch(err){
-                    error = err.detailView
+                    error = err
                 }
-                error.must.not.contain('Invariant Violation: You must supply a registry function');
+                demand(error).must.be.undefined();
             })
         });
 
         context('when instantiating Container', ()=> {
             it('should put new grpah on dependencyGraph property', ()=> {
                 var mut = Mut(x=>x.pathToRoot(path.resolve('./')).complete());
-                console.log(mut)
                 demand(mut.dependencyGraph);
             })
         });
