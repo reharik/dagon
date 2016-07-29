@@ -1,7 +1,7 @@
 language: node_js
 node_js:
-  - "4x"
-  - "6x"
+  - "4.x"
+  - "6.x"
 after_success:
   - npm install codeclimate-test-reporter
   - codeclimate-test-reporter < coverage/lcov.info
