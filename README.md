@@ -113,7 +113,7 @@ module.exports = function (_options) {
                     .for('genericLogger').require('./src/myPersonalLogger')
                     .for('genericLogger').require('./src/myPersonalLogger')
                     .complete(),
-                    i=>i
+                    i=>i.instantiate('someModule')
                         .asClass() // alternately .asFunc()
                         .withParameters('myConnectionString', 'someOtherSetting')
                         .initializeWithMethod('init')
