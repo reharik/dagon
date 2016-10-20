@@ -27,7 +27,8 @@ var resolveInstance = function resolveInstance(unResDeps, resDeps, item){
     if(resDeps.find(x=>x.name === item.name && x.groupName === item.groupName) ){
         return;
     }
-    if(item.json){
+    if(item.json) {
+        item.resolvedInstance = item.wrappedInstance;
         resDeps.push(item);
         return;
     }
