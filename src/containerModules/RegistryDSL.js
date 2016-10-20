@@ -46,13 +46,13 @@ module.exports = class RegistryDSL{
      * @param dir - the directory with modules that you want to register
      * @returns {this}
      */
-    requireDirectory(dir) {
+    requireDirectory(dir, acceptableFileTypes = ['.js']) {
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .map(x=> this.processFile(x, absoluteDir));
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=> acceptableFileTypes.map(e=>x.endsWith(e)))
+          .map(x=> this.processFile(x, absoluteDir));
         this.addDependenciesToCollection(dependencies);
         return this;
     }
@@ -74,14 +74,14 @@ module.exports = class RegistryDSL{
      * @param groupName the name to group all the moduels under
      * @returns {this}
      */
-    groupAllInDirectory(dir, _groupName){
+    groupAllInDirectory(dir, _groupName, acceptableFileTypes = ['.js']){
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        var dependencies = fs.readdirSync(absoluteDir).filter(x=>x.endsWith('.js'))
-            .map(x=> this.processFile(x, absoluteDir, groupName));
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=> acceptableFileTypes.map(e=>x.endsWith(e)) )
+          .map(x=> this.processFile(x, absoluteDir, groupName));
         this.addDependenciesToCollection(dependencies);
         return this;
     }
@@ -146,7 +146,7 @@ module.exports = class RegistryDSL{
     }
 
 
-    recurseDirectories(dir) {
+    recurseDirectories(dir, acceptableFileTypes = ['.js']) {
         logger.trace('RegistryDSL | recurseDirectories: looping through '+dir);
         var dependencies = fs.readdirSync(dir).map(x=> {
             var stat = fs.statSync(dir + '/' + x);
@@ -155,19 +155,18 @@ module.exports = class RegistryDSL{
             }
             return x;
         })
-        .filter(x=>x.endsWith('.js'))
-        .map(x => this.processFile(x, dir));
+          .filter(x=> acceptableFileTypes.map(e=>x.endsWith(e)))
+          .map(x => this.processFile(x, dir));
         this.addDependenciesToCollection(dependencies);
     }
 
     processFile(file,dir, groupName){
         logger.trace('RegistryDSL | processFile: creating dependency object');
-        if(!file.endsWith('.js')){return;}
-        file = file.replace('.js','');
-        var path = dir + '/'+file;
-        var name = this.normalizeName(file);
+        var fileName = file.substr(0, file.lastIndexOf('.'));
+        var path = dir + '/'+fileName;
+        var name = this.normalizeName(fileName);
         logger.trace('RegistryDSL | processFile: properties -' + name +' -'+path+' -'+groupName);
-        return {name: name, path: path, internal: true, groupName:groupName||''};
+        return {name: name, path: path, internal: true, groupName:groupName||'', json:file.endsWith('json')};
     }
 
     // not great that this is here and graph
@@ -185,7 +184,7 @@ module.exports = class RegistryDSL{
         logger.trace('buildListOfDependencies | getDependenciesFromProjectJson: reading package.json dependencies');
         var packageJson      = require(path.join(this._pathToAppRoot, '/package.json'));
         var dependencies =  Object.keys(packageJson.dependencies)
-            .map(x=> {return { name: this.normalizeName(x), path:x, altPath: this._pathToAppRoot + '/node_modules/' + x }});
+          .map(x=> {return { name: this.normalizeName(x), path:x, altPath: this._pathToAppRoot + '/node_modules/' + x }});
         this.addDependenciesToCollection(dependencies);
     };
 
