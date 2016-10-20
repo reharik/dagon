@@ -17,6 +17,9 @@ module.exports = function(registryFunc, containerFunc) {
     var rename  = x=> {
         var clone  = R.clone(dependencies.find(d=>d.name == x.name));
        //shit's blowin up here. if the dep is not there for some reason
+        if(!clone) {
+            throw new ono(`Unable to find dependency named ${x.name} to rename with ${x.newName}`);
+        }
         clone.name = x.newName;
         return clone;
     };
@@ -26,6 +29,9 @@ module.exports = function(registryFunc, containerFunc) {
     var replacements            = R.filter(x=>x.replaceWith, dto.overrideDeclarations);
     var replace                 = x=> {
         var clone  = R.clone(R.find(d => d.name == x.replaceWith, renamedDependencies));
+        if(!clone) {
+            throw new ono(`Unable to find dependency named ${x.name} to replace with ${x.replaceWith}`);
+        }
         clone.name = x.name;
         return clone;
 
