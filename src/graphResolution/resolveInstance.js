@@ -24,11 +24,12 @@ var resolveGroup = function resolveGroup(unResDeps, resDeps, name){
 };
 
 var resolveInstance = function resolveInstance(unResDeps, resDeps, item){
-    if(resDeps.find(x=>x.name === item.name && x.groupName === item.groupName) || item.json){
+    if(resDeps.find(x=>x.name === item.name && x.groupName === item.groupName) ){
         return;
     }
-    if(typeof item.wrappedInstance !== 'function'){
-        throw new Error(`Item named ${item.name} is neither valid JSON nor a wrapped function`);
+    if(item.json){
+        resDeps.push(item);
+        return;
     }
     fnArgs(item.wrappedInstance).forEach(a=>{
         var resDep = resDeps.find(x=>x.name == a);
