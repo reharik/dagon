@@ -46,12 +46,12 @@ module.exports = class RegistryDSL{
      * @param dir - the directory with modules that you want to register
      * @returns {this}
      */
-    requireDirectory(dir, acceptableFileTypes = ['.js']) {
+    requireDirectory(dir, acceptJson) {
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        var dependencies = fs.readdirSync(absoluteDir).filter(x=> acceptableFileTypes.map(e=>x.endsWith(e)))
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=> x.endsWith('.js' || (acceptJson && x.endsWith('.jsom'))))
           .map(x=> this.processFile(x, absoluteDir));
         this.addDependenciesToCollection(dependencies);
         return this;
@@ -74,13 +74,13 @@ module.exports = class RegistryDSL{
      * @param groupName the name to group all the moduels under
      * @returns {this}
      */
-    groupAllInDirectory(dir, _groupName, acceptableFileTypes = ['.js']){
+    groupAllInDirectory(dir, _groupName, acceptJson){
         invariant(dir, 'You must provide a valid directory');
         logger.trace('RegistryDSL | groupAllInDirectory: closing in process declarations and renames');
         var groupName = _groupName || dir.split(path.sep).pop();
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        var dependencies = fs.readdirSync(absoluteDir).filter(x=> acceptableFileTypes.map(e=>x.endsWith(e)) )
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=> x.endsWith('.js' || (acceptJson && x.endsWith('.jsom'))))
           .map(x=> this.processFile(x, absoluteDir, groupName));
         this.addDependenciesToCollection(dependencies);
         return this;
@@ -146,7 +146,7 @@ module.exports = class RegistryDSL{
     }
 
 
-    recurseDirectories(dir, acceptableFileTypes = ['.js']) {
+    recurseDirectories(dir, acceptJson) {
         logger.trace('RegistryDSL | recurseDirectories: looping through '+dir);
         var dependencies = fs.readdirSync(dir).map(x=> {
             var stat = fs.statSync(dir + '/' + x);
@@ -155,7 +155,7 @@ module.exports = class RegistryDSL{
             }
             return x;
         })
-          .filter(x=> acceptableFileTypes.map(e=>x.endsWith(e)))
+        .filter(x=> x.endsWith('.js' || (acceptJson && x.endsWith('.jsom'))))
           .map(x => this.processFile(x, dir));
         this.addDependenciesToCollection(dependencies);
     }
