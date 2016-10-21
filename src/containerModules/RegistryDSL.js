@@ -51,7 +51,7 @@ module.exports = class RegistryDSL{
         logger.trace('RegistryDSL | requireDirectory: closing in process declarations and renames');
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        var dependencies = fs.readdirSync(absoluteDir).filter(x=> x.endsWith('.js' || (acceptJson && x.endsWith('.jsom'))))
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=> x.endsWith('.js') || (acceptJson && x.endsWith('.json')))
           .map(x=> this.processFile(x, absoluteDir));
         this.addDependenciesToCollection(dependencies);
         return this;
@@ -80,7 +80,7 @@ module.exports = class RegistryDSL{
         var groupName = _groupName || dir.split(path.sep).pop();
         var absoluteDir = path.join(this._pathToAppRoot, dir);
         logger.debug('RegistryDSL | requireDirectory: looping through files in directory, filtering for .js');
-        var dependencies = fs.readdirSync(absoluteDir).filter(x=> x.endsWith('.js' || (acceptJson && x.endsWith('.jsom'))))
+        var dependencies = fs.readdirSync(absoluteDir).filter(x=> x.endsWith('.js') || (acceptJson && x.endsWith('.json')))
           .map(x=> this.processFile(x, absoluteDir, groupName));
         this.addDependenciesToCollection(dependencies);
         return this;
@@ -155,7 +155,7 @@ module.exports = class RegistryDSL{
             }
             return x;
         })
-        .filter(x=> x.endsWith('.js' || (acceptJson && x.endsWith('.jsom'))))
+        .filter(x=> x.endsWith('.js') || (acceptJson && x.endsWith('.json')))
           .map(x => this.processFile(x, dir));
         this.addDependenciesToCollection(dependencies);
     }
