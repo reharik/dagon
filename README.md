@@ -352,6 +352,10 @@ You could also do this with an internal function.
 ### Version 0.2.1
 
 ##### revisions
+revision 1.1.0
+- added subWith functionality for testing
+revision 1.0.0
+- cleaned up and made ready for production
 revision 0.2.1
 - fixed goddamn typeo
 - removed console.log
