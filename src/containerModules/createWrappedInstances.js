@@ -11,7 +11,12 @@ module.exports = function(finalDependencies){
 
         if (item.internal) {
             item.wrappedInstance = require(item.path);
-        } else {
+        } else if (item.substitution) {
+            item.wrappedInstance = function() {
+                return item.subWith;
+            };
+        }
+        else {
             var path = getPathForExternalWrappedInstance(item);
             item.wrappedInstance = function() {
                 return require(path);

@@ -111,7 +111,8 @@ module.exports = function (_options) {
                     .for('bluebird').renameTo('Promise')
                     .for('lodash').renameTo('_')
                     .for('genericLogger').require('./src/myPersonalLogger')
-                    .for('genericLogger').require('./src/myPersonalLogger')
+                    .for('genericLogger').replaceWith('./src/myPersonalLogger')
+                    .for('repository').subWith(() => { 'heres my mock'})
                     .complete(),
                     i=>i.instantiate('someModule')
                         .asClass() // alternately .asFunc()
@@ -186,6 +187,15 @@ module.exports = function(_options) {
         // and want to have them all point to just one implementation
         // A "replaceWith" requires a "for"
         .for('genericLogger').replaceWith('./src/myPersonalLogger')
+```
+```sh
+        // here you can override either a previously declared dependency
+        // ( say, through the "requireDirectory" method )
+        // and point it to an inline function that you declare.
+        // useful for testing if you would like to pass in a mock instance 
+        // but you are using a framework like sinon or testDouble
+        // A "subWith" requires a "for"
+        .for('repository').subWith(td.object(repository))
 ```
 ```sh
         // here you end your registration of dependencies and, optionally, begin 

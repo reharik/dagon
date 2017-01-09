@@ -25,6 +25,19 @@ describe('container builder Test', function() {
         });
     });
 
+    describe('#SUB', function() {
+        context('when calling ', function() {
+            it('should put proper wrapped function', function() {
+
+                var dep = { name: 'logger',
+                    subWith: () => 'in line substitution',
+                    substitution: true};
+                var result = mut([dep]);
+                result.dependencies[0].wrappedInstance().toString().must.contain('in line substitution');
+            });
+        });
+    });
+
     describe('#EXTERNAL', function() {
         context('when calling external dep', function() {
             it('should put proper wrapped function', function() {

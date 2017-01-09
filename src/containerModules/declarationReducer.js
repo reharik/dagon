@@ -11,8 +11,7 @@ module.exports = function(registryFunc, containerFunc) {
 
     var dto          = moduleRegistry(registryFunc);
     var dependencies = R.uniqWith((a, b) => a.name == b.name && a.groupName == b.groupName, dto.dependencyDeclarations)
-        .concat(dto.overrideDeclarations.filter(x=>!x.newName && !x.replaceWith));
-
+        .concat(dto.overrideDeclarations.filter(x=>!x.newName && !x.replaceWith && !x.subWith));
     var renames = R.filter(x=>x.newName, dto.overrideDeclarations);
     var rename  = x=> {
         var clone  = R.clone(dependencies.find(d=>d.name == x.name));
@@ -36,9 +35,19 @@ module.exports = function(registryFunc, containerFunc) {
         return clone;
 
     };
+
+    var substitutes            = R.filter(x=>x.subWith, dto.overrideDeclarations);
+    var substitute               = x => {
+        renamedDependencies = R.remove(R.findIndex(i => i.name === x.name, renamedDependencies),1, renamedDependencies);
+        x.substitution = true;
+        return x;
+
+    };
     var filteredForReplacements = renamedDependencies.filter(x=> !replacements.some(s=>s.name === x.name));
 
-    var finalDependencies = R.concat(R.map(replace, replacements), filteredForReplacements);
+    var replacedDependencies = R.concat(R.map(replace, replacements), filteredForReplacements);
+    
+    var finalDependencies = R.concat(R.map(substitute, substitutes), replacedDependencies);
 
     var instantiations = containerFunc ? containerFunc(new InstantiateDSL(finalDependencies)) : [];
     instantiations.forEach(x=> {

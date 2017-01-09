@@ -54,6 +54,21 @@ describe('declaration reducer Test', function() {
         });
     });
 
+    describe('#SUB', function() {
+        context('when calling ', function() {
+            it('should substitue the target', function() {
+                var dependentMod1 = fs.realpathSync('tests/TestModules/dependentModule1/dependentMod1.js');
+                var result = mut(x=>
+                  x.pathToRoot(path.resolve('./'))
+                    .for('ramda').subWith(() => { return "substitued item"})
+                    .requiredModuleRegistires([dependentMod1])
+                    .complete());
+
+                result.find(x=> x.name == 'ramda').subWith().must.equal("substitued item");
+            });
+        });
+    });
+
     describe('#UNIQUE', function() {
         context('when calling ', function() {
             it('should reduce to only unique values', function() {

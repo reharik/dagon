@@ -60,7 +60,6 @@ module.exports = function container(registryFunc, containerFunc){
     try {
         invariant(registryFunc, //&& _.isFunction(registryFunc),
             'You must supply a registry function');
-
         logger.trace('Container | constructor : Building registry');
         var finalDeclarations = declarationReducer(registryFunc, containerFunc);
         unresolvedGrpah = containerBuilder(finalDeclarations);
