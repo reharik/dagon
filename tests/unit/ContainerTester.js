@@ -11,7 +11,6 @@ describe('Container Test', function() {
 
     before(function(){
         Mut = require('../../src/containerModules/container');
-        var logger = require('../../src/logger');
     });
 
     describe('#instantiate Container', function() {

@@ -7,7 +7,6 @@ var RegistryDSL = require('./RegistryDSL');
 var invariant = require('invariant');
 var logger = require('./../logger');
 var path = require('path');
-var exceptionHandler = require('./../exceptionHandler');
 var R = require('ramda');
 var fs = require('fs');
 var ono = require('ono');

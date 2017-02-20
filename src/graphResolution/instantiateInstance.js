@@ -4,7 +4,6 @@
 "use strict";
 
 var logger = require('./../logger');
-var exceptionHandler = require('./../exceptionHandler');
 var JSON = require('JSON');
 var ono = require('ono');
 

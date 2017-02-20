@@ -352,6 +352,9 @@ You could also do this with an internal function.
 ### Version 0.2.1
 
 ##### revisions
+revision 1.2.0
+- removed a lot of cruft, and a bunch of unused dependencies
+- upgraded what dependencies were left to latest version
 revision 1.1.0
 - added subWith functionality for testing
 revision 1.0.0

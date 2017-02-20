@@ -4,7 +4,6 @@
 "use strict";
 
 var logger = require('./../logger');
-var exceptionHandler = require('./../exceptionHandler');
 var ono = require('ono');
 
 module.exports = function requireDependencyOrThrow(resDeps, dependencyName) {

@@ -8,7 +8,6 @@ var declarationReducer = require('./declarationReducer');
 var graphResolver = require('./../graphResolution/graphResolver');
 var invariant = require('invariant');
 var logger = require('./../logger');
-var exceptionHandler = require('./../exceptionHandler');
 var ono = require('ono');
 
 module.exports = function container(registryFunc, containerFunc){

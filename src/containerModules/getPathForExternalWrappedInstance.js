@@ -3,7 +3,6 @@
  */
 "use strict";
 
-var exceptionHandler = require('./../exceptionHandler');
 var ono = require('ono');
 var R = require('ramda');
 var path = require('path');
