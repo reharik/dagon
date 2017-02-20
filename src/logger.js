@@ -12,13 +12,13 @@ module.exports = function () {
         timestamp: true,
         json: false,
         formatter: function (x) {
-          return '[' + x.meta.level + '] ' + ' module: DAGon msg: ' + x.meta.message + ' | ' + moment().format('h:mm:ss a');
+          return '[' + x.level + '] ' + ' module: DAGon msg: ' + x.message + ' | ' + moment().format('h:mm:ss a');
         }
       })
     );
   winston.configure({
     transports,
-    level: process.env.LOGGING_LEVEL || 'silly'
+    level: process.env.LOGGING_LEVEL || 'error'
   });
 
   var trace = (message) => {
