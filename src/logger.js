@@ -18,7 +18,7 @@ module.exports = function () {
     );
   winston.configure({
     transports,
-    level: process.env.LOGGING_LEVEL || 'error'
+    level: process.env.DAGON_LOGGING_LEVEL || 'error'
   });
 
   var trace = (message) => {
