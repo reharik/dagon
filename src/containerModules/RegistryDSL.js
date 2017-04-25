@@ -16,6 +16,7 @@ module.exports = class RegistryDSL{
         this.dependencyDeclarations = [];
         this.overrideDeclarations = [];
         this._declarationInProgress;
+        this.normalizeNameStrategy;
     }
 
     /**
@@ -37,6 +38,16 @@ module.exports = class RegistryDSL{
      */
     requiredModuleRegistires(moduleRegistries){
         this.dependentRegistries = moduleRegistries;
+        return this;
+    }
+
+    /**
+    * @param normailizerFunc - a function that takes the original name and returns a name that escapes
+    *  dashes and does whatever other kind of transforms you like
+    * @returns {this}
+    */
+    setNormalizeNameStrategy(normailizerFunc){
+        this.normalizeNameStrategy = normailizerFunc;
         return this;
     }
 
@@ -182,8 +193,13 @@ module.exports = class RegistryDSL{
         return {name: name, path: path, internal: true, groupName:groupName||'', json:file.endsWith('json')};
     }
 
-    // not great that this is here and graph
-    normalizeName(orig){
+    normalizeName(orig) {
+        return this.normalizeNameStrategy
+            ? this.normalizeNameStrategy(orig)
+            : this.standardNormalizeNameStrategy(orig)
+    }
+
+    standardNormalizeNameStrategy(orig){
         var name = orig.replace(/-/g, '');
         name = name.replace(/\./g, '_');
         logger.trace('Graph | normalizeName: normalizing name: '+orig+'->'+name);

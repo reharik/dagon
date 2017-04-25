@@ -105,9 +105,15 @@ module.exports = function (_options) {
     var result;
     try {
         result = container(x => x.pathToRoot(__dirname)
+                    .setNormalizeNameStrategy(orig => {
+                        var name =  orig.toLowerCase().replace(/-(.)/g, (match, group1) => group1.toUpperCase());
+                        name = name.replace(/\./g, '_');
+                        return name;
+                    })
                     .requireDirectoryRecursively('./src')
                     .requireDirectory('./somewhereelse')
-                    .groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
+                    .groupAllInDirectory('./myImplementationOfAStrategy', 'strategy')
+                    .groupAllInDirectory('./myOtherStrategy', 'strategy_array')
                     .for('bluebird').renameTo('Promise')
                     .for('lodash').renameTo('_')
                     .for('genericLogger').require('./src/myPersonalLogger')
@@ -149,6 +155,21 @@ module.exports = function(_options) {
         x.pathToRoot(__dirname)
 ```
 ```sh
+        // By default dagon replaces names with '-' in them by just removing the 
+        // dashes.  Dashes are not legal in property names so they have to be dealt with.
+        // If you would like to specify a different convention, you can do so here.
+        // you need just provide a function that takes in a name and returns something
+        // that does not have dashes in it.
+        // as a side note, both this example and the default replace '.' with '_' as '.' are
+        // not legal in property names either.  
+        // lastly this example returns camelcased names rather than just concatenated
+        .setNormalizeNameStrategy(orig => {
+            var name =  orig.toLowerCase().replace(/-(.)/g, (match, group1) => group1.toUpperCase());
+            name = name.replace(/\./g, '_');
+            return name;
+        })
+```
+```sh
         // this will require all modules found in said directory
         // and it will do so recursively
         .requireDirectoryRecursively('./src')
@@ -160,10 +181,21 @@ module.exports = function(_options) {
 ```
 ```sh
         // this will group a number of modules such that you can then
-        // require the groupname and recieve an array of modules.
+        // require the groupname and recieve an object whose keys
+        // are the module names and the values are the modules.
         // the groupname is optional and will default to the directory
         // name specified
-        .groupAllInDirectory('./myImplementationOfAStrategy', 'stragegy')
+        .groupAllInDirectory('./myImplementationOfAStrategy', 'strategy')
+```
+```sh
+        // this will group a number of modules such that you can then
+        // require the groupname and array of the modules
+        // the distinction is that you must name the group with
+        // a trailing "_array".  Otherwise it will be an object 
+        // as above.  I'm open to some other way of signifying that
+        // this is an array but I'm going with this for now. ( don't
+        // worry if we change it, it'll be backwards compatable )
+        .groupAllInDirectory('./myImplementationOfAStrategy', 'strategy_array')
 ```
 ```sh
         // here you can specify an alternate name for a dependency.

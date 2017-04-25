@@ -73,6 +73,43 @@ describe('Registry DSL Tester', function() {
             })
         });
 
+      context('when calling normalizeName with standardNormalizer', function () {
+        it('should normalize then name by removing the -', function () {
+          mut.pathToRoot(path.resolve('./'));
+          mut.complete();
+          mut.dependencyDeclarations.find(x => x.path === 'fn-args').name.must.equal('fnargs');
+        })
+      });
+
+      context('when calling normalizeName with customNormalizer', function () {
+        it('should normalize then name by replacing the - with *', function () {
+          mut.pathToRoot(path.resolve('./'));
+          mut.setNormalizeNameStrategy((orig) => {
+            var name = orig.replace(/-/g, '*');
+            name = name.replace(/\./g, '_');
+            return name;
+          });
+
+          mut.complete();
+          mut.dependencyDeclarations.find(x => x.path === 'fn-args').name.must.equal('fn*args');
+        })
+      });
+
+
+      context('when calling normalizeName with camelCaseNormalizer', function () {
+        it('should normalize then name by making it camelcase', function () {
+          mut.pathToRoot(path.resolve('./'));
+          mut.setNormalizeNameStrategy((orig) => {
+            var name =  orig.toLowerCase().replace(/-(.)/g, (match, group1) => group1.toUpperCase());
+            name = name.replace(/\./g, '_');
+            return name;
+          });
+
+          mut.complete();
+          mut.dependencyDeclarations.find(x => x.path === 'fn-args').name.must.equal('fnArgs');
+        })
+      });
+
         context('when calling require with out calling forDependency first', function () {
             it('should throw proper error', function () {
                 var error = '';

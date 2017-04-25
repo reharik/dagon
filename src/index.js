@@ -5,8 +5,12 @@
 
 var registry = require('./containerModules/moduleRegistry');
 var container = require('./containerModules/container');
+var logger = require('./logger');
 
-module.exports = function(){
+module.exports = function(options){
+    if(options.logging_level){
+        logger
+    }
     return {
         registry,
         container
