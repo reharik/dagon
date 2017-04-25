@@ -19,7 +19,7 @@
     "DI"
   ],
   "license": "MIT",
-  "node": ">=0.12.0",
+  "node": ">=4.0.0",
   "dependencies": {
     "JSON": "^1.0.0",
     "fn-args": "^2.0.0",

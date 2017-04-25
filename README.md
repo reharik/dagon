@@ -381,9 +381,11 @@ You could also do this with an internal function.
 - explain dagon loggin
 - create example app
 
-### Version 0.2.1
+### Version 1.3.0
 
 ##### revisions
+revision 1.3.0
+- added setNormalizeNameStrategy to the dsl so you can alter the default strategy, which is to replace '-' with empty '' and replace '.' with '_'
 revision 1.2.0
 - removed a lot of cruft, and a bunch of unused dependencies
 - upgraded what dependencies were left to latest version
@@ -391,9 +393,6 @@ revision 1.1.0
 - added subWith functionality for testing
 revision 1.0.0
 - cleaned up and made ready for production
-revision 0.2.1
-- fixed goddamn typeo
-- removed console.log
 revision 0.2.0
 - Not really breaking changes but I did add error handling which might change the errors you expect in your tests
 - refactorted all or most of the code to be much more explicit about what it's doing and also be explicit about if it's modifying a reference or returning new value
