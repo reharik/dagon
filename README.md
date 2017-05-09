@@ -381,9 +381,11 @@ You could also do this with an internal function.
 - explain dagon loggin
 - create example app
 
-### Version 1.3.0
+### Version 1.3.1
 
 ##### revisions
+revision 1.3.1
+- fixed issues with not passing in options. sorry.
 revision 1.3.0
 - added setNormalizeNameStrategy to the dsl so you can alter the default strategy, which is to replace '-' with empty '' and replace '.' with '_'
 revision 1.2.0

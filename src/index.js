@@ -8,7 +8,7 @@ var container = require('./containerModules/container');
 var logger = require('./logger');
 
 module.exports = function(options){
-    if(options.logging_level){
+    if(options && options.logging_level){
         logger
     }
     return {
