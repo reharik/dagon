@@ -41,7 +41,7 @@ var resolveInstance = function resolveInstance(unResDeps, resDeps, item){
             var nextItem = unResDeps.find(x=>x.name == a);
             if (!nextItem) {
                 if(!resolveGroup(unResDeps, resDeps, a)){
-                    requireDependencyOrThrow(resDeps, a);
+                    requireDependencyOrThrow(resDeps, a, item.name);
                 }
             } else {
                 resolveInstance(unResDeps, resDeps, nextItem);

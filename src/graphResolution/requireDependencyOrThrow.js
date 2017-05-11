@@ -6,7 +6,7 @@
 var logger = require('./../logger');
 var ono = require('ono');
 
-module.exports = function requireDependencyOrThrow(resDeps, dependencyName) {
+module.exports = function requireDependencyOrThrow(resDeps, dependencyName, callerName) {
     try {
         var tryingRequire = require(dependencyName);
         if (tryingRequire) {
@@ -19,6 +19,6 @@ module.exports = function requireDependencyOrThrow(resDeps, dependencyName) {
     } catch (ex) {
         logger.info('getDependency | tryRequireDependency: item was not found and require threw an error');
         logger.info('getDependency | tryRequireDependency: error' + ex);
-        throw ono(ex,'item was not found and require threw an error: ' + dependencyName);
+        throw ono(ex,` Tried to inject item '${dependencyName}' into module '${callerName}' and require threw an error.`);
     }
 };
