@@ -381,9 +381,11 @@ You could also do this with an internal function.
 - explain dagon loggin
 - create example app
 
-### Version 1.3.1
+### Version 1.3.2
 
 ##### revisions
+revision 1.3.2
+- bug fix for error when missing dependency
 revision 1.3.1
 - fixed issues with not passing in options. sorry.
 revision 1.3.0
