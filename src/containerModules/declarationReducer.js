@@ -6,6 +6,7 @@
 var InstantiateDSL = require('./InstantiateDSL');
 var moduleRegistry = require('./moduleRegistry');
 var R = require('ramda');
+var ono = require('ono');
 
 module.exports = function(registryFunc, containerFunc) {
 
