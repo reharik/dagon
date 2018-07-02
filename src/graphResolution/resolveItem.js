@@ -10,7 +10,7 @@ var instantiateInstance = require('./instantiateInstance');
 
 module.exports = function resolveItem(resolvedDependencies,item){
     invariant(item, 'Item to resolve must be provided.');
-    var args = fnArgs(item.wrappedInstance);
+    var args = fnArgs(item.wrappedInstance).filter(Boolean);
     // possible null exception
     var resolvedArgs = args.map(x=> {
         var dep = resolvedDependencies.find(d=>d.name == x);

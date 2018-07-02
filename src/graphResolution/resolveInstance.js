@@ -35,7 +35,7 @@ var resolveInstance = function resolveInstance(unResDeps, resDeps, item){
     if(typeof item.wrappedInstance !== 'function'){
         throw new Error(`Item named ${item.name} is neither valid JSON nor a wrapped function`);
     }
-    fnArgs(item.wrappedInstance).forEach(a=>{
+    fnArgs(item.wrappedInstance).filter(Boolean).forEach(a=>{
         var resDep = resDeps.find(x=>x.name == a);
         if(!resDep) {
             var nextItem = unResDeps.find(x=>x.name == a);

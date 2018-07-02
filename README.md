@@ -384,6 +384,8 @@ You could also do this with an internal function.
 ### Version 1.3.4
 
 ##### revisions
+revision 1.3.5
+- seems fnArgs adds an empty result to the end of an array if there is a trailing comma.  Now I filter for that.
 revision 1.3.4
 - bug fix for error when missing dependency
 revision 1.3.1
